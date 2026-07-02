@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Amary</title>
+<link rel="stylesheet" href="style.css?v=11">
+</head>
+<body>
+<div id="app">
+
+  <!-- app header (top, no phone status bar) -->
+  <header class="appbar">
+    <button class="icon-btn" aria-label="menu" data-icon="menu"></button>
+    <div class="brand"><span class="brand-mark" data-icon="spark"></span><span class="brand-name">Amary</span></div>
+    <button class="icon-btn" aria-label="filter" data-icon="gear"></button>
+  </header>
+
+  <!-- game HUD -->
+  <div class="runbar">
+    <span id="progressText" class="run-count">0 / 20</span>
+    <div class="run-track"><div id="progressFill" class="run-fill"></div></div>
+    <span id="livesText" class="lives"></span>
+  </div>
+
+  <!-- scrollable profile -->
+  <main id="scroll" class="scroll">
+    <div id="profile" class="profile"></div>
+  </main>
+
+  <!-- pinned decision buttons -->
+  <nav class="float-actions">
+    <button class="act act-nope" data-act="nope" aria-label="ナシ" data-icon="x"></button>
+    <button class="act act-like" data-act="like" aria-label="アリ" data-icon="heart"></button>
+  </nav>
+
+  <!-- swipe stamps (独自語。LIKE/NOPEはTinderのシグネチャなので不使用) -->
+  <div class="stamp stamp-like" id="stampLike">アリ</div>
+  <div class="stamp stamp-nope" id="stampNope">ナシ</div>
+
+  <!-- zoom viewer -->
+  <div id="zoom" class="zoom hidden">
+    <div class="zoom-inner"><img id="zoomImg" alt=""></div>
+    <button id="zoomClose" class="zoom-close" data-icon="x"></button>
+    <div class="zoom-hint">ドラッグで移動 / ホイール・ピンチで拡大</div>
+  </div>
+
+  <!-- overlay screens -->
+  <div id="overlay" class="overlay hidden"></div>
+
+</div>
+
+<script src="icons.js?v=11"></script>
+<script src="data.js?v=11"></script>
+<script src="manifest.js?v=11"></script>
+<script src="app.js?v=11"></script>
+</body>
+</html>

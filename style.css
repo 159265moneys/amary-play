@@ -1,0 +1,142 @@
+:root{
+  /* rose mono-hue gradient — deliberately distinct from Tinder(pink→orange) & tapple(pink→purple) */
+  --pink:#ff3d67; --pink2:#ff5e8f; --grad:linear-gradient(135deg,#ff3d67 0%,#ff5e8f 100%);
+  --ink:#24202a; --sub:#8a8592; --line:#eee6ec; --bg:#f3f0f6; --card-radius:20px;
+  --like:#38d39f; --nope:#ff5064; --super:#37a0ff; --gold:#ffb020;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:-apple-system,"Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif;background:#1b171f;color:var(--ink);
+  display:flex;justify-content:center;align-items:center;overscroll-behavior:none}
+#app{position:relative;width:100%;max-width:430px;height:100dvh;max-height:940px;background:var(--bg);
+  display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+@media(min-width:460px){#app{border-radius:30px;height:94dvh}}
+
+/* header */
+.appbar{display:flex;align-items:center;justify-content:space-between;padding:12px 16px 8px;flex:none}
+.brand{display:flex;align-items:center;gap:6px}
+.brand-mark{color:var(--pink);font-size:22px;display:inline-flex;align-items:center}
+.brand-name{font-size:24px;font-weight:800;letter-spacing:-.5px;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.icon-btn{border:none;background:none;font-size:20px;color:#b6adbe;width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.icon-btn:active{background:#0000000d}
+
+/* HUD */
+.runbar{display:flex;align-items:center;gap:10px;padding:2px 18px 10px;flex:none}
+.run-count{font-size:12px;font-weight:700;color:var(--sub);min-width:52px}
+.run-track{flex:1;height:6px;border-radius:4px;background:#e7e0ec;overflow:hidden}
+.run-fill{height:100%;width:0;background:var(--grad);transition:width .3s}
+.lives{font-size:15px;display:flex;justify-content:flex-end;align-items:center;gap:1px;min-width:56px}
+.lives .ic{color:var(--nope)}
+
+/* scroll area */
+.scroll{flex:1;overflow-y:auto;overscroll-behavior:contain;touch-action:pan-y}
+.profile{will-change:transform}
+.profile.enter{animation:profIn .3s ease}
+@keyframes profIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+
+/* photo */
+.photo-wrap{position:relative;width:100%;aspect-ratio:4/5;background:#d9d2df;overflow:hidden;user-select:none;touch-action:pan-y}
+.photo{position:absolute;inset:0;background-size:cover;background-position:center top;background-repeat:no-repeat}
+@keyframes photoIn{from{opacity:.15;transform:scale(1.05)}to{opacity:1;transform:scale(1)}}
+.photo.anim{animation:photoIn .2s ease}
+.ph-grad{position:absolute;left:0;right:0;bottom:0;height:46%;background:linear-gradient(to top,rgba(10,5,15,.82),transparent)}
+.ph-name{position:absolute;left:18px;right:18px;bottom:16px;color:#fff;display:flex;align-items:baseline;gap:9px;flex-wrap:wrap}
+.pn{font-size:28px;font-weight:800;line-height:1;text-shadow:0 1px 6px rgba(0,0,0,.4)}
+.pa{font-size:22px;font-weight:400}
+.ci-badge{font-size:12px;font-weight:700;background:var(--super);color:#fff;padding:2px 8px;border-radius:20px;display:inline-flex;align-items:center;gap:3px;transform:translateY(-3px)}
+.ci-badge.warn{background:var(--nope)}
+.ci-badge .ic{font-size:11px}
+
+/* photo segments + edge */
+.segs{position:absolute;top:10px;left:12px;right:12px;display:flex;gap:5px;z-index:4}
+.seg{flex:1;height:3.5px;border-radius:3px;background:rgba(255,255,255,.35)}
+.seg.on{background:#fff}
+.edge{position:absolute;top:12%;bottom:26%;width:22%;z-index:2;display:flex;align-items:center;pointer-events:none;opacity:0;transition:opacity .15s}
+.edge.l{left:0;justify-content:flex-start;padding-left:8px;background:linear-gradient(to right,rgba(0,0,0,.16),transparent)}
+.edge.r{right:0;justify-content:flex-end;padding-right:8px;background:linear-gradient(to left,rgba(0,0,0,.16),transparent)}
+.edge svg{width:22px;height:22px;fill:none;stroke:#fff;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 1px 3px rgba(0,0,0,.5))}
+.card-wrap:hover .edge,.photo-wrap:hover .edge{opacity:.3}
+.edge.flash{opacity:.9}
+
+/* floating action buttons — pinned to screen bottom (Pairs pattern), always reachable while scrolling */
+.float-actions{position:absolute;bottom:18px;left:0;right:0;z-index:30;display:flex;justify-content:center;gap:84px;pointer-events:none}
+.act{pointer-events:auto;border:none;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 10px 28px rgba(40,20,50,.32),0 2px 6px rgba(40,20,50,.18);transition:transform .1s}
+.act:active{transform:scale(.9)}
+.act-nope{width:64px;height:64px;color:var(--nope);font-size:28px}
+.act-like{width:64px;height:64px;color:var(--like);font-size:28px}
+
+/* content area (bottom padding clears the pinned buttons) */
+.content{padding:14px 14px 118px}
+/* つぶやき (one-liner) bubble */
+.tsu{background:#fff;border-radius:20px;padding:12px 16px;font-size:14px;font-weight:600;color:#3a343f;
+  box-shadow:0 1px 3px rgba(40,20,50,.05);position:relative;margin-bottom:12px}
+.tsu::before{content:'';position:absolute;top:-7px;left:26px;width:14px;height:14px;background:#fff;transform:rotate(45deg);border-radius:3px}
+.tsu .tsu-label{display:block;font-size:10.5px;font-weight:700;color:var(--pink);margin-bottom:3px;letter-spacing:.5px}
+.c-sec{background:#fff;border-radius:16px;padding:16px;margin-bottom:12px;box-shadow:0 1px 3px rgba(40,20,50,.05)}
+.c-h{font-size:13px;font-weight:800;color:var(--ink);margin-bottom:13px;padding-left:10px;border-left:3px solid var(--pink);line-height:1.1;letter-spacing:.3px}
+/* Pairs風タグ（全幅・大画像） */
+.tag-list{display:flex;flex-direction:column;gap:11px}
+.tagrow{position:relative;width:100%;height:104px;border-radius:14px;background:#cfc7d6 center/cover no-repeat;overflow:hidden;display:flex;align-items:flex-end}
+.tagrow::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.62),transparent 62%)}
+.tagrow span{position:relative;z-index:1;color:#fff;font-size:17px;font-weight:800;padding:13px 15px;text-shadow:0 1px 4px rgba(0,0,0,.55)}
+/* bio */
+.c-bio{font-size:14.5px;line-height:1.85;color:#3a343f;white-space:pre-wrap}
+/* profile info rows */
+.c-info .irow{display:flex;justify-content:space-between;align-items:center;padding:12px 2px;border-bottom:1px solid var(--line);font-size:14px}
+.c-info .irow:last-child{border-bottom:none}
+.ik{color:var(--sub);font-weight:600}
+.iv{color:var(--ink);font-weight:700}
+.iv.danger{color:var(--nope)}
+.iv.on{color:var(--like)}
+.iv.ok{color:var(--super)}
+/* Q&A */
+.qa{background:#faf8fc;border:1px solid var(--line);border-radius:12px;padding:11px 13px;margin-top:8px}
+.qa:first-of-type{margin-top:0}
+.qa .q{font-size:11.5px;color:var(--sub);margin-bottom:3px}
+.qa .a{font-size:15px;font-weight:600}
+
+/* swipe stamps */
+.stamp{position:absolute;top:120px;font-size:34px;font-weight:900;letter-spacing:2px;padding:6px 16px;border:4px solid;border-radius:12px;opacity:0;pointer-events:none;z-index:20}
+.stamp-like{left:22px;color:var(--like);border-color:var(--like);transform:rotate(-16deg)}
+.stamp-nope{right:22px;color:var(--nope);border-color:var(--nope);transform:rotate(16deg)}
+
+/* zoom */
+.zoom{position:absolute;inset:0;background:#000;z-index:60;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.zoom-inner{will-change:transform}
+.zoom-inner img{max-width:100%;max-height:100dvh;display:block;user-select:none;-webkit-user-drag:none}
+.zoom-close{position:absolute;top:16px;right:16px;width:40px;height:40px;border-radius:50%;border:none;background:rgba(255,255,255,.15);color:#fff;display:flex;align-items:center;justify-content:center}
+.zoom-close .ic{width:20px;height:20px}
+.zoom-hint{position:absolute;bottom:20px;left:0;right:0;text-align:center;color:#fff9;font-size:12px}
+
+/* overlays */
+.overlay{position:absolute;inset:0;z-index:80;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:34px;color:#fff;background:linear-gradient(160deg,#2a1020,#120a18)}
+.overlay .big{font-size:30px;font-weight:800;margin-bottom:10px}
+.overlay .brand-name{font-size:44px;margin-bottom:6px}
+.ov-brand{display:flex;align-items:center;justify-content:center;gap:10px;background:none;-webkit-text-fill-color:currentColor;color:#fff}
+.ov-brand .ic{color:var(--pink);width:.85em;height:.85em}
+.ov-brand span{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.overlay p{font-size:14.5px;line-height:1.7;color:#e9dfe9;max-width:320px;margin-bottom:8px}
+.overlay .reason{background:#ffffff12;border:1px solid #ffffff22;border-radius:14px;padding:14px 16px;margin:14px 0;font-size:14px}
+.overlay .reason b{color:#ff9db0}
+.reason-eye .ic{color:#ff9db0;width:15px;height:15px;vertical-align:-.2em}
+.overlay .dead-photo{width:112px;height:112px;border-radius:50%;background-size:cover;background-position:center top;margin:8px auto 0;box-shadow:0 8px 24px #0008;border:3px solid #ffffff22}
+.overlay .dead-name{font-weight:800;font-size:18px;margin:12px 0 6px}
+.overlay .verdict{font-size:16px;font-weight:800;letter-spacing:.5px}
+.overlay .verdict.was{color:#ff8fa5}
+.overlay .verdict.wasnt{color:#8fd6ba}
+.btn{margin-top:18px;border:none;border-radius:30px;background:var(--grad);color:#fff;font-size:17px;font-weight:700;padding:15px 44px;box-shadow:0 8px 22px #fe4a6b55}
+.btn:active{transform:scale(.96)}
+.btn.ghost{background:none;border:1.5px solid #ffffff44;box-shadow:none;padding:12px 30px;font-size:14px}
+
+/* icons */
+.ic{width:1em;height:1em;display:inline-block;vertical-align:-.14em;flex:none}
+
+/* generic loading state (共通ロード表示。内部情報は一切出さない) */
+.photo.loading{background:linear-gradient(110deg,#e6dfeb 40%,#f3eef6 50%,#e6dfeb 60%);background-size:200% 100%;animation:shimmer 1.2s linear infinite}
+.photo.loading::after{content:'';position:absolute;top:50%;left:50%;width:34px;height:34px;margin:-17px 0 0 -17px;
+  border-radius:50%;border:3px solid #ffffffaa;border-top-color:var(--pink);animation:spin .8s linear infinite}
+@keyframes shimmer{from{background-position:200% 0}to{background-position:-200% 0}}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.hidden{display:none!important}
