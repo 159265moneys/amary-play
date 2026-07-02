@@ -64,6 +64,20 @@ function buildBasic(p){
     ],
   };
 }
+/* 整合性ルール：乱数とキャラ上書きの合成結果に最後に強制する。
+   プロフの矛盾は「偽の手がかり」になって冤罪死を生むため、ここで機械的に潰す */
+function enforceConsistency(rows,p){
+  const get=k=>{const r=rows.find(r=>r[0]===k);return r?r[1]:'';};
+  const set=(k,v)=>{const r=rows.find(r=>r[0]===k);if(r)r[1]=v;};
+  // 未婚なら子どもは「なし」（子持ち設定は結婚歴「独身（離婚）」等を明示した人物のみ）
+  if(get('結婚歴').includes('未婚')) set('子どもの有無','なし');
+  // 年齢と学歴の物理的整合（21歳以下で大卒は不可能、23歳以下で院卒は不自然）
+  const edu=get('学歴');
+  if(p.age<=21&&(edu==='大学卒'||edu==='大学院卒')) set('学歴', p.age>=20?'短大／専門卒':'高校卒');
+  else if(p.age<=23&&edu==='大学院卒') set('学歴','大学卒');
+  return rows;
+}
+
 /* キャラ個別データ(data.js)が持つ値で自動生成を上書きする */
 function buildBasicFor(p){
   const b=buildBasic(p);
@@ -72,6 +86,7 @@ function buildBasicFor(p){
     b.rows=b.rows.map(([k,v])=>[k, p.basic[k]!==undefined?p.basic[k]:v]);
     for(const k of Object.keys(p.basic)) if(!b.rows.some(row=>row[0]===k)) b.rows.push([k,p.basic[k]]);
   }
+  b.rows=enforceConsistency(b.rows,p);
   return b;
 }
 const QA=[['理想の休日は？','家でのんびり派、たまに遠出'],['好きな食べ物','無限に食べられるお寿司'],['最近ハマってること','近所のカフェ開拓'],['一緒に行きたい場所','夜景の見えるところ'],['性格を一言で','マイペースってよく言われます']];
