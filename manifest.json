@@ -1,313 +1,356 @@
 {
   "女10": {
     "photos": [
-      "img/女10）金髪コンカフェ/10-1.webp",
-      "img/女10）金髪コンカフェ/10-2.webp",
-      "img/女10）金髪コンカフェ/10-3.webp",
-      "img/女10）金髪コンカフェ/10-4.webp",
-      "img/女10）金髪コンカフェ/10-5.webp"
+      "img/f10/10-1.webp",
+      "img/f10/10-2.webp",
+      "img/f10/10-3.webp",
+      "img/f10/10-4.webp",
+      "img/f10/10-5.webp"
     ],
     "anomalies": {
       "4": [
-        "img/女10）金髪コンカフェ/10-5-1.webp"
+        "img/f10/10-5-1.webp"
       ]
     }
   },
+  "女11": {
+    "photos": [
+      "img/f11/11-1.webp",
+      "img/f11/11-2.webp",
+      "img/f11/11-3.webp",
+      "img/f11/11-4.webp",
+      "img/f11/11-5.webp",
+      "img/f11/11-6.webp"
+    ],
+    "anomalies": {}
+  },
   "女1": {
     "photos": [
-      "img/女1）心霊１/1-1.webp",
-      "img/女1）心霊１/1-2.webp",
-      "img/女1）心霊１/1-3.webp",
-      "img/女1）心霊１/1-4.webp",
-      "img/女1）心霊１/1-5.webp"
+      "img/f1/1-1.webp",
+      "img/f1/1-2.webp",
+      "img/f1/1-3.webp",
+      "img/f1/1-4.webp",
+      "img/f1/1-5.webp"
     ],
     "anomalies": {
       "2": [
-        "img/女1）心霊１/1-3-1.webp"
+        "img/f1/1-3-1.webp"
       ],
       "4": [
-        "img/女1）心霊１/1-5-1.webp"
+        "img/f1/1-5-1.webp"
       ]
     }
   },
   "女2": {
     "photos": [
-      "img/女2)地雷ギャル/2-1.webp",
-      "img/女2)地雷ギャル/2-2.webp",
-      "img/女2)地雷ギャル/2-3.webp",
-      "img/女2)地雷ギャル/2-4.webp",
-      "img/女2)地雷ギャル/2-5.webp"
+      "img/f2/2-1.webp",
+      "img/f2/2-2.webp",
+      "img/f2/2-3.webp",
+      "img/f2/2-4.webp",
+      "img/f2/2-5.webp"
     ],
     "anomalies": {
       "1": [
-        "img/女2)地雷ギャル/2-2-1.webp"
+        "img/f2/2-2-1.webp"
       ],
       "3": [
-        "img/女2)地雷ギャル/2-4-1.webp"
+        "img/f2/2-4-1.webp"
       ]
     }
   },
   "女3": {
     "photos": [
-      "img/女3）心霊2/3-1.webp",
-      "img/女3）心霊2/3-2.webp",
-      "img/女3）心霊2/3-3.webp",
-      "img/女3）心霊2/3-4.webp"
+      "img/f3/3-1.webp",
+      "img/f3/3-2.webp",
+      "img/f3/3-3.webp",
+      "img/f3/3-4.webp"
     ],
     "anomalies": {
       "1": [
-        "img/女3）心霊2/3-2-1.webp"
+        "img/f3/3-2-1.webp"
       ],
       "3": [
-        "img/女3）心霊2/3-4-1.webp"
+        "img/f3/3-4-1.webp"
       ]
     }
   },
   "女4": {
     "photos": [
-      "img/女4）監禁/4-1.webp",
-      "img/女4）監禁/4-2.webp",
-      "img/女4）監禁/4-3.webp",
-      "img/女4）監禁/4-4.webp",
-      "img/女4）監禁/4-5.webp"
+      "img/f4/4-1.webp",
+      "img/f4/4-2.webp",
+      "img/f4/4-3.webp",
+      "img/f4/4-4.webp",
+      "img/f4/4-5.webp"
     ],
     "anomalies": {
       "2": [
-        "img/女4）監禁/4-3-1.webp"
+        "img/f4/4-3-1.webp"
       ]
     }
   },
   "女5": {
     "photos": [
-      "img/女5）逆走/5-1.webp",
-      "img/女5）逆走/5-2.webp",
-      "img/女5）逆走/5-3.webp",
-      "img/女5）逆走/5-4.webp",
-      "img/女5）逆走/5-5.webp"
+      "img/f5/5-1.webp",
+      "img/f5/5-2.webp",
+      "img/f5/5-3.webp",
+      "img/f5/5-4.webp",
+      "img/f5/5-5.webp"
     ],
     "anomalies": {
       "2": [
-        "img/女5）逆走/5-3-1.webp"
+        "img/f5/5-3-1.webp"
       ]
     }
   },
   "女6": {
     "photos": [
-      "img/女6）被スト/6-1.webp",
-      "img/女6）被スト/6-2.webp",
-      "img/女6）被スト/6-3.webp",
-      "img/女6）被スト/6-4.webp",
-      "img/女6）被スト/6-5.webp"
+      "img/f6/6-1.webp",
+      "img/f6/6-2.webp",
+      "img/f6/6-3.webp",
+      "img/f6/6-4.webp",
+      "img/f6/6-5.webp"
     ],
     "anomalies": {},
     "anomalySets": [
       {
-        "0": "img/女6）被スト/6-1-2.webp",
-        "3": "img/女6）被スト/6-4-2.webp",
-        "4": "img/女6）被スト/6-5-2.webp"
+        "0": "img/f6/6-1-2.webp",
+        "3": "img/f6/6-4-2.webp",
+        "4": "img/f6/6-5-2.webp"
       }
     ]
   },
   "女7": {
     "photos": [
-      "img/女7）ゲーマー/7-1.webp",
-      "img/女7）ゲーマー/7-2.webp",
-      "img/女7）ゲーマー/7-3.webp",
-      "img/女7）ゲーマー/7-4.webp",
-      "img/女7）ゲーマー/7-5.webp"
+      "img/f7/7-1.webp",
+      "img/f7/7-2.webp",
+      "img/f7/7-3.webp",
+      "img/f7/7-4.webp",
+      "img/f7/7-5.webp"
     ],
     "anomalies": {
       "0": [
-        "img/女7）ゲーマー/7-1-1.webp"
+        "img/f7/7-1-1.webp"
       ]
     }
   },
   "女8": {
     "photos": [
-      "img/女8）バリキャリ/8-1.webp",
-      "img/女8）バリキャリ/8-2.webp",
-      "img/女8）バリキャリ/8-3.webp",
-      "img/女8）バリキャリ/8-4.webp",
-      "img/女8）バリキャリ/8-5.webp"
+      "img/f8/8-1.webp",
+      "img/f8/8-2.webp",
+      "img/f8/8-3.webp",
+      "img/f8/8-4.webp",
+      "img/f8/8-5.webp"
     ],
     "anomalies": {
       "3": [
-        "img/女8）バリキャリ/8-4-1.webp"
+        "img/f8/8-4-1.webp"
       ]
     }
   },
   "女9": {
     "photos": [
-      "img/女9）ハッピーデブ/9-1.webp",
-      "img/女9）ハッピーデブ/9-2.webp",
-      "img/女9）ハッピーデブ/9-3.webp",
-      "img/女9）ハッピーデブ/9-4.webp",
-      "img/女9）ハッピーデブ/9-5.webp"
+      "img/f9/9-1.webp",
+      "img/f9/9-2.webp",
+      "img/f9/9-3.webp",
+      "img/f9/9-4.webp",
+      "img/f9/9-5.webp"
     ],
     "anomalies": {
       "0": [
-        "img/女9）ハッピーデブ/9-1-1.webp"
+        "img/f9/9-1-1.webp"
       ],
       "2": [
-        "img/女9）ハッピーデブ/9-3-1.webp"
+        "img/f9/9-3-1.webp"
       ]
     }
   },
   "男10": {
     "photos": [
-      "img/男10）変態/10-1.webp",
-      "img/男10）変態/10-2.webp",
-      "img/男10）変態/10-3.webp",
-      "img/男10）変態/10-4.webp",
-      "img/男10）変態/10-5.webp"
+      "img/m10/10-1.webp",
+      "img/m10/10-2.webp",
+      "img/m10/10-3.webp",
+      "img/m10/10-4.webp",
+      "img/m10/10-5.webp"
     ],
     "anomalies": {
       "0": [
-        "img/男10）変態/10-1-1.webp"
+        "img/m10/10-1-1.webp"
       ],
       "4": [
-        "img/男10）変態/10-5-1.webp"
+        "img/m10/10-5-1.webp"
       ]
     }
   },
+  "男11": {
+    "photos": [
+      "img/m11/11-1.webp",
+      "img/m11/11-2.webp",
+      "img/m11/11-3.webp",
+      "img/m11/11-4.webp",
+      "img/m11/11-5.webp"
+    ],
+    "anomalies": {
+      "1": [
+        "img/m11/11-2-1.webp"
+      ]
+    }
+  },
+  "男12": {
+    "photos": [
+      "img/m12/12-1.webp",
+      "img/m12/12-2.webp",
+      "img/m12/12-3.webp",
+      "img/m12/12-4.webp"
+    ],
+    "anomalies": {}
+  },
+  "男13": {
+    "photos": [
+      "img/m13/13-1.webp",
+      "img/m13/13-2.webp",
+      "img/m13/13-3.webp",
+      "img/m13/13-4.webp"
+    ],
+    "anomalies": {}
+  },
   "男1": {
     "photos": [
-      "img/男1（不倫/1-1.webp",
-      "img/男1（不倫/1-2.webp",
-      "img/男1（不倫/1-3.webp",
-      "img/男1（不倫/1-4.webp",
-      "img/男1（不倫/1-5.webp"
+      "img/m1/1-1.webp",
+      "img/m1/1-2.webp",
+      "img/m1/1-3.webp",
+      "img/m1/1-4.webp",
+      "img/m1/1-5.webp"
     ],
     "anomalies": {
       "0": [
-        "img/男1（不倫/1-1-1.webp"
+        "img/m1/1-1-1.webp"
       ],
       "2": [
-        "img/男1（不倫/1-3-1.webp"
+        "img/m1/1-3-1.webp"
       ]
     }
   },
   "男2": {
     "photos": [
-      "img/男2（ストーカー/2-1.webp",
-      "img/男2（ストーカー/2-2.webp",
-      "img/男2（ストーカー/2-3.webp",
-      "img/男2（ストーカー/2-4.webp",
-      "img/男2（ストーカー/2-5.webp"
+      "img/m2/2-1.webp",
+      "img/m2/2-2.webp",
+      "img/m2/2-3.webp",
+      "img/m2/2-4.webp",
+      "img/m2/2-5.webp"
     ],
     "anomalies": {
       "0": [
-        "img/男2（ストーカー/2-1-1.webp"
+        "img/m2/2-1-1.webp"
       ],
       "3": [
-        "img/男2（ストーカー/2-4-1.webp"
+        "img/m2/2-4-1.webp"
       ],
       "4": [
-        "img/男2（ストーカー/2-5-1.webp"
+        "img/m2/2-5-1.webp"
       ]
     }
   },
   "男3": {
     "photos": [
-      "img/男3（サイレ/3-1.webp",
-      "img/男3（サイレ/3-2.webp",
-      "img/男3（サイレ/3-3.webp",
-      "img/男3（サイレ/3-4.webp"
+      "img/m3/3-1.webp",
+      "img/m3/3-2.webp",
+      "img/m3/3-3.webp",
+      "img/m3/3-4.webp"
     ],
     "anomalies": {
       "0": [
-        "img/男3（サイレ/3-1-1.webp"
+        "img/m3/3-1-1.webp"
       ],
       "3": [
-        "img/男3（サイレ/3-4-1.webp"
+        "img/m3/3-4-1.webp"
       ]
     }
   },
   "男4": {
     "photos": [
-      "img/男4（詐欺師/4-1.webp",
-      "img/男4（詐欺師/4-2.webp",
-      "img/男4（詐欺師/4-3.webp",
-      "img/男4（詐欺師/4-4.webp",
-      "img/男4（詐欺師/4-5.webp"
+      "img/m4/4-1.webp",
+      "img/m4/4-2.webp",
+      "img/m4/4-3.webp",
+      "img/m4/4-4.webp",
+      "img/m4/4-5.webp"
     ],
     "anomalies": {
       "1": [
-        "img/男4（詐欺師/4-2-1.webp"
+        "img/m4/4-2-1.webp"
       ],
       "2": [
-        "img/男4（詐欺師/4-3-1.webp"
+        "img/m4/4-3-1.webp"
       ]
     }
   },
   "男5": {
     "photos": [
-      "img/男5（チー牛/5-1.webp",
-      "img/男5（チー牛/5-2.webp",
-      "img/男5（チー牛/5-3.webp",
-      "img/男5（チー牛/5-4.webp",
-      "img/男5（チー牛/5-5.webp"
+      "img/m5/5-1.webp",
+      "img/m5/5-2.webp",
+      "img/m5/5-3.webp",
+      "img/m5/5-4.webp",
+      "img/m5/5-5.webp"
     ],
     "anomalies": {
       "2": [
-        "img/男5（チー牛/5-3-1.webp"
+        "img/m5/5-3-1.webp"
       ],
       "4": [
-        "img/男5（チー牛/5-5-1.webp"
+        "img/m5/5-5-1.webp"
       ]
     }
   },
   "男6": {
     "photos": [
-      "img/男6）デブ/6-1.webp",
-      "img/男6）デブ/6-2.webp",
-      "img/男6）デブ/6-3.webp",
-      "img/男6）デブ/6-4.webp",
-      "img/男6）デブ/6-5.webp"
+      "img/m6/6-1.webp",
+      "img/m6/6-2.webp",
+      "img/m6/6-3.webp",
+      "img/m6/6-4.webp",
+      "img/m6/6-5.webp"
     ],
     "anomalies": {
       "3": [
-        "img/男6）デブ/6-4-1.webp"
+        "img/m6/6-4-1.webp"
       ]
     }
   },
   "男7": {
     "photos": [
-      "img/男7）ヤリラフィー/7-1.webp",
-      "img/男7）ヤリラフィー/7-2.webp",
-      "img/男7）ヤリラフィー/7-3.webp",
-      "img/男7）ヤリラフィー/7-4.webp",
-      "img/男7）ヤリラフィー/7-5.webp"
+      "img/m7/7-1.webp",
+      "img/m7/7-2.webp",
+      "img/m7/7-3.webp",
+      "img/m7/7-4.webp",
+      "img/m7/7-5.webp"
     ],
     "anomalies": {
       "1": [
-        "img/男7）ヤリラフィー/7-2-1.webp"
+        "img/m7/7-2-1.webp"
       ],
       "3": [
-        "img/男7）ヤリラフィー/7-4-1.webp"
+        "img/m7/7-4-1.webp"
       ]
     }
   },
   "男8": {
     "photos": [
-      "img/男8）地方芋/8-1.webp",
-      "img/男8）地方芋/8-2.webp",
-      "img/男8）地方芋/8-3.webp",
-      "img/男8）地方芋/8-4.webp"
+      "img/m8/8-1.webp",
+      "img/m8/8-2.webp",
+      "img/m8/8-3.webp",
+      "img/m8/8-4.webp"
     ],
     "anomalies": {
       "3": [
-        "img/男8）地方芋/8-4-1.webp"
+        "img/m8/8-4-1.webp"
       ]
     }
   },
   "男9": {
     "photos": [
-      "img/男9）釣り：異変なし/9-1.webp",
-      "img/男9）釣り：異変なし/9-2.webp",
-      "img/男9）釣り：異変なし/9-3.webp",
-      "img/男9）釣り：異変なし/9-4.webp",
-      "img/男9）釣り：異変なし/9-5.webp"
+      "img/m9/9-1.webp",
+      "img/m9/9-2.webp",
+      "img/m9/9-3.webp",
+      "img/m9/9-4.webp",
+      "img/m9/9-5.webp"
     ],
     "anomalies": {}
   }
