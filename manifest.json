@@ -24,6 +24,20 @@
     ],
     "anomalies": {}
   },
+  "女12": {
+    "photos": [
+      "img/f12/12-1.webp",
+      "img/f12/12-2.webp",
+      "img/f12/12-3.webp",
+      "img/f12/12-4.webp",
+      "img/f12/12-5.webp"
+    ],
+    "anomalies": {
+      "2": [
+        "img/f12/12-3-1.webp"
+      ]
+    }
+  },
   "女1": {
     "photos": [
       "img/f1/1-1.webp",
@@ -202,16 +216,52 @@
       "img/m12/12-3.webp",
       "img/m12/12-4.webp"
     ],
-    "anomalies": {}
+    "anomalies": {
+      "1": [
+        "img/m12/12-2-1.webp"
+      ]
+    }
   },
   "男13": {
     "photos": [
       "img/m13/13-1.webp",
       "img/m13/13-2.webp",
       "img/m13/13-3.webp",
-      "img/m13/13-4.webp"
+      "img/m13/13-4.webp",
+      "img/m13/13-5.webp"
+    ],
+    "anomalies": {
+      "4": [
+        "img/m13/13-5-1.webp"
+      ]
+    }
+  },
+  "男14": {
+    "photos": [
+      "img/m14/14-1.webp",
+      "img/m14/14-2.webp",
+      "img/m14/14-3.webp",
+      "img/m14/14-4.webp",
+      "img/m14/14-5.webp"
     ],
     "anomalies": {}
+  },
+  "男15": {
+    "photos": [
+      "img/m15/15-1.webp",
+      "img/m15/15-2.webp",
+      "img/m15/15-3.webp",
+      "img/m15/15-4.webp",
+      "img/m15/15-5.webp"
+    ],
+    "anomalies": {
+      "0": [
+        "img/m15/15-1-1.webp"
+      ],
+      "4": [
+        "img/m15/15-5-1.webp"
+      ]
+    }
   },
   "男1": {
     "photos": [
