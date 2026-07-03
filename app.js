@@ -273,7 +273,7 @@ function wireGestures(){
   const scroll=document.getElementById('scroll');
   const prof=()=>document.getElementById('profile');
   let sx=0,sy=0,axis=null,moved=0,startWrap=null,active=false;
-  const inGame=()=>!committing&&run[idx]&&ov.classList.contains('hidden');
+  const inGame=()=>!committing&&((tutorial&&tutorial.entry)||run[idx])&&ov.classList.contains('hidden');
 
   scroll.addEventListener('pointerdown',e=>{
     if(!inGame())return;
@@ -342,6 +342,7 @@ function wireGestures(){
 function commit(dir){
   if(committing)return;                                   // 連打・多重発火ガード
   if(!ov.classList.contains('hidden'))return;             // オーバーレイ表示中は無効
+  if(tutorial)return tutCommit(dir);                      // チュートリアル中は専用処理（死なない）
   const entry=run[idx]; if(!entry)return;
   committing=true;
   const judgedSafe=dir==='like';
@@ -406,9 +407,9 @@ function showStart(){
       <p class="ov-hint warn">クロを見逃してシロ判定しても、普通の人をクロ判定しても、そこで終了。</p>
     </div>
     <button class="btn" id="startBtn">さがす</button>
-    <p class="ov-note">本作はフィクションです。登場する人物・アプリ・団体は全て架空のものであり、実在のサービス・団体・人物とは一切関係ありません。</p>`;
+    <p class="ov-note">本作はフィクションです。登場する人物・団体・アプリはすべて架空のものであり、実在するサービス・団体・人物とは一切関係ありません。<br>人物写真はすべてAIによって生成された、実在しない人物です。<br>本作には犯罪・ストーカー行為等を示唆する表現が含まれます。</p>`;
   paintIcons(ov);
-  ov.querySelector('#startBtn').addEventListener('click',startRun);
+  ov.querySelector('#startBtn').addEventListener('click',startTutorial);
   ov.classList.remove('hidden');
 }
 function gameOver(entry,judgedSafe){
@@ -452,6 +453,86 @@ function win(){
   ov.querySelector('#againBtn').addEventListener('click',startRun);
   ov.querySelector('#winTitleBtn').addEventListener('click',showStart);
   ov.classList.remove('hidden');
+}
+
+/* ============ tutorial ============ */
+let tutorial=null;
+const TUT_KURO='男2';   // 一番わかりやすい犯罪系（引き出しに隠し撮り写真の束）
+const TUT_SHIRO='男9';  // 異変なし専用の釣り人物
+function tutEntry(folder,danger){
+  const p=window.PROFILES.find(x=>x.folder===folder);
+  const set=(window.PHOTOS||{})[folder];
+  let tell=null;
+  if(danger&&set&&set.anomalies){
+    const slots=Object.keys(set.anomalies).map(Number).sort((a,b)=>a-b);
+    const s=slots[0];
+    tell={kind:'photo',swaps:{[s]:set.anomalies[s][0]}};
+  }
+  return {p,danger,tell,
+    tagList:(p.tagIds||[]).map(id=>TAGS.find(t=>t.id===id)).filter(Boolean),
+    want:p.want,area:p.area||'東京都',qa:p.qa||[],
+    dist:'3.4km先',online:'オンライン中',badge:true};
+}
+function startTutorial(){
+  ov.classList.add('hidden');
+  tutorial={step:0,entry:null,need:null};
+  document.getElementById('progressText').textContent='チュートリアル';
+  document.getElementById('progressFill').style.width='0%';
+  document.getElementById('scroll').scrollTop=0;
+  tutShow();
+}
+function tutSkipHTML(){return `<button class="tut-skip" id="tutSkip">スキップ</button>`;}
+function tutShow(){
+  const T=document.getElementById('tut');
+  const s=tutorial.step;
+  T.classList.remove('hidden');
+  if(s===0||s===3||s===4){
+    const text={0:'あなたは、マッチングアプリに潜む闇を調査する<b>捜査官</b>です。',
+                3:'マッチングアプリに潜む闇には、<b>さまざまな種類</b>があります。',
+                4:'判断を間違えないように、<b>よーく観察</b>してみましょう。'}[s];
+    T.className='tut';
+    T.innerHTML=`<div class="tut-scrim"></div>
+      <div class="tut-card">${text}<div class="tut-tap">タップで${s===4?'開始':'次へ'}</div></div>${tutSkipHTML()}`;
+    T.querySelector('.tut-scrim').addEventListener('click',tutNext);
+    T.querySelector('.tut-card').addEventListener('click',tutNext);
+  }else if(s===1){
+    tutorial.entry=tutEntry(TUT_KURO,true); tutorial.need='nope';
+    document.getElementById('scroll').scrollTop=0;
+    renderProfile(tutorial.entry);
+    T.className='tut pass';
+    T.innerHTML=`<div class="tut-pop">怪しいと思ったユーザーは、<br>左にスワイプして<b class="kuro">「クロ」</b>に。
+      <div class="tut-ges left"><span class="tut-chev">‹‹‹</span><span class="tut-dot"></span></div></div>${tutSkipHTML()}`;
+  }else if(s===2){
+    tutorial.entry=tutEntry(TUT_SHIRO,false); tutorial.need='like';
+    document.getElementById('scroll').scrollTop=0;
+    renderProfile(tutorial.entry);
+    T.className='tut pass';
+    T.innerHTML=`<div class="tut-pop">問題ないと思ったユーザーは、<br>右にスワイプして<b class="shiro">「シロ」</b>にしてください。
+      <div class="tut-ges right"><span class="tut-dot"></span><span class="tut-chev">›››</span></div></div>${tutSkipHTML()}`;
+  }else{
+    T.innerHTML=''; T.classList.add('hidden'); tutorial=null;
+    startRun(); return;
+  }
+  const sk=T.querySelector('#tutSkip');
+  if(sk)sk.addEventListener('click',()=>{T.innerHTML='';T.classList.add('hidden');tutorial=null;startRun();});
+}
+function tutNext(){if(!tutorial)return;tutorial.step++;tutShow();}
+function tutCommit(dir){
+  if(committing||!tutorial.need)return;
+  const prof=document.getElementById('profile');
+  if(dir!==tutorial.need){   // 逆方向：戻して促す（死なない）
+    prof.style.transition='transform .3s'; prof.style.transform=''; setJudgeBg(0);
+    stampLike.style.opacity=0; stampNope.style.opacity=0;
+    const pop=document.querySelector('.tut-pop');
+    if(pop){pop.classList.remove('shake');void pop.offsetWidth;pop.classList.add('shake');}
+    return;
+  }
+  committing=true; setJudgeBg(dir==='like'?1:-1);
+  stampLike.style.opacity=0; stampNope.style.opacity=0;
+  prof.style.transition='transform .3s ease-out, opacity .3s ease-out';
+  prof.style.transform=`translateX(${dir==='like'?600:-600}px) rotate(${dir==='like'?9:-9}deg)`;
+  prof.style.opacity='0';
+  setTimeout(()=>{resetProfileStyle();committing=false;tutorial.need=null;tutNext();},310);
 }
 
 /* ============ controls / boot ============ */

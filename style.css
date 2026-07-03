@@ -182,4 +182,32 @@ body{font-family:-apple-system,"Hiragino Kaku Gothic ProN","Noto Sans JP",sans-s
 @keyframes shimmer{from{background-position:200% 0}to{background-position:-200% 0}}
 @keyframes spin{to{transform:rotate(360deg)}}
 
+/* ===== tutorial ===== */
+#tut{position:absolute;inset:0;z-index:70}
+#tut.pass{pointer-events:none}
+.tut-scrim{position:absolute;inset:0;background:#141018c9;backdrop-filter:blur(2px)}
+.tut-card{position:absolute;left:26px;right:26px;top:42%;transform:translateY(-50%);
+  background:#fff;border-radius:18px;padding:26px 20px;text-align:center;
+  font-size:15.5px;font-weight:700;line-height:2;color:var(--ink);box-shadow:0 14px 44px #0007}
+.tut-card b{color:var(--pink)}
+.tut-tap{margin-top:14px;font-size:11px;color:var(--sub);font-weight:600;letter-spacing:.5px}
+.tut-pop{position:absolute;left:20px;right:20px;bottom:118px;pointer-events:none;
+  background:#fffffff5;border-radius:16px;padding:15px 16px 10px;text-align:center;
+  font-size:13.5px;font-weight:700;line-height:1.8;color:var(--ink);box-shadow:0 10px 30px #0005}
+.tut-pop b.kuro{color:#b01226}
+.tut-pop b.shiro{color:#2fa8de}
+.tut-pop.shake{animation:tutshake .4s}
+@keyframes tutshake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}50%{transform:translateX(8px)}75%{transform:translateX(-5px)}}
+.tut-ges{position:relative;height:44px;margin-top:4px;display:flex;align-items:center;justify-content:center;gap:10px}
+.tut-chev{font-size:22px;font-weight:900;letter-spacing:2px}
+.tut-ges.left .tut-chev{color:#b01226}
+.tut-ges.right .tut-chev{color:#2fa8de}
+.tut-dot{width:30px;height:30px;border-radius:50%;border:3px solid #0002;background:#fff;box-shadow:0 3px 10px #0003}
+.tut-ges.left .tut-dot{animation:gesL 1.5s ease-in-out infinite}
+.tut-ges.right .tut-dot{animation:gesR 1.5s ease-in-out infinite}
+@keyframes gesL{0%{transform:translateX(44px);opacity:0}25%{opacity:1}70%{transform:translateX(-44px);opacity:1}100%{transform:translateX(-52px);opacity:0}}
+@keyframes gesR{0%{transform:translateX(-44px);opacity:0}25%{opacity:1}70%{transform:translateX(44px);opacity:1}100%{transform:translateX(52px);opacity:0}}
+.tut-skip{position:absolute;top:14px;right:14px;pointer-events:auto;z-index:5;
+  background:#00000066;color:#fff;border:none;border-radius:16px;padding:7px 15px;font-size:12px;font-weight:700}
+
 .hidden{display:none!important}
