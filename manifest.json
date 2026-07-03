@@ -177,6 +177,73 @@
       ]
     }
   },
+  "女21": {
+    "photos": [
+      "img/f21/21-1.webp",
+      "img/f21/21-2.webp",
+      "img/f21/21-3.webp",
+      "img/f21/21-4.webp",
+      "img/f21/21-5.webp"
+    ],
+    "anomalies": {
+      "2": [
+        "img/f21/21-3-1.webp"
+      ]
+    }
+  },
+  "女22": {
+    "photos": [
+      "img/f22/22-1.webp",
+      "img/f22/22-2.webp",
+      "img/f22/22-3.webp",
+      "img/f22/22-4.webp"
+    ],
+    "anomalies": {
+      "1": [
+        "img/f22/22-2-1.webp"
+      ]
+    }
+  },
+  "女23": {
+    "photos": [
+      "img/f23/23-1.webp",
+      "img/f23/23-2.webp",
+      "img/f23/23-3.webp",
+      "img/f23/23-4.webp",
+      "img/f23/23-5.webp"
+    ],
+    "anomalies": {
+      "0": [
+        "img/f23/23-1-1.webp"
+      ],
+      "3": [
+        "img/f23/23-4-1.webp"
+      ]
+    }
+  },
+  "女24": {
+    "photos": [
+      "img/f24/24-1.webp",
+      "img/f24/24-2.webp",
+      "img/f24/24-3.webp",
+      "img/f24/24-4.webp"
+    ],
+    "anomalies": {}
+  },
+  "女25": {
+    "photos": [
+      "img/f25/25-1.webp",
+      "img/f25/25-2.webp",
+      "img/f25/25-3.webp",
+      "img/f25/25-4.webp",
+      "img/f25/25-5.webp"
+    ],
+    "anomalies": {
+      "4": [
+        "img/f25/25-5-1.webp"
+      ]
+    }
+  },
   "女3": {
     "photos": [
       "img/f3/3-1.webp",
@@ -453,6 +520,121 @@
       ]
     }
   },
+  "男21": {
+    "photos": [
+      "img/m21/21-1.webp",
+      "img/m21/21-2.webp",
+      "img/m21/21-3.webp",
+      "img/m21/21-4.webp",
+      "img/m21/21-5.webp"
+    ],
+    "anomalies": {}
+  },
+  "男22": {
+    "photos": [
+      "img/m22/22-1.webp",
+      "img/m22/22-2.webp",
+      "img/m22/22-3.webp",
+      "img/m22/22-4.webp",
+      "img/m22/22-5.webp"
+    ],
+    "anomalies": {}
+  },
+  "男23": {
+    "photos": [
+      "img/m23/23-1.webp",
+      "img/m23/23-2.webp",
+      "img/m23/23-3.webp",
+      "img/m23/23-4.webp",
+      "img/m23/23-5.webp"
+    ],
+    "anomalies": {}
+  },
+  "男24": {
+    "photos": [
+      "img/m24/24-1.webp",
+      "img/m24/24-2.webp",
+      "img/m24/24-3.webp",
+      "img/m24/24-4.webp",
+      "img/m24/24-5.webp"
+    ],
+    "anomalies": {}
+  },
+  "男25": {
+    "photos": [
+      "img/m25/25-1.webp",
+      "img/m25/25-2.webp",
+      "img/m25/25-3.webp",
+      "img/m25/25-4.webp",
+      "img/m25/25-5.webp"
+    ],
+    "anomalies": {
+      "0": [
+        "img/m25/25-1-1.webp"
+      ]
+    }
+  },
+  "男26": {
+    "photos": [
+      "img/m26/26-1.webp",
+      "img/m26/26-2.webp",
+      "img/m26/26-3.webp",
+      "img/m26/26-4.webp",
+      "img/m26/26-5.webp"
+    ],
+    "anomalies": {
+      "1": [
+        "img/m26/26-2-1.webp"
+      ]
+    }
+  },
+  "男27": {
+    "photos": [
+      "img/m27/27-1.webp",
+      "img/m27/27-2.webp",
+      "img/m27/27-3.webp",
+      "img/m27/27-4.webp"
+    ],
+    "anomalies": {
+      "0": [
+        "img/m27/27-1-1.webp"
+      ]
+    }
+  },
+  "男28": {
+    "photos": [
+      "img/m28/28-1.webp",
+      "img/m28/28-2.webp",
+      "img/m28/28-3.webp",
+      "img/m28/28-4.webp",
+      "img/m28/28-5.webp"
+    ],
+    "anomalies": {
+      "2": [
+        "img/m28/28-3-1.webp"
+      ],
+      "4": [
+        "img/m28/28-5-1.webp"
+      ]
+    }
+  },
+  "男29": {
+    "photos": [
+      "img/m29/29-1.webp",
+      "img/m29/29-2.webp",
+      "img/m29/29-3.webp",
+      "img/m29/29-4.webp",
+      "img/m29/29-5.webp"
+    ],
+    "anomalies": {
+      "0": [
+        "img/m29/29-1-1.webp"
+      ],
+      "1": [
+        "img/m29/29-2-1.webp"
+      ]
+    }
+  },
   "男2": {
     "photos": [
       "img/m2/2-1.webp",
@@ -472,6 +654,28 @@
         "img/m2/2-5-1.webp"
       ]
     }
+  },
+  "男30": {
+    "photos": [
+      "img/m30/30-1.webp",
+      "img/m30/30-2.webp",
+      "img/m30/30-3.webp",
+      "img/m30/30-4.webp",
+      "img/m30/30-5.webp"
+    ],
+    "anomalies": {
+      "1": [
+        "img/m30/30-2-1.webp"
+      ],
+      "2": [
+        "img/m30/30-3-1.webp"
+      ]
+    },
+    "anomalySets": [
+      {
+        "2": "img/m30/30-3-2.webp"
+      }
+    ]
   },
   "男3": {
     "photos": [
