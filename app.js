@@ -368,7 +368,6 @@ function commit(dir){
 function updateHUD(){
   document.getElementById('progressText').textContent=`${idx} / ${run.length}`;
   document.getElementById('progressFill').style.width=`${idx/run.length*100}%`;
-  document.getElementById('livesText').innerHTML=ICON.heart.repeat(lives)+`<span style="opacity:.26">${ICON.heartLine.repeat(START_LIVES-lives)}</span>`;
 }
 
 /* ============ zoom viewer ============ */

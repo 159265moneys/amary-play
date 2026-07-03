@@ -25,8 +25,6 @@ body{font-family:-apple-system,"Hiragino Kaku Gothic ProN","Noto Sans JP",sans-s
 .run-count{font-size:12px;font-weight:700;color:var(--sub);min-width:52px}
 .run-track{flex:1;height:6px;border-radius:4px;background:#e7e0ec;overflow:hidden}
 .run-fill{height:100%;width:0;background:var(--grad);transition:width .3s}
-.lives{font-size:15px;display:flex;justify-content:flex-end;align-items:center;gap:1px;min-width:56px}
-.lives .ic{color:var(--nope)}
 
 /* scroll area */
 .scroll{flex:1;overflow-y:auto;overscroll-behavior:contain;touch-action:pan-y}
