@@ -279,6 +279,7 @@ function wireGestures(){
     if(!inGame())return;
     active=true; sx=e.clientX; sy=e.clientY; axis=null; moved=0;
     startWrap=e.target.closest&&e.target.closest('.photo-wrap');
+    if(tutorial)tutNudge(false);        // 指追従を優先（ピクピクを一旦停止）
     prof().style.transition='none';
   });
   // iOS対策の本丸：横ジェスチャと判った瞬間に touchmove を preventDefault して
@@ -316,17 +317,20 @@ function wireGestures(){
       const p=prof();
       p.style.transition='transform .3s cubic-bezier(.2,.85,.25,1)'; p.style.transform='';
       setJudgeBg(0);
+      if(tutorial){p.addEventListener('transitionend',()=>tutNudge(true),{once:true});}   // 戻り切ってからピクピク再開
     }else if(axis===null&&moved<8&&startWrap){
       // タップは写真送りのみ（左1/3=前、右1/3=次）。拡大は廃止＝スワイプと競合させない
       const r=startWrap.getBoundingClientRect(), rx=(sx-r.left)/r.width;
       if(rx<0.33){if(startWrap._pi>0){showPhoto(startWrap,startWrap._pi-1);flashEdge(startWrap,'l');}}
       else if(rx>0.67){if(startWrap._pi<photoCount(startWrap._entry)-1){showPhoto(startWrap,startWrap._pi+1);flashEdge(startWrap,'r');}}
-    }
+      if(tutorial)tutNudge(true);
+    }else if(tutorial&&!committing)tutNudge(true);
     axis=null;
   });
   scroll.addEventListener('pointercancel',()=>{
     active=false;
     if(!committing)resetProfileStyle();
+    if(tutorial&&!committing)tutNudge(true);
     axis=null;
   });
   // 取りこぼし保険（capture失敗等でpointerupが#scroll外に落ちた場合の原状復帰。判定はしない）
@@ -521,8 +525,8 @@ function tutShow(){
         <div class="coach-text">怪しいと思ったら、<b class="kuro">左にスワイプ</b></div>
         <div class="coach-sub">この人を "クロ" と判定する</div>
       </div>
-      <div class="swipe-guide left"><div class="sg-hand">${ICON.heartLine?'':''}<span class="sg-dot"></span></div><div class="sg-arrow">‹</div></div>
       ${tutSkipHTML()}`;
+    tutNudge(true);
   }else if(s===2){
     tutorial.entry=tutEntry(TUT_SHIRO,false); tutorial.need='like';
     document.getElementById('scroll').scrollTop=0;
@@ -534,8 +538,8 @@ function tutShow(){
         <div class="coach-text">問題ないと思ったら、<b class="shiro">右にスワイプ</b></div>
         <div class="coach-sub">この人を "シロ" と判定する</div>
       </div>
-      <div class="swipe-guide right"><div class="sg-arrow">›</div><div class="sg-hand"><span class="sg-dot"></span></div></div>
       ${tutSkipHTML()}`;
+    tutNudge(true);
   }else if(s===3){
     T.className='tut brief-layer';
     T.innerHTML=brief(ICON.warn,'CAUTION',
@@ -561,14 +565,22 @@ function tutShow(){
   if(sk)sk.addEventListener('click',()=>{T.innerHTML='';T.classList.add('hidden');tutorial=null;startRun();});
 }
 function tutNext(){if(!tutorial)return;tutorial.step++;tutShow();}
+/* カード本体を「スワイプしかけ」でピクピク動かす（CSSアニメ）。ドラッグ中は外して指追従を優先 */
+function tutNudge(on){
+  const p=document.getElementById('profile');
+  p.classList.remove('tut-nudge-left','tut-nudge-right');
+  if(on&&tutorial&&tutorial.need) p.classList.add(tutorial.need==='nope'?'tut-nudge-left':'tut-nudge-right');
+}
 function tutCommit(dir){
   if(committing||!tutorial.need)return;
   const prof=document.getElementById('profile');
+  tutNudge(false);
   if(dir!==tutorial.need){   // 逆方向：戻して促す（死なない）
     prof.style.transition='transform .3s'; prof.style.transform=''; setJudgeBg(0);
     stampLike.style.opacity=0; stampNope.style.opacity=0;
-    const pop=document.querySelector('.tut-pop');
-    if(pop){pop.classList.remove('shake');void pop.offsetWidth;pop.classList.add('shake');}
+    const coach=document.querySelector('.coach');
+    if(coach){coach.classList.remove('shake');void coach.offsetWidth;coach.classList.add('shake');}
+    setTimeout(()=>tutNudge(true),320);
     return;
   }
   committing=true; setJudgeBg(dir==='like'?1:-1);
