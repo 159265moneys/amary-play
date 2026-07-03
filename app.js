@@ -404,11 +404,8 @@ function showStart(){
   const center=(window.PHOTOS['女6']&&window.PHOTOS['女6'].anomalySets)?encodeURI(window.PHOTOS['女6'].anomalySets[0]['0']):ph('女6',0);
   ov.className='overlay title';
   ov.innerHTML=`
-    <div class="t-glow t-glow-s"></div>
-    <div class="t-glow t-glow-k"></div>
     <div class="t-inner">
       <div class="ov-logo t-logo">${ICON.spark}<span>Amary</span></div>
-      <p class="t-genre">マッチングアプリ擬態・観察ホラー</p>
       <div class="t-fan">
         <div class="t-card t-l" style="background-image:url('${ph('女1',0)}')"><span class="t-stamp t-s">シロ</span></div>
         <div class="t-card t-r" style="background-image:url('${ph('男6',0)}')"><span class="t-q">?</span></div>
@@ -497,65 +494,37 @@ function tutShow(){
   const T=document.getElementById('tut');
   const s=tutorial.step;
   T.classList.remove('hidden');
-  const brief=(icon,eyebrow,title,body,cta)=>`
+  // 映画の字幕方式：黒場に明朝の素のテキストだけ。文言はディレクター指定の原文そのまま
+  const inter=(text)=>`
     <div class="tut-scrim"></div>
-    <div class="brief">
-      <div class="brief-icon">${icon}</div>
-      <div class="brief-eyebrow">${eyebrow}</div>
-      <h2 class="brief-title">${title}</h2>
-      <p class="brief-body">${body}</p>
-      <div class="brief-cta">${cta} ${ICON.chevR||'›'}</div>
-    </div>${tutSkipHTML()}`;
+    <div class="inter">${text}</div>
+    <div class="inter-tap">タップでつづける</div>${tutSkipHTML()}`;
   if(s===0){
-    T.className='tut brief-layer';
-    T.innerHTML=brief(ICON.eye,'MISSION',
-      'あなたは<b>捜査官</b>。',
-      'このマッチングアプリには、<b>身元を偽った危険人物</b>が紛れ込んでいる。<br>プロフィールを調べ、"クロ"を見抜け。',
-      'ブリーフィングを続ける');
-    T.querySelector('.tut-scrim').addEventListener('click',tutNext);
-    T.querySelector('.brief').addEventListener('click',tutNext);
+    T.className='tut inter-layer';
+    T.innerHTML=inter('あなたはマッチングアプリに潜む闇を調査する捜査官です');
+    T.addEventListener('click',tutNext,{once:true});
   }else if(s===1){
     tutorial.entry=tutEntry(TUT_KURO,true); tutorial.need='nope';
     document.getElementById('scroll').scrollTop=0;
     renderProfile(tutorial.entry);
     T.className='tut pass';
-    T.innerHTML=`
-      <div class="coach coach-k">
-        <div class="coach-badge kuro">クロ</div>
-        <div class="coach-text">怪しいと思ったら、<b class="kuro">左にスワイプ</b></div>
-        <div class="coach-sub">この人を "クロ" と判定する</div>
-      </div>
-      ${tutSkipHTML()}`;
+    T.innerHTML=`<div class="tut-cap">怪しいと思ったユーザーは<br>左にスワイプして<b class="kuro">「クロ」</b>に</div>${tutSkipHTML()}`;
     tutNudge(true);
   }else if(s===2){
     tutorial.entry=tutEntry(TUT_SHIRO,false); tutorial.need='like';
     document.getElementById('scroll').scrollTop=0;
     renderProfile(tutorial.entry);
     T.className='tut pass';
-    T.innerHTML=`
-      <div class="coach coach-s">
-        <div class="coach-badge shiro">シロ</div>
-        <div class="coach-text">問題ないと思ったら、<b class="shiro">右にスワイプ</b></div>
-        <div class="coach-sub">この人を "シロ" と判定する</div>
-      </div>
-      ${tutSkipHTML()}`;
+    T.innerHTML=`<div class="tut-cap">問題ないと思ったユーザは<br>右にスワイプして<b class="shiro">「シロ」</b>にしてください</div>${tutSkipHTML()}`;
     tutNudge(true);
   }else if(s===3){
-    T.className='tut brief-layer';
-    T.innerHTML=brief(ICON.warn,'CAUTION',
-      '闇は、<b>一様ではない</b>。',
-      'ストーカー、不倫、詐欺、そして——もっと悍ましい何か。<br>危険のサインは、写真のどこかに必ず<b>写り込んでいる</b>。',
-      '心得を続ける');
-    T.querySelector('.tut-scrim').addEventListener('click',tutNext);
-    T.querySelector('.brief').addEventListener('click',tutNext);
+    T.className='tut inter-layer';
+    T.innerHTML=inter('マッチングアプリに潜む闇には<br>さまざまな種類があります');
+    T.addEventListener('click',tutNext,{once:true});
   }else if(s===4){
-    T.className='tut brief-layer';
-    T.innerHTML=brief(ICON.spark,'READY',
-      '見極めろ。',
-      '写真は<b>タップで切り替え</b>、下に<b>スクロール</b>してプロフィールも確認できる。<br>一度の誤りが、命取りになる。',
-      '調査を開始する');
-    T.querySelector('.tut-scrim').addEventListener('click',tutNext);
-    T.querySelector('.brief').addEventListener('click',tutNext);
+    T.className='tut inter-layer';
+    T.innerHTML=inter('判断を間違えないように<br>よーく観察してみましょう');
+    T.addEventListener('click',tutNext,{once:true});
   }else{
     T.innerHTML=''; T.classList.add('hidden'); tutorial=null;
     startRun(); return;
@@ -569,7 +538,10 @@ function tutNext(){if(!tutorial)return;tutorial.step++;tutShow();}
 function tutNudge(on){
   const p=document.getElementById('profile');
   p.classList.remove('tut-nudge-left','tut-nudge-right');
-  if(on&&tutorial&&tutorial.need) p.classList.add(tutorial.need==='nope'?'tut-nudge-left':'tut-nudge-right');
+  if(on&&tutorial&&tutorial.need){
+    p.classList.add(tutorial.need==='nope'?'tut-nudge-left':'tut-nudge-right');
+    setJudgeBg(tutorial.need==='nope'?-1:1);   // ズレた隙間に判定色（実際に動かしている時と同じ画面）
+  }
 }
 function tutCommit(dir){
   if(committing||!tutorial.need)return;
@@ -578,8 +550,8 @@ function tutCommit(dir){
   if(dir!==tutorial.need){   // 逆方向：戻して促す（死なない）
     prof.style.transition='transform .3s'; prof.style.transform=''; setJudgeBg(0);
     stampLike.style.opacity=0; stampNope.style.opacity=0;
-    const coach=document.querySelector('.coach');
-    if(coach){coach.classList.remove('shake');void coach.offsetWidth;coach.classList.add('shake');}
+    const cap=document.querySelector('.tut-cap');
+    if(cap){cap.classList.remove('blink');void cap.offsetWidth;cap.classList.add('blink');}
     setTimeout(()=>tutNudge(true),320);
     return;
   }

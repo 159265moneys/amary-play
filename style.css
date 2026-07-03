@@ -185,11 +185,7 @@ body{font-family:-apple-system,"Hiragino Kaku Gothic ProN","Noto Sans JP",sans-s
 /* ===== title screen (キービジュアル) ===== */
 .overlay.title{background:#131019;color:#fff;justify-content:flex-start;padding:0;overflow:hidden}
 .t-inner{position:relative;z-index:2;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:26px 24px;gap:0}
-.t-glow{position:absolute;width:460px;height:460px;border-radius:50%;filter:blur(70px);pointer-events:none}
-.t-glow-s{top:-140px;right:-120px;background:radial-gradient(circle,#7fd8ff2e 0%,transparent 65%)}
-.t-glow-k{bottom:-140px;left:-140px;background:radial-gradient(circle,#a3122a4d 0%,transparent 65%)}
-.t-logo{font-size:40px;animation:tFade .7s ease both}
-.t-genre{font-size:11px;font-weight:700;letter-spacing:3px;color:#8d8498;margin:6px 0 20px;animation:tFade .7s .1s ease both}
+.t-logo{font-size:40px;margin-bottom:22px;animation:tFade .7s ease both}
 .t-fan{position:relative;width:320px;height:236px;margin:4px 0 18px;animation:tFade .8s .15s ease both}
 .t-card{position:absolute;top:14px;left:50%;width:150px;height:188px;margin-left:-75px;border-radius:16px;
   background-size:cover;background-position:center top;box-shadow:0 14px 34px #000a;border:2.5px solid #ffffff18}
@@ -209,8 +205,7 @@ body{font-family:-apple-system,"Hiragino Kaku Gothic ProN","Noto Sans JP",sans-s
 .t-copy{font-size:26px;font-weight:900;letter-spacing:1px;color:#fff;animation:tUp .7s .3s ease both}
 .t-copy b{color:#ff2b47;text-shadow:0 0 16px #ff2b4766}
 .t-copy2{font-size:13px;font-weight:600;color:#9a90a5;margin-top:8px;animation:tUp .7s .4s ease both}
-.t-cta{margin-top:22px;padding:16px 58px;animation:tUp .7s .5s ease both,tPulse 2.4s 1.4s ease-in-out infinite}
-@keyframes tPulse{0%,100%{box-shadow:0 8px 20px #ff3d6740}50%{box-shadow:0 8px 30px #ff3d6788}}
+.t-cta{margin-top:22px;padding:16px 58px;animation:tUp .7s .5s ease both}
 .t-note{color:#6d6478;margin-top:22px;max-width:340px}
 @keyframes tFade{from{opacity:0}to{opacity:1}}
 @keyframes tUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
@@ -219,37 +214,31 @@ body{font-family:-apple-system,"Hiragino Kaku Gothic ProN","Noto Sans JP",sans-s
 #tut{position:absolute;inset:0;z-index:70}
 #tut.pass{pointer-events:none}
 .tut-skip{position:absolute;top:14px;right:14px;pointer-events:auto;z-index:8;
-  background:#ffffff1f;color:#fff;border:1px solid #ffffff33;border-radius:18px;padding:7px 16px;font-size:12px;font-weight:700;backdrop-filter:blur(6px)}
-/* briefing modal (捜査官) */
-.tut-scrim{position:absolute;inset:0;background:radial-gradient(120% 90% at 50% 30%,#241426e0,#0c0810f2);backdrop-filter:blur(3px);animation:tFade .3s ease}
-.brief{position:absolute;left:24px;right:24px;top:50%;transform:translateY(-50%);text-align:center;color:#fff;
-  animation:briefIn .45s cubic-bezier(.2,.8,.25,1) both}
-.brief-icon{width:60px;height:60px;margin:0 auto 16px;border-radius:50%;display:flex;align-items:center;justify-content:center;
-  font-size:26px;background:#ffffff10;border:1px solid #ffffff26;box-shadow:0 0 30px #ff3d6733}
-.brief-icon .ic{width:28px;height:28px;color:var(--pink)}
-.brief-eyebrow{font-size:11px;font-weight:800;letter-spacing:5px;color:#ff5e8f;margin-bottom:12px}
-.brief-title{font-size:27px;font-weight:900;letter-spacing:1px;line-height:1.35;margin-bottom:14px}
-.brief-title b{color:#ff2b47;text-shadow:0 0 16px #ff2b4755}
-.brief-body{font-size:14px;line-height:1.9;color:#c7bccf;max-width:330px;margin:0 auto}
-.brief-body b{color:#fff}
-.brief-cta{display:inline-flex;align-items:center;gap:4px;margin-top:26px;font-size:14px;font-weight:800;color:#fff;
-  background:var(--grad);padding:12px 30px;border-radius:26px;box-shadow:0 8px 22px #ff3d6740;animation:tPulse 2.2s 1s ease-in-out infinite}
-/* coach mark (方向ガイド) — solid so it never fights the profile text */
-.tut.pass::after{content:'';position:absolute;inset:0;pointer-events:none;
-  background:linear-gradient(to bottom,transparent 44%,#0a0610cc 78%,#0a0610f2 100%)}
-.coach{position:absolute;left:16px;right:16px;bottom:104px;z-index:2;text-align:center;color:#fff;
-  background:#171019;border:1px solid #ffffff24;border-radius:20px;padding:18px 16px 16px;
-  box-shadow:0 18px 46px #000d;animation:coachIn .4s cubic-bezier(.2,.8,.25,1) both}
-.coach.coach-k{box-shadow:0 18px 46px #000d,0 0 40px #a3122a3a}
-.coach.coach-s{box-shadow:0 18px 46px #000d,0 0 40px #2fa8de33}
-.coach.shake{animation:tutshake .4s}
-.coach-badge{display:inline-block;font-size:16px;font-weight:900;letter-spacing:3px;padding:4px 16px;border-radius:10px;border:2.5px solid;margin-bottom:11px}
-.coach-badge.kuro{color:#ff2b47;border-color:#a3122a;background:#150407;box-shadow:0 0 22px #a3122a99;text-shadow:0 0 10px #ff2b47}
-.coach-badge.shiro{color:#2fa8de;border-color:#8fdcff;background:#eaf9ff;box-shadow:0 0 20px #8fdcff99}
-.coach-text{font-size:17px;font-weight:800;line-height:1.5;color:#fff}
-.coach-text b.kuro{color:#ff5f74}
-.coach-text b.shiro{color:#7fd0f5}
-.coach-sub{font-size:12.5px;color:#a79db2;margin-top:5px}
+  background:#0a0710c9;color:#fff;border:1px solid #ffffff2b;border-radius:18px;padding:7px 16px;font-size:12px;font-weight:700}
+/* スワイプ実習：写真下部を暗く沈めて字幕を立たせる */
+.tut.pass::before{content:'';position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(to top,#0a0610f2 0%,#0a0610c4 14%,#0a061050 30%,transparent 46%)}
+/* 映画字幕（明朝・黒場・素のテキスト） */
+.inter-layer{cursor:pointer}
+.tut-scrim{position:absolute;inset:0;background:#0a0710f8;animation:tFade .35s ease}
+.inter{position:absolute;left:30px;right:30px;top:50%;transform:translateY(-50%);
+  font-family:"Hiragino Mincho ProN","Yu Mincho","Noto Serif JP",serif;
+  font-size:19px;font-weight:600;line-height:2.4;letter-spacing:.12em;color:#e9e4ee;text-align:center;
+  animation:interIn 1.1s ease both}
+.inter-tap{position:absolute;left:0;right:0;bottom:56px;text-align:center;
+  font-size:11px;letter-spacing:.2em;color:#5d5566;animation:tFade 1s .9s ease both}
+@keyframes interIn{from{opacity:0}to{opacity:1}}
+/* スワイプ実習の字幕（写真下部のビネット上に直接） */
+.tut-cap{position:absolute;left:20px;right:20px;bottom:132px;z-index:2;text-align:center;
+  font-family:"Hiragino Mincho ProN","Yu Mincho","Noto Serif JP",serif;
+  font-size:16.5px;font-weight:600;line-height:2.1;letter-spacing:.08em;color:#f2edf5;
+  text-shadow:0 1px 10px #000,0 0 26px #000;animation:interIn .8s ease both}
+.tut-cap b{font-weight:700}
+.tut-cap b.kuro{color:#ff4a5f;text-shadow:0 1px 10px #000,0 0 18px #a3122a}
+.tut-cap b.shiro{color:#9adcff;text-shadow:0 1px 10px #000,0 0 18px #2fa8de}
+.tut-cap.blink{animation:capBlink .5s ease}
+@keyframes capBlink{0%,100%{opacity:1}30%{opacity:.15}60%{opacity:1}80%{opacity:.3}}
+
 /* card "ピクピク" nudge — カードが自らスワイプしかけて戻るのを2回、休んでループ */
 .profile.tut-nudge-left{animation:nudgeL 2.1s ease-in-out infinite}
 .profile.tut-nudge-right{animation:nudgeR 2.1s ease-in-out infinite}
