@@ -38,6 +38,98 @@
       ]
     }
   },
+  "女13": {
+    "photos": [
+      "img/f13/13-1.webp",
+      "img/f13/13-2.webp",
+      "img/f13/13-3.webp",
+      "img/f13/13-4.webp",
+      "img/f13/13-5.webp"
+    ],
+    "anomalies": {}
+  },
+  "女14": {
+    "photos": [
+      "img/f14/14-1.webp",
+      "img/f14/14-2.webp",
+      "img/f14/14-3.webp",
+      "img/f14/14-4.webp"
+    ],
+    "anomalies": {
+      "0": [
+        "img/f14/14-1-1.webp"
+      ]
+    }
+  },
+  "女15": {
+    "photos": [
+      "img/f15/15-1.webp",
+      "img/f15/15-2.webp",
+      "img/f15/15-3.webp",
+      "img/f15/15-4.webp",
+      "img/f15/15-5.webp"
+    ],
+    "anomalies": {
+      "2": [
+        "img/f15/15-3-1.webp"
+      ]
+    }
+  },
+  "女16": {
+    "photos": [
+      "img/f16/16-1.webp",
+      "img/f16/16-2.webp",
+      "img/f16/16-3.webp",
+      "img/f16/16-4.webp",
+      "img/f16/16-5.webp"
+    ],
+    "anomalies": {}
+  },
+  "女17": {
+    "photos": [
+      "img/f17/17-1.webp",
+      "img/f17/17-2.webp",
+      "img/f17/17-3.webp",
+      "img/f17/17-4.webp",
+      "img/f17/17-5.webp"
+    ],
+    "anomalies": {
+      "4": [
+        "img/f17/17-5-1.webp"
+      ]
+    }
+  },
+  "女18": {
+    "photos": [
+      "img/f18/18-1.webp",
+      "img/f18/18-2.webp",
+      "img/f18/18-3.webp",
+      "img/f18/18-4.webp",
+      "img/f18/18-5.webp"
+    ],
+    "anomalies": {
+      "0": [
+        "img/f18/18-1-1.webp"
+      ]
+    }
+  },
+  "女19": {
+    "photos": [
+      "img/f19/19-1.webp",
+      "img/f19/19-2.webp",
+      "img/f19/19-3.webp",
+      "img/f19/19-4.webp",
+      "img/f19/19-5.webp"
+    ],
+    "anomalies": {
+      "0": [
+        "img/f19/19-1-1.webp"
+      ],
+      "4": [
+        "img/f19/19-5-1.webp"
+      ]
+    }
+  },
   "女1": {
     "photos": [
       "img/f1/1-1.webp",
@@ -69,6 +161,19 @@
       ],
       "3": [
         "img/f2/2-4-1.webp"
+      ]
+    }
+  },
+  "女20": {
+    "photos": [
+      "img/f20/20-1.webp",
+      "img/f20/20-2.webp",
+      "img/f20/20-3.webp",
+      "img/f20/20-4.webp"
+    ],
+    "anomalies": {
+      "3": [
+        "img/f20/20-4-1.webp"
       ]
     }
   },
@@ -263,6 +368,61 @@
       ]
     }
   },
+  "男16": {
+    "photos": [
+      "img/m16/16-1.webp",
+      "img/m16/16-2.webp",
+      "img/m16/16-3.webp",
+      "img/m16/16-4.webp"
+    ],
+    "anomalies": {
+      "2": [
+        "img/m16/16-3-1.webp"
+      ]
+    }
+  },
+  "男17": {
+    "photos": [
+      "img/m17/17-1.webp",
+      "img/m17/17-2.webp",
+      "img/m17/17-3.webp",
+      "img/m17/17-4.webp",
+      "img/m17/17-5.webp"
+    ],
+    "anomalies": {
+      "4": [
+        "img/m17/17-5-1.webp"
+      ]
+    }
+  },
+  "男18": {
+    "photos": [
+      "img/m18/18-1.webp",
+      "img/m18/18-2.webp",
+      "img/m18/18-3.webp",
+      "img/m18/18-4.webp",
+      "img/m18/18-5.webp"
+    ],
+    "anomalies": {
+      "1": [
+        "img/m18/18-2-1.webp"
+      ]
+    }
+  },
+  "男19": {
+    "photos": [
+      "img/m19/19-1.webp",
+      "img/m19/19-2.webp",
+      "img/m19/19-3.webp",
+      "img/m19/19-4.webp",
+      "img/m19/19-5.webp"
+    ],
+    "anomalies": {
+      "3": [
+        "img/m19/19-4-1.webp"
+      ]
+    }
+  },
   "男1": {
     "photos": [
       "img/m1/1-1.webp",
@@ -277,6 +437,19 @@
       ],
       "2": [
         "img/m1/1-3-1.webp"
+      ]
+    }
+  },
+  "男20": {
+    "photos": [
+      "img/m20/20-1.webp",
+      "img/m20/20-2.webp",
+      "img/m20/20-3.webp",
+      "img/m20/20-4.webp"
+    ],
+    "anomalies": {
+      "2": [
+        "img/m20/20-3-1.webp"
       ]
     }
   },
