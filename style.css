@@ -182,32 +182,87 @@ body{font-family:-apple-system,"Hiragino Kaku Gothic ProN","Noto Sans JP",sans-s
 @keyframes shimmer{from{background-position:200% 0}to{background-position:-200% 0}}
 @keyframes spin{to{transform:rotate(360deg)}}
 
+/* ===== title screen (キービジュアル) ===== */
+.overlay.title{background:#131019;color:#fff;justify-content:flex-start;padding:0;overflow:hidden}
+.t-inner{position:relative;z-index:2;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:26px 24px;gap:0}
+.t-glow{position:absolute;width:460px;height:460px;border-radius:50%;filter:blur(70px);pointer-events:none}
+.t-glow-s{top:-140px;right:-120px;background:radial-gradient(circle,#7fd8ff2e 0%,transparent 65%)}
+.t-glow-k{bottom:-140px;left:-140px;background:radial-gradient(circle,#a3122a4d 0%,transparent 65%)}
+.t-logo{font-size:40px;animation:tFade .7s ease both}
+.t-genre{font-size:11px;font-weight:700;letter-spacing:3px;color:#8d8498;margin:6px 0 20px;animation:tFade .7s .1s ease both}
+.t-fan{position:relative;width:320px;height:236px;margin:4px 0 18px;animation:tFade .8s .15s ease both}
+.t-card{position:absolute;top:14px;left:50%;width:150px;height:188px;margin-left:-75px;border-radius:16px;
+  background-size:cover;background-position:center top;box-shadow:0 14px 34px #000a;border:2.5px solid #ffffff18}
+.t-l{transform:translateX(-96px) rotate(-12deg);filter:brightness(.92)}
+.t-r{transform:translateX(96px) rotate(12deg);filter:brightness(.9)}
+.t-c{width:164px;height:206px;margin-left:-82px;top:2px;transform:none;z-index:2;border-color:#ffffff2e;
+  box-shadow:0 18px 44px #000c,0 0 34px #a3122a55}
+.t-fan,.t-card{will-change:transform}
+.t-l,.t-r,.t-c{animation:tFloat 5s ease-in-out infinite}
+.t-r{animation-delay:1.2s}.t-c{animation-delay:.6s}
+@keyframes tFloat{0%,100%{margin-top:0}50%{margin-top:-7px}}
+.t-stamp{position:absolute;font-size:15px;font-weight:900;letter-spacing:2px;padding:3px 9px;border:2.5px solid;border-radius:8px}
+.t-s{bottom:12px;left:8px;transform:rotate(-12deg);color:#2fa8de;border-color:#8fdcff;background:#ffffffe8;text-shadow:0 0 8px #aee6ff;box-shadow:0 0 14px #8fdcff66}
+.t-k{top:10px;right:8px;transform:rotate(12deg);color:#ff2b47;border-color:#a3122a;background:#150407ee;text-shadow:0 0 8px #ff2b47aa;box-shadow:0 0 18px #a3122a88}
+.t-q{position:absolute;bottom:12px;right:10px;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:19px;font-weight:900;color:#fff;background:#000000b3;border:2px solid #ffffff55;text-shadow:none}
+.t-copy{font-size:26px;font-weight:900;letter-spacing:1px;color:#fff;animation:tUp .7s .3s ease both}
+.t-copy b{color:#ff2b47;text-shadow:0 0 16px #ff2b4766}
+.t-copy2{font-size:13px;font-weight:600;color:#9a90a5;margin-top:8px;animation:tUp .7s .4s ease both}
+.t-cta{margin-top:22px;padding:16px 58px;animation:tUp .7s .5s ease both,tPulse 2.4s 1.4s ease-in-out infinite}
+@keyframes tPulse{0%,100%{box-shadow:0 8px 20px #ff3d6740}50%{box-shadow:0 8px 30px #ff3d6788}}
+.t-note{color:#6d6478;margin-top:22px;max-width:340px}
+@keyframes tFade{from{opacity:0}to{opacity:1}}
+@keyframes tUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+
 /* ===== tutorial ===== */
 #tut{position:absolute;inset:0;z-index:70}
 #tut.pass{pointer-events:none}
-.tut-scrim{position:absolute;inset:0;background:#141018c9;backdrop-filter:blur(2px)}
-.tut-card{position:absolute;left:26px;right:26px;top:42%;transform:translateY(-50%);
-  background:#fff;border-radius:18px;padding:26px 20px;text-align:center;
-  font-size:15.5px;font-weight:700;line-height:2;color:var(--ink);box-shadow:0 14px 44px #0007}
-.tut-card b{color:var(--pink)}
-.tut-tap{margin-top:14px;font-size:11px;color:var(--sub);font-weight:600;letter-spacing:.5px}
-.tut-pop{position:absolute;left:20px;right:20px;bottom:118px;pointer-events:none;
-  background:#fffffff5;border-radius:16px;padding:15px 16px 10px;text-align:center;
-  font-size:13.5px;font-weight:700;line-height:1.8;color:var(--ink);box-shadow:0 10px 30px #0005}
-.tut-pop b.kuro{color:#b01226}
-.tut-pop b.shiro{color:#2fa8de}
-.tut-pop.shake{animation:tutshake .4s}
-@keyframes tutshake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}50%{transform:translateX(8px)}75%{transform:translateX(-5px)}}
-.tut-ges{position:relative;height:44px;margin-top:4px;display:flex;align-items:center;justify-content:center;gap:10px}
-.tut-chev{font-size:22px;font-weight:900;letter-spacing:2px}
-.tut-ges.left .tut-chev{color:#b01226}
-.tut-ges.right .tut-chev{color:#2fa8de}
-.tut-dot{width:30px;height:30px;border-radius:50%;border:3px solid #0002;background:#fff;box-shadow:0 3px 10px #0003}
-.tut-ges.left .tut-dot{animation:gesL 1.5s ease-in-out infinite}
-.tut-ges.right .tut-dot{animation:gesR 1.5s ease-in-out infinite}
-@keyframes gesL{0%{transform:translateX(44px);opacity:0}25%{opacity:1}70%{transform:translateX(-44px);opacity:1}100%{transform:translateX(-52px);opacity:0}}
-@keyframes gesR{0%{transform:translateX(-44px);opacity:0}25%{opacity:1}70%{transform:translateX(44px);opacity:1}100%{transform:translateX(52px);opacity:0}}
-.tut-skip{position:absolute;top:14px;right:14px;pointer-events:auto;z-index:5;
-  background:#00000066;color:#fff;border:none;border-radius:16px;padding:7px 15px;font-size:12px;font-weight:700}
+.tut-skip{position:absolute;top:14px;right:14px;pointer-events:auto;z-index:8;
+  background:#ffffff1f;color:#fff;border:1px solid #ffffff33;border-radius:18px;padding:7px 16px;font-size:12px;font-weight:700;backdrop-filter:blur(6px)}
+/* briefing modal (捜査官) */
+.tut-scrim{position:absolute;inset:0;background:radial-gradient(120% 90% at 50% 30%,#241426e0,#0c0810f2);backdrop-filter:blur(3px);animation:tFade .3s ease}
+.brief{position:absolute;left:24px;right:24px;top:50%;transform:translateY(-50%);text-align:center;color:#fff;
+  animation:briefIn .45s cubic-bezier(.2,.8,.25,1) both}
+.brief-icon{width:60px;height:60px;margin:0 auto 16px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:26px;background:#ffffff10;border:1px solid #ffffff26;box-shadow:0 0 30px #ff3d6733}
+.brief-icon .ic{width:28px;height:28px;color:var(--pink)}
+.brief-eyebrow{font-size:11px;font-weight:800;letter-spacing:5px;color:#ff5e8f;margin-bottom:12px}
+.brief-title{font-size:27px;font-weight:900;letter-spacing:1px;line-height:1.35;margin-bottom:14px}
+.brief-title b{color:#ff2b47;text-shadow:0 0 16px #ff2b4755}
+.brief-body{font-size:14px;line-height:1.9;color:#c7bccf;max-width:330px;margin:0 auto}
+.brief-body b{color:#fff}
+.brief-cta{display:inline-flex;align-items:center;gap:4px;margin-top:26px;font-size:14px;font-weight:800;color:#fff;
+  background:var(--grad);padding:12px 30px;border-radius:26px;box-shadow:0 8px 22px #ff3d6740;animation:tPulse 2.2s 1s ease-in-out infinite}
+/* coach mark (方向ガイド) — solid so it never fights the profile text */
+.tut.pass::after{content:'';position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(to bottom,transparent 44%,#0a0610cc 78%,#0a0610f2 100%)}
+.coach{position:absolute;left:16px;right:16px;bottom:104px;z-index:2;text-align:center;color:#fff;
+  background:#171019;border:1px solid #ffffff24;border-radius:20px;padding:18px 16px 16px;
+  box-shadow:0 18px 46px #000d;animation:coachIn .4s cubic-bezier(.2,.8,.25,1) both}
+.coach.coach-k{box-shadow:0 18px 46px #000d,0 0 40px #a3122a3a}
+.coach.coach-s{box-shadow:0 18px 46px #000d,0 0 40px #2fa8de33}
+.coach.shake{animation:tutshake .4s}
+.coach-badge{display:inline-block;font-size:16px;font-weight:900;letter-spacing:3px;padding:4px 16px;border-radius:10px;border:2.5px solid;margin-bottom:11px}
+.coach-badge.kuro{color:#ff2b47;border-color:#a3122a;background:#150407;box-shadow:0 0 22px #a3122a99;text-shadow:0 0 10px #ff2b47}
+.coach-badge.shiro{color:#2fa8de;border-color:#8fdcff;background:#eaf9ff;box-shadow:0 0 20px #8fdcff99}
+.coach-text{font-size:17px;font-weight:800;line-height:1.5;color:#fff}
+.coach-text b.kuro{color:#ff5f74}
+.coach-text b.shiro{color:#7fd0f5}
+.coach-sub{font-size:12.5px;color:#a79db2;margin-top:5px}
+/* big swipe guide over the photo */
+.swipe-guide{position:absolute;top:40%;z-index:2;display:flex;align-items:center;gap:8px;pointer-events:none}
+.swipe-guide.left{left:8%;flex-direction:row-reverse;animation:sgL 1.5s cubic-bezier(.5,0,.5,1) infinite}
+.swipe-guide.right{right:8%;animation:sgR 1.5s cubic-bezier(.5,0,.5,1) infinite}
+.sg-hand{width:54px;height:54px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#fff,#e7edf2);
+  box-shadow:0 8px 22px #000a,0 0 0 6px #ffffff26}
+.sg-arrow{font-size:62px;font-weight:900;line-height:.7}
+.swipe-guide.left .sg-arrow{color:#ff3d57;text-shadow:0 0 22px #ff2b47}
+.swipe-guide.right .sg-arrow{color:#37b3e8;text-shadow:0 0 22px #8fdcff}
+@keyframes sgL{0%{transform:translateX(46px);opacity:0}18%{opacity:1}72%{transform:translateX(-46px);opacity:1}100%{transform:translateX(-58px);opacity:0}}
+@keyframes sgR{0%{transform:translateX(-46px);opacity:0}18%{opacity:1}72%{transform:translateX(46px);opacity:1}100%{transform:translateX(58px);opacity:0}}
+@keyframes tutshake{0%,100%{transform:translateX(0)}25%{transform:translateX(-9px)}50%{transform:translateX(9px)}75%{transform:translateX(-5px)}}
+@keyframes briefIn{from{opacity:0;transform:translateY(-46%) scale(.94)}to{opacity:1;transform:translateY(-50%) scale(1)}}
+@keyframes coachIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
 
 .hidden{display:none!important}

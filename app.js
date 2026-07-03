@@ -395,19 +395,26 @@ function applyZoom(){document.querySelector('.zoom-inner').style.transform=`tran
 /* ============ overlays ============ */
 const ov=document.getElementById('overlay');
 function showStart(){
-  ov.className='overlay';
+  const ph=(f,i)=>{const m=(window.PHOTOS||{})[f];return m&&m.photos&&m.photos[i]?encodeURI(m.photos[i]):'';};
+  // 中央カードは「あかり(女6)のFV異変ver」＝背後にストーカーが写っている実物。気づいた人だけゾッとする仕掛け
+  const center=(window.PHOTOS['女6']&&window.PHOTOS['女6'].anomalySets)?encodeURI(window.PHOTOS['女6'].anomalySets[0]['0']):ph('女6',0);
+  ov.className='overlay title';
   ov.innerHTML=`
-    <div class="ov-logo">${ICON.spark}<span>Amary</span></div>
-    <p class="ov-tag">${roster().length}人の中から、大丈夫な人を見極めよう。</p>
-    <div class="ov-card">
-      <p class="ov-rule"><b class="rule-like">右スワイプ＝シロ</b><span>この人は大丈夫</span></p>
-      <p class="ov-rule"><b class="rule-nope">左スワイプ＝クロ</b><span>この人は…異変あり</span></p>
-      <div class="ov-divider"></div>
-      <p class="ov-hint">危険な相手の写真には、必ずどこかに"見れば分かる異変"がある。写真は左右タップで切替、下にスクロールでプロフィールを確認。</p>
-      <p class="ov-hint warn">クロを見逃してシロ判定しても、普通の人をクロ判定しても、そこで終了。</p>
-    </div>
-    <button class="btn" id="startBtn">さがす</button>
-    <p class="ov-note">本作はフィクションです。登場する人物・団体・アプリはすべて架空のものであり、実在するサービス・団体・人物とは一切関係ありません。<br>人物写真はすべてAIによって生成された、実在しない人物です。<br>本作には犯罪・ストーカー行為等を示唆する表現が含まれます。</p>`;
+    <div class="t-glow t-glow-s"></div>
+    <div class="t-glow t-glow-k"></div>
+    <div class="t-inner">
+      <div class="ov-logo t-logo">${ICON.spark}<span>Amary</span></div>
+      <p class="t-genre">マッチングアプリ擬態・観察ホラー</p>
+      <div class="t-fan">
+        <div class="t-card t-l" style="background-image:url('${ph('女1',0)}')"><span class="t-stamp t-s">シロ</span></div>
+        <div class="t-card t-r" style="background-image:url('${ph('男6',0)}')"><span class="t-q">?</span></div>
+        <div class="t-card t-c" style="background-image:url('${center}')"><span class="t-stamp t-k">クロ</span></div>
+      </div>
+      <h1 class="t-copy">この中に、<b>クロ</b>がいる。</h1>
+      <p class="t-copy2">${roster().length}人全員、普通に見える。</p>
+      <button class="btn t-cta" id="startBtn">調査をはじめる</button>
+      <p class="ov-note t-note">本作はフィクションです。登場する人物・団体・アプリはすべて架空のものであり、実在するサービス・団体・人物とは一切関係ありません。人物写真はすべてAIによって生成された、実在しない人物です。本作には犯罪・ストーカー行為等を示唆する表現が含まれます。</p>
+    </div>`;
   paintIcons(ov);
   ov.querySelector('#startBtn').addEventListener('click',startTutorial);
   ov.classList.remove('hidden');
@@ -486,33 +493,70 @@ function tutShow(){
   const T=document.getElementById('tut');
   const s=tutorial.step;
   T.classList.remove('hidden');
-  if(s===0||s===3||s===4){
-    const text={0:'あなたは、マッチングアプリに潜む闇を調査する<b>捜査官</b>です。',
-                3:'マッチングアプリに潜む闇には、<b>さまざまな種類</b>があります。',
-                4:'判断を間違えないように、<b>よーく観察</b>してみましょう。'}[s];
-    T.className='tut';
-    T.innerHTML=`<div class="tut-scrim"></div>
-      <div class="tut-card">${text}<div class="tut-tap">タップで${s===4?'開始':'次へ'}</div></div>${tutSkipHTML()}`;
+  const brief=(icon,eyebrow,title,body,cta)=>`
+    <div class="tut-scrim"></div>
+    <div class="brief">
+      <div class="brief-icon">${icon}</div>
+      <div class="brief-eyebrow">${eyebrow}</div>
+      <h2 class="brief-title">${title}</h2>
+      <p class="brief-body">${body}</p>
+      <div class="brief-cta">${cta} ${ICON.chevR||'›'}</div>
+    </div>${tutSkipHTML()}`;
+  if(s===0){
+    T.className='tut brief-layer';
+    T.innerHTML=brief(ICON.eye,'MISSION',
+      'あなたは<b>捜査官</b>。',
+      'このマッチングアプリには、<b>身元を偽った危険人物</b>が紛れ込んでいる。<br>プロフィールを調べ、"クロ"を見抜け。',
+      'ブリーフィングを続ける');
     T.querySelector('.tut-scrim').addEventListener('click',tutNext);
-    T.querySelector('.tut-card').addEventListener('click',tutNext);
+    T.querySelector('.brief').addEventListener('click',tutNext);
   }else if(s===1){
     tutorial.entry=tutEntry(TUT_KURO,true); tutorial.need='nope';
     document.getElementById('scroll').scrollTop=0;
     renderProfile(tutorial.entry);
     T.className='tut pass';
-    T.innerHTML=`<div class="tut-pop">怪しいと思ったユーザーは、<br>左にスワイプして<b class="kuro">「クロ」</b>に。
-      <div class="tut-ges left"><span class="tut-chev">‹‹‹</span><span class="tut-dot"></span></div></div>${tutSkipHTML()}`;
+    T.innerHTML=`
+      <div class="coach coach-k">
+        <div class="coach-badge kuro">クロ</div>
+        <div class="coach-text">怪しいと思ったら、<b class="kuro">左にスワイプ</b></div>
+        <div class="coach-sub">この人を "クロ" と判定する</div>
+      </div>
+      <div class="swipe-guide left"><div class="sg-hand">${ICON.heartLine?'':''}<span class="sg-dot"></span></div><div class="sg-arrow">‹</div></div>
+      ${tutSkipHTML()}`;
   }else if(s===2){
     tutorial.entry=tutEntry(TUT_SHIRO,false); tutorial.need='like';
     document.getElementById('scroll').scrollTop=0;
     renderProfile(tutorial.entry);
     T.className='tut pass';
-    T.innerHTML=`<div class="tut-pop">問題ないと思ったユーザーは、<br>右にスワイプして<b class="shiro">「シロ」</b>にしてください。
-      <div class="tut-ges right"><span class="tut-dot"></span><span class="tut-chev">›››</span></div></div>${tutSkipHTML()}`;
+    T.innerHTML=`
+      <div class="coach coach-s">
+        <div class="coach-badge shiro">シロ</div>
+        <div class="coach-text">問題ないと思ったら、<b class="shiro">右にスワイプ</b></div>
+        <div class="coach-sub">この人を "シロ" と判定する</div>
+      </div>
+      <div class="swipe-guide right"><div class="sg-arrow">›</div><div class="sg-hand"><span class="sg-dot"></span></div></div>
+      ${tutSkipHTML()}`;
+  }else if(s===3){
+    T.className='tut brief-layer';
+    T.innerHTML=brief(ICON.warn,'CAUTION',
+      '闇は、<b>一様ではない</b>。',
+      'ストーカー、不倫、詐欺、そして——もっと悍ましい何か。<br>危険のサインは、写真のどこかに必ず<b>写り込んでいる</b>。',
+      '心得を続ける');
+    T.querySelector('.tut-scrim').addEventListener('click',tutNext);
+    T.querySelector('.brief').addEventListener('click',tutNext);
+  }else if(s===4){
+    T.className='tut brief-layer';
+    T.innerHTML=brief(ICON.spark,'READY',
+      '見極めろ。',
+      '写真は<b>タップで切り替え</b>、下に<b>スクロール</b>してプロフィールも確認できる。<br>一度の誤りが、命取りになる。',
+      '調査を開始する');
+    T.querySelector('.tut-scrim').addEventListener('click',tutNext);
+    T.querySelector('.brief').addEventListener('click',tutNext);
   }else{
     T.innerHTML=''; T.classList.add('hidden'); tutorial=null;
     startRun(); return;
   }
+  paintIcons(T);
   const sk=T.querySelector('#tutSkip');
   if(sk)sk.addEventListener('click',()=>{T.innerHTML='';T.classList.add('hidden');tutorial=null;startRun();});
 }
