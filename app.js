@@ -386,13 +386,19 @@ function applyZoom(){document.querySelector('.zoom-inner').style.transform=`tran
 const ov=document.getElementById('overlay');
 function showStart(){
   ov.className='overlay';
-  ov.innerHTML=`<div class="brand-name ov-brand">${ICON.spark}<span>Amary</span></div>
-    <p>スワイプで${roster().length}人を見極めろ。</p>
-    <p><b style="color:#ff9db0">右＝マッチ</b>（この人は安全）／ <b style="color:#9fd">左＝拒否</b>（この人は"異変あり"）</p>
-    <p style="font-size:13px;color:#c9b8c9">写真は左右タップで切替。下にスクロールでプロフ確認。危険な相手とマッチしても、まともな人を誤って拒否しても即アウト。</p>
-    <div class="reason" style="font-size:13px"><span class="reason-eye">${ICON.eye}</span> 危険な相手の写真には、必ずどこかに"見れば分かる異変"がある。見つけたら左、シロなら右。</div>
-    <button class="btn" id="startBtn">はじめる</button>
-    <p style="font-size:10.5px;color:#8a7a8a;margin-top:22px;line-height:1.6">本作はフィクションです。登場する人物・アプリ・団体は全て架空のものであり、<br>実在のサービス・団体・人物とは一切関係ありません。</p>`;
+  ov.innerHTML=`
+    <div class="ov-logo">${ICON.spark}<span>Amary</span></div>
+    <p class="ov-tag">${roster().length}人の中から、大丈夫な人を見極めよう。</p>
+    <div class="ov-card">
+      <p class="ov-rule"><b class="rule-like">右スワイプ＝いいね</b><span>この人は大丈夫</span></p>
+      <p class="ov-rule"><b class="rule-nope">左スワイプ＝パス</b><span>この人は…異変あり</span></p>
+      <div class="ov-divider"></div>
+      <p class="ov-hint">危険な相手の写真には、必ずどこかに"見れば分かる異変"がある。写真は左右タップで切替、下にスクロールでプロフィールを確認。</p>
+      <p class="ov-hint warn">異変を見逃して「いいね」しても、普通の人を「パス」しても、そこで終了。</p>
+    </div>
+    <button class="btn" id="startBtn">さがす</button>
+    <p class="ov-note">本作はフィクションです。登場する人物・アプリ・団体は全て架空のものであり、実在のサービス・団体・人物とは一切関係ありません。</p>`;
+  paintIcons(ov);
   ov.querySelector('#startBtn').addEventListener('click',startRun);
   ov.classList.remove('hidden');
 }
@@ -400,13 +406,13 @@ function gameOver(entry,judgedSafe){
   lives--; updateHUD();
   // 8番出口方式：答え合わせはしない。「異変があった/なかった」だけ。
   ov.className='overlay';
-  ov.innerHTML=`<div class="big">GAME OVER</div>
+  ov.innerHTML=`<div class="ov-go">GAME OVER</div>
     <div class="dead-photo" id="deadPhoto"></div>
-    <div class="dead-name">${entry.p.name} ${entry.p.age}</div>
+    <div class="dead-name">${entry.p.name} <span class="dead-age">${entry.p.age}</span></div>
     <div class="verdict ${entry.danger?'was':'wasnt'}">${entry.danger?'異変があった':'異変はなかった'}</div>
-    <p style="font-size:13px;margin-top:16px">到達：${idx} / ${run.length} 人</p>
-    <button class="btn" id="retryBtn">もう一度</button>
-    <button class="btn ghost" id="titleBtn">タイトルへ</button>`;
+    <p class="ov-progress">${idx} / ${run.length} 人</p>
+    <button class="btn" id="retryBtn">もう一度さがす</button>
+    <button class="btn sub" id="titleBtn">タイトルへ</button>`;
   const dp=ov.querySelector('#deadPhoto');
   const s=photoSet(entry);
   const u=encodeURI(s&&s.photos[0]?s.photos[0]:`${PHOTO_BASE}/${entry.p.folder}/1.png`);
@@ -419,9 +425,15 @@ function gameOver(entry,judgedSafe){
   ov.classList.remove('hidden');
 }
 function win(){
-  ov.className='overlay'; ov.style.background='linear-gradient(160deg,#10261c,#0a1812)';
-  ov.innerHTML=`<div class="big">CLEAR</div><p>20人すべてを正しく見極めた。</p><p style="color:#9fd">マッチ ${matched}人／冤罪も見逃しもゼロ。</p><button class="btn" id="againBtn">もう一度</button>`;
+  ov.className='overlay';
+  ov.innerHTML=`
+    <div class="ov-logo clear"><span>CLEAR</span></div>
+    <p class="ov-tag">${run.length}人すべてを見極めた。</p>
+    <div class="verdict wasnt">いいね ${matched}人・見逃しゼロ</div>
+    <button class="btn" id="againBtn">もう一度さがす</button>
+    <button class="btn sub" id="winTitleBtn">タイトルへ</button>`;
   ov.querySelector('#againBtn').addEventListener('click',startRun);
+  ov.querySelector('#winTitleBtn').addEventListener('click',showStart);
   ov.classList.remove('hidden');
 }
 
