@@ -257,10 +257,17 @@ function flashEdge(wrap,side){const e=wrap.querySelector('.edge.'+side);if(e){e.
 
 /* ============ gestures: swipe anywhere / vertical scroll / photo taps ============ */
 let committing=false;
+/* スワイプでズレて見える背景を判定色に染める（右=シロ:神々しい水色 / 左=クロ:禍々しい赤黒） */
+function setJudgeBg(s){
+  const sc=document.getElementById('scroll');
+  sc.classList.toggle('judge-shiro',s>0);
+  sc.classList.toggle('judge-kuro',s<0);
+}
 function resetProfileStyle(){
   const prof=document.getElementById('profile');
   prof.style.transition='none'; prof.style.transform=''; prof.style.opacity='';
   stampLike.style.opacity=0; stampNope.style.opacity=0;
+  setJudgeBg(0);
 }
 function wireGestures(){
   const scroll=document.getElementById('scroll');
@@ -295,6 +302,7 @@ function wireGestures(){
       prof().style.transform=`translateX(${dx}px) rotate(${dx/24}deg)`;
       const k=Math.min(Math.abs(dx)/120,1);
       stampLike.style.opacity=dx>0?k:0; stampNope.style.opacity=dx<0?k:0;
+      setJudgeBg(dx);
     }
   });
   scroll.addEventListener('pointerup',e=>{
@@ -307,6 +315,7 @@ function wireGestures(){
       if(Math.abs(dx)>90)return commit(dx>0?'like':'nope');
       const p=prof();
       p.style.transition='transform .3s cubic-bezier(.2,.85,.25,1)'; p.style.transform='';
+      setJudgeBg(0);
     }else if(axis===null&&moved<8&&startWrap){
       // タップは写真送りのみ（左1/3=前、右1/3=次）。拡大は廃止＝スワイプと競合させない
       const r=startWrap.getBoundingClientRect(), rx=(sx-r.left)/r.width;
@@ -339,6 +348,7 @@ function commit(dir){
   const correct=entry.danger?!judgedSafe:judgedSafe;
   const prof=document.getElementById('profile');
   stampLike.style.opacity=0; stampNope.style.opacity=0;
+  setJudgeBg(dir==='like'?1:-1);   // 飛んでいく間も判定色を見せる
   prof.style.transition='transform .3s ease-out, opacity .3s ease-out';
   prof.style.transform=`translateX(${dir==='like'?600:-600}px) rotate(${dir==='like'?9:-9}deg)`;
   prof.style.opacity='0';
@@ -390,11 +400,11 @@ function showStart(){
     <div class="ov-logo">${ICON.spark}<span>Amary</span></div>
     <p class="ov-tag">${roster().length}人の中から、大丈夫な人を見極めよう。</p>
     <div class="ov-card">
-      <p class="ov-rule"><b class="rule-like">右スワイプ＝いいね</b><span>この人は大丈夫</span></p>
-      <p class="ov-rule"><b class="rule-nope">左スワイプ＝パス</b><span>この人は…異変あり</span></p>
+      <p class="ov-rule"><b class="rule-like">右スワイプ＝シロ</b><span>この人は大丈夫</span></p>
+      <p class="ov-rule"><b class="rule-nope">左スワイプ＝クロ</b><span>この人は…異変あり</span></p>
       <div class="ov-divider"></div>
       <p class="ov-hint">危険な相手の写真には、必ずどこかに"見れば分かる異変"がある。写真は左右タップで切替、下にスクロールでプロフィールを確認。</p>
-      <p class="ov-hint warn">異変を見逃して「いいね」しても、普通の人を「パス」しても、そこで終了。</p>
+      <p class="ov-hint warn">クロを見逃してシロ判定しても、普通の人をクロ判定しても、そこで終了。</p>
     </div>
     <button class="btn" id="startBtn">さがす</button>
     <p class="ov-note">本作はフィクションです。登場する人物・アプリ・団体は全て架空のものであり、実在のサービス・団体・人物とは一切関係ありません。</p>`;
@@ -405,11 +415,14 @@ function showStart(){
 function gameOver(entry,judgedSafe){
   lives--; updateHUD();
   // 8番出口方式：答え合わせはしない。「異変があった/なかった」だけ。
-  ov.className='overlay';
-  ov.innerHTML=`<div class="ov-go">GAME OVER</div>
+  const dead=entry.danger;   // クロを見逃してシロ判定＝死 / 普通の人をクロ判定＝冤罪
+  ov.className=dead?'overlay dead':'overlay';
+  ov.innerHTML=`
+    <div class="ov-go">${dead?'DEAD END':'冤罪'}</div>
+    <p class="ov-sub">${dead?'死んでしまった':'この人は、普通の人だった'}</p>
     <div class="dead-photo" id="deadPhoto"></div>
     <div class="dead-name">${entry.p.name} <span class="dead-age">${entry.p.age}</span></div>
-    <div class="verdict ${entry.danger?'was':'wasnt'}">${entry.danger?'異変があった':'異変はなかった'}</div>
+    <div class="verdict ${dead?'was':'wasnt'}">${dead?'異変があった':'異変はなかった'}</div>
     <p class="ov-progress">${idx} / ${run.length} 人</p>
     <button class="btn" id="retryBtn">もう一度さがす</button>
     <button class="btn sub" id="titleBtn">タイトルへ</button>`;
@@ -425,11 +438,16 @@ function gameOver(entry,judgedSafe){
   ov.classList.remove('hidden');
 }
 function win(){
-  ov.className='overlay';
+  ov.className='overlay holy';
+  const kuro=run.length-matched;
   ov.innerHTML=`
     <div class="ov-logo clear"><span>CLEAR</span></div>
     <p class="ov-tag">${run.length}人すべてを見極めた。</p>
-    <div class="verdict wasnt">いいね ${matched}人・見逃しゼロ</div>
+    <div class="holy-stats">
+      <div class="hs"><span class="hs-n">${matched}</span><span class="hs-l">シロ判定</span></div>
+      <div class="hs"><span class="hs-n">${kuro}</span><span class="hs-l">クロ判定</span></div>
+      <div class="hs"><span class="hs-n">0</span><span class="hs-l">ミス</span></div>
+    </div>
     <button class="btn" id="againBtn">もう一度さがす</button>
     <button class="btn sub" id="winTitleBtn">タイトルへ</button>`;
   ov.querySelector('#againBtn').addEventListener('click',startRun);
