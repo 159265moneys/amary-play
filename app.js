@@ -504,11 +504,10 @@ function startBloodFX(host){
           d.last={x:nx,y:ny}; d.y=ny;
         }
       }
-      // 先端の濡れた溜まり（小さく・暗く。玉ボケにしない）
-      const r=d.w*0.85+0.8;
-      const g=pc.createRadialGradient(d.last.x,d.last.y-r*0.3,0,d.last.x,d.last.y,r*1.25);
-      g.addColorStop(0,'rgba(172,18,40,.92)'); g.addColorStop(.7,'rgba(128,8,26,.75)'); g.addColorStop(1,'rgba(100,4,20,0)');
-      pc.fillStyle=g; pc.beginPath(); pc.ellipse(d.last.x,d.last.y,r,r*1.35,0,0,7); pc.fill();
+      // 先端: 独立した「丸」は描かない。筋と同色の僅かな膨らみで線の終わりを湿らせるだけ
+      const r=Math.max(1,d.w*0.5);
+      pc.fillStyle='rgba(126,8,26,.55)';
+      pc.beginPath(); pc.ellipse(d.last.x,d.last.y+r*0.4,r,r*1.5,0,0,7); pc.fill();
     }
   }
   raf=requestAnimationFrame(frame);
