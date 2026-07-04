@@ -472,25 +472,21 @@ function gameOver(entry,judgedSafe){
       <button class="btn" id="retryBtn">もう一度さがす</button>
       <button class="btn sub" id="titleBtn">タイトルへ</button>
     </div>`;
-  if(dead){
-    // 上部から血が滴り落ちる（本数・太さ・速度・タイミングは毎回ランダム）
-    spawnFx(ov.querySelector('.fx-blood'),'drip',13,el=>{
-      el.style.left=(1+Math.random()*97)+'%';
-      el.style.width=(2.5+Math.random()*4.5)+'px';
-      el.style.animationDuration=(3.2+Math.random()*3.4)+'s';
-      el.style.animationDelay=(Math.random()*3.5)+'s';
-    });
-  }else{
-    // 黒いオーブがゆっくり浮遊
-    spawnFx(ov.querySelector('.fx-orbs'),'orb',7,el=>{
-      const s=18+Math.random()*52;
+  if(!dead){
+    // 黒いオーブ: 少数・大きめ・奥行き（ぼかしと透明度を連動）でゆっくり呼吸
+    spawnFx(ov.querySelector('.fx-orbs'),'orb',5,el=>{
+      const depth=Math.random();                 // 0=手前 1=奥
+      const s=34+depth*54;
       el.style.width=el.style.height=s+'px';
-      el.style.left=(4+Math.random()*88)+'%';
-      el.style.top=(6+Math.random()*80)+'%';
-      el.style.animationDuration=(7+Math.random()*7)+'s';
-      el.style.animationDelay=(-Math.random()*8)+'s';
+      el.style.left=(6+Math.random()*84)+'%';
+      el.style.top=(8+Math.random()*74)+'%';
+      el.style.filter=`blur(${1+depth*5}px)`;
+      el.style.opacity=(0.55-depth*0.3).toFixed(2);
+      el.style.animationDuration=(14+Math.random()*10)+'s';
+      el.style.animationDelay=(-Math.random()*20)+'s';
     });
   }
+  // DEAD ENDの血・ノイズはCSSのみ（fx-blood/fx-vhsの擬似要素）。JS生成物なし
   const dp=ov.querySelector('#deadPhoto');
   const s=photoSet(entry);
   const u=encodeURI(s&&s.photos[0]?s.photos[0]:`${PHOTO_BASE}/${entry.p.folder}/1.png`);
@@ -521,13 +517,15 @@ function win(){
       <button class="btn sub" id="winTitleBtn">タイトルへ</button>
     </div>`;
   const fx=ov.querySelector('.fx-holy');
-  // 下から上へ立ちのぼる白いキラキラ粒子
-  spawnFx(fx,'spark',26,el=>{
-    const s=3+Math.random()*5;
+  // 上る光の粒: 少数精鋭・奥行きつき（大きさ/ぼかし/速度を連動）
+  spawnFx(fx,'spark',12,el=>{
+    const depth=Math.random();
+    const s=3+ (1-depth)*6;
     el.style.width=el.style.height=s+'px';
-    el.style.left=(1+Math.random()*97)+'%';
-    el.style.animationDuration=(4.5+Math.random()*4.5)+'s';
-    el.style.animationDelay=(-Math.random()*9)+'s';
+    el.style.left=(3+Math.random()*94)+'%';
+    el.style.filter=`blur(${depth*2.5}px)`;
+    el.style.animationDuration=(8+depth*7)+'s';
+    el.style.animationDelay=(-Math.random()*15)+'s';
   });
   // 背景そのものが上へ流れていく光の帯
   spawnFx(fx,'hlight',3,(el,i)=>{

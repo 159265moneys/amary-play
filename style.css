@@ -153,47 +153,66 @@ body{font-family:-apple-system,"Hiragino Kaku Gothic ProN","Noto Sans JP",sans-s
 .go-inner{position:relative;z-index:5;display:flex;flex-direction:column;align-items:center;width:100%}
 .fx-goo,.fx-blood,.fx-vhs,.fx-orbs,.fx-holy{position:absolute;inset:0;pointer-events:none;overflow:hidden}
 
-/* ===== DEAD END（クロを見逃した死）: 禍々しい赤黒 ===== */
-.overlay.dead{background:#0c0205;color:#e8c9cf;overflow:hidden}
-/* 赤と黒がドロドロと蠢く背景（巨大なぼかし血溜まりが伸縮しながら這う） */
-.fx-goo{filter:blur(46px) contrast(1.15);opacity:.9;z-index:1}
-.fx-goo::before,.fx-goo::after{content:'';position:absolute;border-radius:50%}
-.fx-goo::before{width:85%;height:62%;top:-8%;left:-16%;
-  background:radial-gradient(circle at 40% 40%,#8a0a20 0%,#4a0512 55%,transparent 75%);
-  animation:gooA 8s ease-in-out infinite alternate}
-.fx-goo::after{width:78%;height:58%;bottom:-6%;right:-14%;
-  background:radial-gradient(circle at 60% 60%,#5c0716 0%,#2a040c 55%,transparent 75%);
-  animation:gooB 11s ease-in-out infinite alternate}
-@keyframes gooA{from{transform:translate(0,0) scale(1) rotate(0deg)}50%{transform:translate(26%,20%) scale(1.35) rotate(18deg)}to{transform:translate(8%,42%) scale(.9) rotate(-12deg)}}
-@keyframes gooB{from{transform:translate(0,0) scale(1.1) rotate(0deg)}50%{transform:translate(-24%,-26%) scale(.85) rotate(-20deg)}to{transform:translate(-40%,-6%) scale(1.3) rotate(14deg)}}
-/* 上部から血が滴り落ちる */
+/* ===== DEAD END（クロを見逃した死）: 禍々しい赤黒 =====
+   演出方針（oddquiz 即死演出の思想を移植）:
+   ・血は「落ちてくる粒」ではなく、上端に張り付いた不揃いな筋が
+     background-size アニメで十数秒かけて じわじわ 伸びていく
+   ・画面は揺らさない。絶望は遅さで出す
+   ・RGBスプリット等の狂いは数秒に一瞬だけ薄く差し込む */
+.overlay.dead{background:radial-gradient(130% 100% at 50% 0%,#2a070e 0%,#170409 55%,#0c0205 100%);
+  color:#e8c9cf;overflow:hidden}
+/* 血だれ: 7本の縦筋。太さ・濃さ・伸びるテンポを1本ずつ変えて不均一に */
 .fx-blood{z-index:2}
-.fx-blood::before{content:'';position:absolute;top:0;left:0;right:0;height:10px;
-  background:linear-gradient(#5c0512,#8a0a20);box-shadow:0 2px 14px #8a0a2088;
-  border-radius:0 0 40% 60%/0 0 14px 22px}
-.drip{position:absolute;top:-2px;height:16vh;border-radius:0 0 5px 5px;
-  background:linear-gradient(to bottom,#8a0a20,#c01530 55%,#e02040);box-shadow:0 0 8px #a3122a66;
-  transform:translateY(-105%);animation:dripFall ease-in infinite}
-.drip::after{content:'';position:absolute;bottom:-4px;left:50%;width:8px;height:11px;margin-left:-4px;
-  border-radius:50% 50% 60% 60%;background:#c01530}
-@keyframes dripFall{0%{transform:translateY(-105%)}55%{transform:translateY(30vh)}100%{transform:translateY(115vh)}}
-/* VHSノイズ：走査線＋明滅＋画面ジッタ */
-.fx-vhs{z-index:3;mix-blend-mode:overlay;
-  background:repeating-linear-gradient(0deg,transparent 0 2px,#ffffff0a 2px 3px,#00000014 3px 4px);
-  animation:vhsFlicker .18s steps(2) infinite}
-.fx-vhs::after{content:'';position:absolute;left:0;right:0;height:56px;top:-60px;
-  background:linear-gradient(#ffffff00,#ffffff12,#ffffff00);animation:vhsRoll 4.5s linear infinite}
-@keyframes vhsFlicker{0%{opacity:.55}50%{opacity:.95}100%{opacity:.7}}
-@keyframes vhsRoll{from{top:-60px}to{top:110%}}
-.vhs-shake{animation:vhsShake .16s steps(2) infinite}
-@keyframes vhsShake{0%{transform:translate(0,0)}25%{transform:translate(-1.5px,.5px)}50%{transform:translate(1px,-1px) skewX(.15deg)}75%{transform:translate(-.5px,1px)}100%{transform:translate(1px,0)}}
-.overlay.dead .ov-go{position:relative;color:#ff2b47;font-size:36px;letter-spacing:5px;text-shadow:0 0 22px #ff2b4788,0 0 60px #a3122a66}
-/* 色ズレ（RGBスプリット）でブラウン管の狂いを出す */
-.overlay.dead .ov-go::before,.overlay.dead .ov-go::after{content:attr(data-glitch);position:absolute;inset:0;opacity:.55}
-.overlay.dead .ov-go::before{color:#0ef;transform:translateX(-2.5px);animation:glitchA 2.4s steps(3) infinite}
-.overlay.dead .ov-go::after{color:#f0426a;transform:translateX(2.5px);animation:glitchB 3.1s steps(4) infinite}
-@keyframes glitchA{0%,88%{transform:translateX(-2.5px)}90%{transform:translate(-6px,2px)}94%{transform:translateX(-1px)}100%{transform:translateX(-2.5px)}}
-@keyframes glitchB{0%,84%{transform:translateX(2.5px)}86%{transform:translate(6px,-2px)}92%{transform:translateX(1px)}100%{transform:translateX(2.5px)}}
+.fx-blood::before{content:'';position:absolute;inset:0;pointer-events:none;
+  background-repeat:no-repeat;
+  background-image:
+    linear-gradient(to bottom, rgba(88,3,14,.96) 0%, rgba(112,5,20,.92) 55%, rgba(150,10,30,.96) 86%, rgba(176,16,40,1) 95%, transparent 100%),
+    linear-gradient(to bottom, rgba(96,4,16,.94) 0%, rgba(118,6,22,.90) 50%, rgba(155,11,32,.96) 87%, rgba(180,18,42,1) 95%, transparent 100%),
+    linear-gradient(to bottom, rgba(82,3,13,.95) 0%, rgba(106,5,19,.90) 55%, rgba(146,10,29,.95) 88%, rgba(172,15,38,1) 96%, transparent 100%),
+    linear-gradient(to bottom, rgba(92,4,15,.95) 0%, rgba(114,6,21,.91) 52%, rgba(152,11,31,.96) 86%, rgba(178,17,41,1) 95%, transparent 100%),
+    linear-gradient(to bottom, rgba(86,3,14,.93) 0%, rgba(108,5,20,.88) 54%, rgba(148,10,30,.94) 88%, rgba(174,16,39,1) 96%, transparent 100%),
+    linear-gradient(to bottom, rgba(94,4,16,.95) 0%, rgba(116,6,21,.91) 51%, rgba(154,11,31,.96) 87%, rgba(179,17,41,1) 95%, transparent 100%),
+    linear-gradient(to bottom, rgba(90,3,15,.94) 0%, rgba(110,5,20,.89) 53%, rgba(150,10,30,.95) 88%, rgba(175,16,40,1) 96%, transparent 100%);
+  background-position: 4% 0%, 17% 0%, 30% 0%, 46% 0%, 61% 0%, 76% 0%, 92% 0%;
+  background-size: 9px 0%, 17px 0%, 6px 0%, 13px 0%, 8px 0%, 15px 0%, 11px 0%;
+  filter:drop-shadow(0 1px 3px rgba(60,0,10,.65));
+  animation:bloodGrow 16s cubic-bezier(.35,.05,.55,.45) forwards}
+/* 不揃いに伸びる（本ごとに速度差。届く深さもバラバラ） */
+@keyframes bloodGrow{
+  0%  {background-size:9px  0%,17px  0%,6px  0%,13px  0%,8px  0%,15px  0%,11px  0%}
+  8%  {background-size:9px  9%,17px  2%,6px  0%,13px  4%,8px  0%,15px  7%,11px  1%}
+  22% {background-size:9px 24%,17px 13%,6px  8%,13px 14%,8px  5%,15px 20%,11px  9%}
+  45% {background-size:9px 44%,17px 28%,6px 32%,13px 27%,8px 19%,15px 39%,11px 23%}
+  70% {background-size:9px 58%,17px 39%,6px 60%,13px 36%,8px 34%,15px 54%,11px 37%}
+  100%{background-size:9px 68%,17px 46%,6px 80%,13px 42%,8px 48%,15px 64%,11px 46%}
+}
+/* 血の上端の溜まり（にじみ） */
+.fx-blood::after{content:'';position:absolute;top:0;left:0;right:0;height:7px;
+  background:linear-gradient(to bottom,#5c0512,#8a0a20 60%,transparent);opacity:.9}
+/* 画面周縁の赤いビネット（ゆっくり脈打つ。枠線は出さない） */
+.fx-goo{z-index:1}
+.fx-goo::before{content:'';position:absolute;inset:0;
+  box-shadow:inset 0 0 90px rgba(200,20,50,.22),inset 0 0 260px rgba(160,10,40,.16);
+  animation:deadPulse 3.2s ease-in-out infinite alternate}
+@keyframes deadPulse{from{opacity:.5}to{opacity:1}}
+/* 走査線は静かに敷くだけ（明滅させない） */
+.fx-vhs{z-index:3;opacity:.5;
+  background:repeating-linear-gradient(0deg,transparent 0 3px,rgba(0,0,0,.14) 3px 4px)}
+/* 数秒に一度だけ、ごく薄いトラッキングラインが上へ流れる */
+.fx-vhs::after{content:'';position:absolute;left:0;right:0;height:44px;top:110%;
+  background:linear-gradient(rgba(255,255,255,0),rgba(255,255,255,.08),rgba(255,255,255,0));
+  animation:vhsRoll 7s linear infinite}
+@keyframes vhsRoll{0%{top:110%}12%{top:-8%}100%{top:-8%}}
+/* 揺れは廃止。クラスは互換のため残す（何もしない） */
+.vhs-shake{animation:none}
+.overlay.dead .ov-go{position:relative;color:#ff2b47;font-size:36px;letter-spacing:5px;
+  text-shadow:0 0 22px #ff2b4788,0 0 60px #a3122a66}
+/* RGBスプリット: 常時2本ズレを重ねるのではなく、6.5秒周期の一瞬(3%)だけ狂う */
+.overlay.dead .ov-go::before,.overlay.dead .ov-go::after{content:attr(data-glitch);position:absolute;inset:0;opacity:0}
+.overlay.dead .ov-go::before{color:#0ef;animation:glitchA 6.5s steps(2) infinite}
+.overlay.dead .ov-go::after{color:#ff5f7a;animation:glitchB 6.5s steps(2) infinite .12s}
+@keyframes glitchA{0%,93.9%,97.1%,100%{opacity:0;transform:none}94%{opacity:.6;transform:translate(-4px,1px)}95.5%{opacity:.35;transform:translate(2px,-1px)}97%{opacity:0}}
+@keyframes glitchB{0%,93.9%,97.1%,100%{opacity:0;transform:none}94%{opacity:.55;transform:translate(4px,-1px)}95.5%{opacity:.3;transform:translate(-2px,1px)}97%{opacity:0}}
 .overlay.dead .ov-sub{color:#c98b95}
 .overlay.dead .dead-photo{border-color:#12030a;box-shadow:0 0 0 3px #a3122a,0 12px 34px #000d;filter:saturate(.55) brightness(.8) contrast(1.05)}
 .overlay.dead .dead-name{color:#f3d9dc}
@@ -203,17 +222,28 @@ body{font-family:-apple-system,"Hiragino Kaku Gothic ProN","Noto Sans JP",sans-s
 .overlay.dead .btn{background:linear-gradient(135deg,#a3122a,#ff2b47);box-shadow:0 8px 24px #a3122a66}
 .overlay.dead .btn.sub{background:transparent;color:#e08a97;border-color:#5a1b26}
 
-/* ===== 冤罪（誤ってクロ判定）: 白黒混合のグレー＋黒いオーブ ===== */
+/* ===== 冤罪（誤ってクロ判定）: 白黒混合のグレー＋黒いオーブ =====
+   方針: 音のない世界。大きく柔らかいオーブが呼吸するようにゆっくり漂うだけ。
+   派手さゼロ、罪悪感の静けさ */
 .overlay.enzai{background:
   radial-gradient(90% 70% at 20% 15%,#f4f4f5 0%,transparent 60%),
   radial-gradient(80% 65% at 85% 80%,#3c3b41 0%,transparent 65%),
   radial-gradient(120% 100% at 50% 50%,#cbcacf 0%,#8f8e95 70%,#6b6a71 100%);
   color:#2a282e;overflow:hidden}
+/* 靄（もや）: 巨大なぼかし塊が反対方向に超低速で流れ、灰色が「混ざり続ける」 */
+.fx-orbs::before,.fx-orbs::after{content:'';position:absolute;width:120%;height:70%;border-radius:50%;
+  filter:blur(70px);pointer-events:none}
+.fx-orbs::before{top:-20%;left:-30%;background:radial-gradient(circle,#ffffff55,transparent 70%);
+  animation:fogA 26s ease-in-out infinite alternate}
+.fx-orbs::after{bottom:-25%;right:-30%;background:radial-gradient(circle,#1a191dcc,transparent 70%);
+  animation:fogB 32s ease-in-out infinite alternate}
+@keyframes fogA{from{transform:translate(0,0)}to{transform:translate(18%,10%)}}
+@keyframes fogB{from{transform:translate(0,0)}to{transform:translate(-16%,-8%)}}
 .fx-orbs{z-index:1}
-.orb{position:absolute;border-radius:50%;opacity:.55;filter:blur(1.5px);
-  background:radial-gradient(circle at 34% 28%,#4a4950,#141317 68%,#000 100%);
-  box-shadow:0 6px 22px #0006;animation:orbFloat ease-in-out infinite alternate}
-@keyframes orbFloat{from{transform:translate(0,0) scale(1)}to{transform:translate(14px,-26px) scale(1.08)}}
+.orb{position:absolute;border-radius:50%;
+  background:radial-gradient(circle at 34% 28%,#3d3c43,#101014 68%,#000 100%);
+  animation:orbFloat ease-in-out infinite alternate}
+@keyframes orbFloat{from{transform:translate(0,0)}to{transform:translate(10px,-34px)}}
 .overlay.enzai .ov-go{color:#3a383f}
 .overlay.enzai .ov-sub{color:#57555d}
 .overlay.enzai .dead-photo{border-color:#e6e5e9;box-shadow:0 6px 18px #0004,0 0 0 3px #a5a4ab;filter:grayscale(.55)}
@@ -222,19 +252,34 @@ body{font-family:-apple-system,"Hiragino Kaku Gothic ProN","Noto Sans JP",sans-s
 .overlay.enzai .btn{background:linear-gradient(135deg,#4c4a52,#77757e);box-shadow:0 8px 20px #0003}
 .overlay.enzai .btn.sub{background:#ffffff70;color:#4c4a52;border-color:#9d9ca3}
 
-/* ===== CLEAR: 神々しい水色 ===== */
+/* ===== CLEAR: 神々しい水色 =====
+   方針: 紙吹雪ではなく「光の中に浮かび上がる」。
+   ・天からの淡い光条（ゆっくり呼吸）
+   ・粒子は少数精鋭。奥行き（ぼかし差）を持たせて漂うように上る */
 .overlay.holy{background:radial-gradient(130% 100% at 50% 0%,#ffffff 0%,#eaf8ff 45%,#c8ecff 100%);overflow:hidden}
-/* 背景そのものが水色→白へ上へ流れる光の帯 */
 .fx-holy{z-index:1}
-.hlight{position:absolute;left:-25%;right:-25%;height:42%;
-  background:radial-gradient(50% 50% at 50% 50%,#ffffffd9 0%,#d8f2ff66 55%,transparent 75%);
-  filter:blur(26px);transform:translateY(110vh);animation:hlRise linear infinite}
-@keyframes hlRise{0%{transform:translateY(110vh);opacity:0}12%{opacity:1}88%{opacity:1}100%{transform:translateY(-70vh);opacity:0}}
-/* 下から上へのぼる白いキラキラ粒子 */
+/* 天からの光条（2本の斜めシャフトが超低速で明滅） */
+.fx-holy::before,.fx-holy::after{content:'';position:absolute;top:-20%;height:130%;width:34%;
+  background:linear-gradient(to bottom,#ffffffcc,#e8f7ff44 55%,transparent 85%);
+  filter:blur(28px);pointer-events:none}
+.fx-holy::before{left:8%;transform:skewX(-9deg);animation:shaft 9s ease-in-out infinite alternate}
+.fx-holy::after{right:6%;width:26%;transform:skewX(7deg);animation:shaft 12s ease-in-out infinite alternate 2s}
+@keyframes shaft{from{opacity:.25}to{opacity:.85}}
+/* 上昇する光の帯（背景ごと上に流れている感覚） */
+.hlight{position:absolute;left:-25%;right:-25%;height:46%;
+  background:radial-gradient(50% 50% at 50% 50%,#ffffffb8 0%,#d8f2ff55 55%,transparent 75%);
+  filter:blur(34px);transform:translateY(110vh);animation:hlRise linear infinite}
+@keyframes hlRise{0%{transform:translateY(110vh);opacity:0}14%{opacity:.9}86%{opacity:.9}100%{transform:translateY(-70vh);opacity:0}}
+/* 粒子: 少数・低速・奥行き。まっすぐではなく僅かに揺れながら上る */
 .spark{position:absolute;bottom:-3%;border-radius:50%;background:#fff;
-  box-shadow:0 0 6px #fff,0 0 14px #aee6ff,0 0 26px #8fdcff88;
-  animation:sparkUp linear infinite}
-@keyframes sparkUp{0%{transform:translateY(0) scale(1);opacity:0}8%{opacity:1}80%{opacity:.9}100%{transform:translateY(-108vh) scale(.35);opacity:0}}
+  box-shadow:0 0 6px #fff,0 0 14px #aee6ff,0 0 26px #8fdcff66;
+  animation:sparkUp ease-in infinite}
+@keyframes sparkUp{
+  0%{transform:translate(0,0) scale(1);opacity:0}
+  10%{opacity:.95}
+  40%{transform:translate(9px,-42vh) scale(.8)}
+  70%{transform:translate(-7px,-74vh) scale(.6);opacity:.8}
+  100%{transform:translate(4px,-108vh) scale(.3);opacity:0}}
 /* タイム（クリア時のみ表示） */
 .holy-time{display:flex;flex-direction:column;align-items:center;margin:2px 0 14px}
 .ht-n{font-size:44px;font-weight:900;letter-spacing:1px;color:#1e90c9;text-shadow:0 0 24px #9fdcff;line-height:1.1;font-variant-numeric:tabular-nums}
