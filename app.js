@@ -28,6 +28,18 @@ const DARK_TAGS=[
   {id:'d_kanshi',label:'監視カメラ鑑賞'},{id:'d_kokkaku',label:'骨格標本'},{id:'d_rope',label:'ロープの結び方研究'},
   {id:'d_soshiki',label:'お葬式に参列すること'},{id:'d_otoshimono',label:'落とし物あつめ'},{id:'d_kagi',label:'鍵作り'},
 ];
+/* 闇タグの図鑑記録用: 説明(d)＋難易度(s)。画像は assets/tags/<id>.png を流用 */
+const TAG_DARKDESC={
+  d_haka:{d:'興味・関心に「墓地巡り」。故人を悼むためではないらしい',s:2},
+  d_hamono:{d:'興味・関心に「刃物あつめ」。飾るためではない',s:2},
+  d_biko:{d:'興味・関心に「深夜の尾行」。誰かの後ろを、夜ごと歩いている',s:1},
+  d_kanshi:{d:'興味・関心に「監視カメラ鑑賞」。映っているのは、知らない誰かの日常',s:1},
+  d_kokkaku:{d:'興味・関心に「骨格標本」。部屋に、骨が並んでいる',s:2},
+  d_rope:{d:'興味・関心に「ロープの結び方研究」。アウトドアの話ではないらしい',s:3},
+  d_soshiki:{d:'興味・関心に「お葬式に参列すること」。知らない人の葬式にも、行く',s:2},
+  d_otoshimono:{d:'興味・関心に「落とし物あつめ」。集めるだけで、届けはしない',s:3},
+  d_kagi:{d:'興味・関心に「鍵作り」。作っているのは、他人の家の合鍵',s:1},
+};
 const tagImg=t=>encodeURI(`assets/tags/${t.id}.png`);
 
 const WANT_POOL=['まずは友達から','恋人募集','気軽に話したい','結婚を視野に','価値観の合う人'];
@@ -196,6 +208,7 @@ function buildRun(){
         const dark=pick(DARK_TAGS);
         const i=Math.floor(Math.random()*entry.tagList.length);
         entry.tagList=entry.tagList.slice(); entry.tagList[i]=dark;
+        tell.darkTag=dark.id;                    // 図鑑記録用
         tell.desc=`タグ異変: ${dark.label}`;
       }else if(t.type==='bio'){
         entry.bioOverride=t.mode==='replace'?t.text:p.bio+t.text;
@@ -583,7 +596,9 @@ function getDark(){ try{return JSON.parse(localStorage.getItem('amaryDark')||'[]
 function collectDarkRun(){
   const got=new Set(getDark());
   for(const e of run){
-    if(e.danger&&e.tell&&e.tell.swaps) Object.values(e.tell.swaps).forEach(p=>got.add(p));
+    if(!e.danger||!e.tell)continue;
+    if(e.tell.swaps) Object.values(e.tell.swaps).forEach(p=>got.add(p));   // 写真異変
+    if(e.tell.darkTag) got.add('tag:'+e.tell.darkTag);                     // タグ異変
   }
   localStorage.setItem('amaryDark',JSON.stringify([...got]));
 }
@@ -602,11 +617,21 @@ function darkEntries(){
   const order=paths.map((_,i)=>i);
   for(let i=order.length-1;i>0;i--){const j=(r()*(i+1))|0;[order[i],order[j]]=[order[j],order[i]];}
   const got=new Set(getDark());
-  return paths.map((p,i)=>{
+  const photo=paths.map((p,i)=>{
     const meta=(window.DARKDESC||{})[p]||{};
-    return {path:p,no:order[i]+1,got:got.has(p),
-      desc:meta.d||'',star:meta.s||3};
-  }).sort((a,b)=>a.no-b.no);
+    return {kind:'photo',key:p,img:p,no:order[i]+1,got:got.has(p),desc:meta.d||'',star:meta.s||3};
+  });
+  // 写真異変(1〜72)の後ろに闇タグ(73〜)を追加。写真のNo.は不変に保つため別シードで採番
+  const N=paths.length;
+  const r2=mulberry32(20260705);
+  const torder=DARK_TAGS.map((_,i)=>i);
+  for(let i=torder.length-1;i>0;i--){const j=(r2()*(i+1))|0;[torder[i],torder[j]]=[torder[j],torder[i]];}
+  const tags=DARK_TAGS.map((t,i)=>{
+    const meta=TAG_DARKDESC[t.id]||{};
+    return {kind:'tag',key:'tag:'+t.id,img:tagImg(t),label:t.label,no:N+torder[i]+1,
+      got:got.has('tag:'+t.id),desc:meta.d||'',star:meta.s||2};
+  });
+  return photo.concat(tags).sort((a,b)=>a.no-b.no);
 }
 const starsHTML=n=>Array.from({length:5},(_,i)=>`<span class="st ${i<n?'on':''}">★</span>`).join('');
 const df=document.getElementById('darkfile');
@@ -620,8 +645,8 @@ function openDarkFile(){
       <button class="df-close" id="dfClose" data-icon="x"></button></div>
     <div class="df-grid">
       ${items.map(e=>e.got?`
-        <div class="df-cell" data-no="${e.no}">
-          <div class="df-thumb" style="background-image:url('${encodeURI(e.path)}')"></div>
+        <div class="df-cell${e.kind==='tag'?' tagcell':''}" data-no="${e.no}">
+          <div class="df-thumb" style="background-image:url('${encodeURI(e.img)}')">${e.kind==='tag'?`<span class="df-tag">${e.label}</span>`:''}</div>
           <span class="df-no">闇No.${String(e.no).padStart(2,'0')}</span>
           <span class="df-stars">${starsHTML(e.star)}</span>
         </div>`:`
@@ -640,7 +665,10 @@ function openDarkFile(){
     d.className='df-detail';
     d.innerHTML=`
       <div class="df-d-inner">
-        <img src="${encodeURI(e.path)}" alt="">
+        <div class="df-d-img-wrap">
+          <img src="${encodeURI(e.img)}" alt="">
+          ${e.kind==='tag'?`<span class="df-d-tag">${e.label}</span>`:''}
+        </div>
         <div class="df-d-no">闇No.${String(e.no).padStart(2,'0')}</div>
         <div class="df-d-stars">${starsHTML(e.star)}</div>
         <p class="df-d-desc">${e.desc}</p>

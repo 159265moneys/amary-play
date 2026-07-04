@@ -378,9 +378,13 @@ body{font-family:-apple-system,"Hiragino Kaku Gothic ProN","Noto Sans JP",sans-s
 .df-grid{flex:1;overflow-y:auto;display:grid;grid-template-columns:repeat(3,1fr);gap:6px;
   padding:12px 12px calc(24px + env(safe-area-inset-bottom,0px));align-content:start}
 .df-cell{position:relative}
-.df-thumb{aspect-ratio:4/5;border-radius:8px;background-size:cover;background-position:center top;
-  border:1px solid #2a121a;filter:saturate(.85) brightness(.92)}
+.df-thumb{position:relative;aspect-ratio:4/5;border-radius:8px;background-size:cover;background-position:center top;
+  border:1px solid #2a121a;filter:saturate(.85) brightness(.92);overflow:hidden}
 .df-cell:active .df-thumb{filter:none}
+/* 闇タグの札（興味・関心カードそのまま。画像の上にラベルを重ねる） */
+.df-tag{position:absolute;left:0;right:0;bottom:0;padding:16px 7px 7px;
+  background:linear-gradient(to top,#000000e0,transparent);
+  color:#fff;font-size:11px;font-weight:800;line-height:1.2;text-shadow:0 1px 4px #000}
 .df-no{position:absolute;left:5px;top:5px;font-size:9.5px;font-weight:700;letter-spacing:.06em;
   color:#ff8a9c;background:#0a0508cc;padding:2px 6px;border-radius:6px}
 /* 収集数カウンタ */
@@ -390,6 +394,8 @@ body{font-family:-apple-system,"Hiragino Kaku Gothic ProN","Noto Sans JP",sans-s
   font-size:8.5px;letter-spacing:1px;line-height:1}
 .st{color:#3a1a22}
 .st.on{color:#e0264f;text-shadow:0 0 5px #a3122a88}
+/* タグ札はラベルが下端を占めるので、難易度★は右上へ逃がす */
+.tagcell .df-stars{top:5px;bottom:auto}
 .df-d-stars{margin-top:6px;font-size:15px;letter-spacing:4px}
 /* 未収集: UNIDENTIFIED */
 .df-unknown .df-thumb{display:flex;align-items:center;justify-content:center;
@@ -404,8 +410,13 @@ body{font-family:-apple-system,"Hiragino Kaku Gothic ProN","Noto Sans JP",sans-s
   align-items:center;justify-content:center;animation:tFade .25s ease}
 .df-d-inner{width:100%;max-width:340px;padding:16px 20px;display:flex;flex-direction:column;align-items:center}
 /* 画像は縦を抑えて、説明＋ボタンが必ず画面内に収まる配分にする */
+.df-d-img-wrap{position:relative;width:100%;display:flex;justify-content:center}
 .df-d-inner img{width:100%;max-height:52vh;object-fit:contain;border-radius:12px;
   border:1px solid #3a1a24;box-shadow:0 12px 44px #000c}
+/* タグ詳細: 画像の上に興味・関心カードのラベルを大きく重ねる */
+.df-d-tag{position:absolute;left:0;right:0;bottom:0;padding:34px 18px 16px;
+  background:linear-gradient(to top,#000000e6,transparent);border-radius:0 0 12px 12px;
+  color:#fff;font-size:20px;font-weight:800;text-align:left;text-shadow:0 1px 6px #000}
 .df-d-no{margin-top:12px;font-size:13px;font-weight:800;letter-spacing:.2em;color:#ff8a9c}
 /* 説明は最大3行（従来+1行）。超過は構造的に不可能（clamp） */
 .df-d-desc{margin-top:7px;font-size:13px;line-height:1.85;color:#cfaab2;text-align:center;
