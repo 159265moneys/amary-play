@@ -664,7 +664,6 @@ function openDrawer(){
   document.getElementById('drawer').innerHTML=`
     <div class="dw-title">設定<button class="dw-close" id="dwClose" data-icon="x"></button></div>
     <div class="dw-sec">サウンド</div>
-    <div class="dw-row"><label>BGM</label><input type="range" min="0" max="100" value="${vol('amaryVolBGM',70)}" id="dwBGM"><span class="dw-val" id="dwBGMv">${vol('amaryVolBGM',70)}</span></div>
     <div class="dw-row"><label>SE</label><input type="range" min="0" max="100" value="${vol('amaryVolSE',70)}" id="dwSE"><span class="dw-val" id="dwSEv">${vol('amaryVolSE',70)}</span></div>
     <div class="dw-sec">記録（ベストタイム）</div>
     ${recs}
@@ -673,7 +672,6 @@ function openDrawer(){
   drawerWrap.classList.remove('hidden');
   document.getElementById('dwClose').addEventListener('click',closeDrawer);
   document.getElementById('drawerBack').addEventListener('click',closeDrawer);
-  document.getElementById('dwBGM').addEventListener('input',e=>{localStorage.setItem('amaryVolBGM',e.target.value);document.getElementById('dwBGMv').textContent=e.target.value;});
   document.getElementById('dwSE').addEventListener('input',e=>{localStorage.setItem('amaryVolSE',e.target.value);document.getElementById('dwSEv').textContent=e.target.value;});
   const dk=document.getElementById('dwDark');
   if(dk)dk.addEventListener('click',()=>{closeDrawer();openDarkFile();});
