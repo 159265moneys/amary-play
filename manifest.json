@@ -277,7 +277,11 @@
       "img/f26/26-4.webp",
       "img/f26/26-5.webp"
     ],
-    "anomalies": {}
+    "anomalies": {
+      "3": [
+        "img/f26/26-4-1.webp"
+      ]
+    }
   },
   "女27": {
     "photos": [
@@ -290,6 +294,51 @@
     "anomalies": {
       "0": [
         "img/f27/27-1-1.webp"
+      ]
+    }
+  },
+  "女28": {
+    "photos": [
+      "img/f28/28-1.webp",
+      "img/f28/28-2.webp",
+      "img/f28/28-3.webp",
+      "img/f28/28-4.webp",
+      "img/f28/28-5.webp"
+    ],
+    "anomalies": {
+      "1": [
+        "img/f28/28-2-1.webp"
+      ],
+      "3": [
+        "img/f28/28-4-1.webp"
+      ]
+    }
+  },
+  "女29": {
+    "photos": [
+      "img/f29/29-1.webp",
+      "img/f29/29-2.webp",
+      "img/f29/29-3.webp",
+      "img/f29/29-4.webp",
+      "img/f29/29-5.webp"
+    ],
+    "anomalies": {
+      "2": [
+        "img/f29/29-3-1.webp"
+      ]
+    }
+  },
+  "女30": {
+    "photos": [
+      "img/f30/30-1.webp",
+      "img/f30/30-2.webp",
+      "img/f30/30-3.webp",
+      "img/f30/30-4.webp",
+      "img/f30/30-5.webp"
+    ],
+    "anomalies": {
+      "1": [
+        "img/f30/30-2-1.webp"
       ]
     }
   },
