@@ -131,66 +131,6 @@ function haptic(kind){
     }
   }catch(_){}
 }
-/* ---- SE: Web Audioで全部合成（音源ファイルゼロ）。Menu の SE 音量(amaryVolSE)に連動。
-   本編は基本無音（マチアプ感）。鳴らすのは システム音／GAME OVER／CLEAR の3つだけ ---- */
-let _actx=null,_seMaster=null;
-function ensureAudio(){
-  if(_actx){ if(_actx.state==='suspended')_actx.resume().catch(()=>{}); return _actx; }
-  try{
-    const AC=window.AudioContext||window.webkitAudioContext; if(!AC)return null;
-    _actx=new AC(); _seMaster=_actx.createGain(); _seMaster.gain.value=1; _seMaster.connect(_actx.destination);
-  }catch(_){ _actx=null; }
-  return _actx;
-}
-function seVol(){ const v=parseInt(localStorage.getItem('amaryVolSE')); return (isNaN(v)?70:v)/100; }
-function _tone(ctx,{type='sine',f0,f1,t0,dur,peak,attack=0.004,dest}){
-  const o=ctx.createOscillator(),g=ctx.createGain();
-  o.type=type; o.frequency.setValueAtTime(f0,t0);
-  if(f1!=null)o.frequency.exponentialRampToValueAtTime(Math.max(1,f1),t0+dur);
-  g.gain.setValueAtTime(0.0001,t0);
-  g.gain.exponentialRampToValueAtTime(Math.max(0.0002,peak),t0+attack);
-  g.gain.exponentialRampToValueAtTime(0.0001,t0+dur);
-  o.connect(g); g.connect(dest||_seMaster); o.start(t0); o.stop(t0+dur+0.03);
-}
-function _noiseHit(ctx,{t0,dur,peak,cutoff,dest}){
-  const n=Math.max(1,Math.floor(ctx.sampleRate*dur)),b=ctx.createBuffer(1,n,ctx.sampleRate),d=b.getChannelData(0);
-  for(let i=0;i<n;i++)d[i]=(Math.random()*2-1)*(1-i/n);
-  const s=ctx.createBufferSource(); s.buffer=b;
-  const lp=ctx.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=cutoff;
-  const g=ctx.createGain(); g.gain.setValueAtTime(peak,t0); g.gain.exponentialRampToValueAtTime(0.0001,t0+dur);
-  s.connect(lp); lp.connect(g); g.connect(dest||_seMaster); s.start(t0); s.stop(t0+dur+0.02);
-}
-/* システム音: スワイプ判定と主要ボタン。方向で僅かに音程を変える（シロ=高/クロ=低） */
-function seClick(dir){
-  const ctx=ensureAudio(); if(!ctx)return; const v=seVol(); if(v<=0)return;
-  const t=ctx.currentTime, base=dir==='like'?900:dir==='nope'?540:720;
-  _tone(ctx,{type:'triangle',f0:base,f1:base*0.93,t0:t,dur:0.085,peak:0.16*v,attack:0.002});
-}
-const seTap=()=>seClick();
-/* GAME OVER: 低い不協和が沈む＋衝撃。冤罪はsoft=trueで軽く悲しく */
-function seGameOver(soft){
-  const ctx=ensureAudio(); if(!ctx)return; const v=seVol(); if(v<=0)return;
-  const t=ctx.currentTime, k=soft?0.5:1;
-  _noiseHit(ctx,{t0:t,dur:soft?0.18:0.28,peak:0.28*v*k,cutoff:soft?300:460});
-  _tone(ctx,{type:'sawtooth',f0:soft?120:140,f1:soft?70:55,t0:t,dur:soft?1.1:1.7,peak:0.2*v*k,attack:0.004});
-  if(!soft)_tone(ctx,{type:'sawtooth',f0:147,f1:58,t0:t,dur:1.7,peak:0.15*v,attack:0.004});
-  _tone(ctx,{type:'sine',f0:72,f1:40,t0:t,dur:soft?1.3:1.9,peak:0.24*v,attack:0.012});
-}
-/* CLEAR: 明るい長三和音が少しずつ立ちのぼる＋上昇シマー */
-function seClear(){
-  const ctx=ensureAudio(); if(!ctx)return; const v=seVol(); if(v<=0)return;
-  const t=ctx.currentTime, chord=[523.25,659.25,783.99,1046.5];
-  chord.forEach((f,i)=>_tone(ctx,{type:'sine',f0:f*0.994,f1:f,t0:t+i*0.13,dur:1.9-i*0.12,peak:(0.15-i*0.022)*v,attack:0.05}));
-  _tone(ctx,{type:'triangle',f0:1046,f1:2093,t0:t+0.25,dur:1.5,peak:0.045*v,attack:0.22});
-}
-/* CLEARのクロ判定爆発（闇の侵入）: 短い暗い衝撃 */
-function seThud(){
-  const ctx=ensureAudio(); if(!ctx)return; const v=seVol(); if(v<=0)return;
-  const t=ctx.currentTime;
-  _noiseHit(ctx,{t0:t,dur:0.3,peak:0.24*v,cutoff:520});
-  _tone(ctx,{type:'sine',f0:96,f1:46,t0:t,dur:0.55,peak:0.22*v,attack:0.003});
-}
-
 /* ---- クロ側心拍ビネット: 左への傾きに応じて縁を暗くし、鼓動させる ---- */
 const dreadEl=document.getElementById('dread');
 function setDread(dx){
@@ -480,7 +420,7 @@ function commit(dir){
   if(tutorial)return tutCommit(dir);                      // チュートリアル中は専用処理（死なない）
   const entry=run[idx]; if(!entry)return;
   committing=true;
-  haptic('light'); seClick(dir);   // 捺印の手応え＋システム音
+  haptic('light');   // 捺印の手応え
   const judgedSafe=dir==='like';
   const correct=entry.danger?!judgedSafe:judgedSafe;
   const prof=document.getElementById('profile');
@@ -606,7 +546,7 @@ function startBloodFX(host){
 function stopOverlayFx(){ if(ov._stopFx){ov._stopFx(); ov._stopFx=null;} }
 function gameOver(entry,judgedSafe){
   lives--; updateHUD();
-  haptic('heavy'); seGameOver(!entry.danger);   // 死＝重い衝撃 / 冤罪＝軽く悲しく
+  haptic('heavy');   // GAME OVERの重い衝撃
   // 8番出口方式：答え合わせはしない。「異変があった/なかった」だけ。
   const dead=entry.danger;   // クロを見逃してシロ判定＝死 / 普通の人をクロ判定＝冤罪
   stopOverlayFx();
@@ -744,7 +684,6 @@ function openDarkFile(){
 }
 /* ============ 設定ドロワー（⚙・左からスライド） ============ */
 const drawerWrap=document.getElementById('drawerWrap');
-function vol(key,def){const v=parseInt(localStorage.getItem(key));return isNaN(v)?def:v;}
 function openDrawer(){
   const times=(()=>{try{return JSON.parse(localStorage.getItem('amaryTimes')||'[]');}catch(_){return [];}})();
   const recs=times.length
@@ -756,8 +695,6 @@ function openDrawer(){
     : '';
   document.getElementById('drawer').innerHTML=`
     <div class="dw-title">Menu<button class="dw-close" id="dwClose" data-icon="x"></button></div>
-    <div class="dw-sec">サウンド</div>
-    <div class="dw-row"><label>SE</label><input type="range" min="0" max="100" value="${vol('amaryVolSE',70)}" id="dwSE"><span class="dw-val" id="dwSEv">${vol('amaryVolSE',70)}</span></div>
     <div class="dw-sec">記録（ベストタイム）</div>
     ${recs}
     ${darkBtn}`;
@@ -765,8 +702,6 @@ function openDrawer(){
   drawerWrap.classList.remove('hidden');
   document.getElementById('dwClose').addEventListener('click',closeDrawer);
   document.getElementById('drawerBack').addEventListener('click',closeDrawer);
-  document.getElementById('dwSE').addEventListener('input',e=>{localStorage.setItem('amaryVolSE',e.target.value);document.getElementById('dwSEv').textContent=e.target.value;});
-  document.getElementById('dwSE').addEventListener('change',()=>seTap());   // 離した時に今の音量を試聴
   const dk=document.getElementById('dwDark');
   if(dk)dk.addEventListener('click',()=>{closeDrawer();openDarkFile();});
 }
@@ -776,7 +711,6 @@ document.querySelector('.appbar .icon-btn[aria-label="menu"]').addEventListener(
 function win(){
   stopOverlayFx();
   collectDarkRun();                              // クリアしたランのクロを記録
-  seClear();                                     // 浄化の音（ホワイトアウト→天国と共に）
   const firstTime=!localStorage.getItem('amaryDarkPopup');
   ov.className='overlay holy';
   const kuro=run.length-matched;
@@ -842,7 +776,6 @@ function kuroCorrupt(firstTime){
   }
   setTimeout(()=>{
     fx.querySelectorAll('.kuro-p').forEach(p=>p.remove());
-    seThud();                                    // 爆発＝闇の侵入音
     const b=document.createElement('div'); b.className='kuro-burst';
     b.style.left=cx+'px'; b.style.top=cy+'px'; fx.appendChild(b);
     el.style.opacity='0';                          // 数字は消えてなくなる
@@ -966,7 +899,7 @@ function tutCommit(dir){
     setTimeout(()=>tutNudge(true),320);
     return;
   }
-  committing=true; setJudgeBg(dir==='like'?1:-1); haptic('light'); seClick(dir);
+  committing=true; setJudgeBg(dir==='like'?1:-1); haptic('light');
   prof.style.transition='transform .3s ease-out, opacity .3s ease-out';
   prof.style.transform=`translateX(${dir==='like'?600:-600}px) rotate(${dir==='like'?9:-9}deg)`;
   prof.style.opacity='0';
@@ -987,9 +920,8 @@ document.querySelectorAll('.float-actions .act').forEach(b=>b.addEventListener('
 /* UI操作全般に軽いコツン（押した瞬間＝pointerdown）。
    判定ボタン.actと写真送りはそれぞれ専用にhapticを鳴らすため二重防止で除外 */
 document.getElementById('app').addEventListener('pointerdown',e=>{
-  ensureAudio();                                  // 最初のタップでオーディオ起動（iOS対策）
   if(e.target.closest('.act,.photo-wrap'))return;
-  if(e.target.closest('button,.df-cell,.dw-dark')){ haptic('light'); seTap(); }
+  if(e.target.closest('button,.df-cell,.dw-dark')) haptic('light');
 },true);
 
 paintIcons(document);
