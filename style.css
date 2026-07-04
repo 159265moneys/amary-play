@@ -95,19 +95,10 @@ body{font-family:-apple-system,"Hiragino Kaku Gothic ProN","Noto Sans JP",sans-s
 .qa .q{font-size:11.5px;color:var(--sub);margin-bottom:3px}
 .qa .a{font-size:15px;font-weight:600}
 
-/* スワイプでズレて見える背景を判定色に染め、判定文字を背景に直接大書きする */
-.scroll.judge-shiro{background:radial-gradient(120% 90% at 70% 20%,#ffffff 0%,#dff4ff 45%,#b9e6ff 100%)}
-.scroll.judge-kuro{background:radial-gradient(120% 90% at 30% 20%,#3a0d15 0%,#20070c 55%,#0e0306 100%)}
-.judge-layer{position:sticky;top:0;height:0;z-index:0;pointer-events:none}
+/* スワイプでズレて見える判定背景＝生成スプライト（筆文字ごと描き込み済みのキーアート） */
+.scroll.judge-shiro{background:#dff0fb url('assets/judge/shiro.webp') left center/cover no-repeat}
+.scroll.judge-kuro{background:#0c0205 url('assets/judge/kuro.webp') right center/cover no-repeat}
 .profile{position:relative;z-index:1}
-.jw{position:absolute;top:120px;font-size:88px;font-weight:900;opacity:0;
-  transition:opacity .12s ease;width:1em;word-break:break-all;line-height:1.08;text-align:center}
-.jw-shiro{left:18px;color:#2fa8de;
-  text-shadow:0 0 18px #ffffff,0 0 42px #8fdcff,0 2px 6px #ffffffcc}
-.jw-kuro{right:18px;color:#ff2b47;
-  text-shadow:0 0 18px #40000a,0 0 46px #a3122a,0 2px 8px #000}
-.scroll.judge-shiro .jw-shiro{opacity:1}
-.scroll.judge-kuro .jw-kuro{opacity:1}
 
 /* zoom */
 .zoom{position:absolute;inset:0;background:#000;z-index:60;display:flex;align-items:center;justify-content:center;overflow:hidden}
