@@ -658,8 +658,8 @@ function openDarkFile(){
       <span class="df-count">発見率 ${Math.round(gotCount/items.length*100)}%</span>
       <button class="df-close" id="dfClose" data-icon="x"></button></div>
     <div class="df-scroll">
-      ${section('写真異変',items.filter(e=>e.kind==='photo'))}
-      ${section('タグ異変',items.filter(e=>e.kind==='tag'))}
+      ${section('写真',items.filter(e=>e.kind==='photo'))}
+      ${section('興味・関心',items.filter(e=>e.kind==='tag'))}
     </div>
     <div class="df-detail hidden" id="dfDetail"></div>`;
   paintIcons(df);
