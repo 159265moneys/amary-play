@@ -138,9 +138,18 @@ function buildRun(){
       }
       if(candidates.length){
         const c=pick(candidates);
-        if(c.prof)      tell={kind:'prof',t:c.prof};
+        if(c.prof){
+          tell={kind:'prof',t:c.prof};
+          // withPhoto: プロフ異変単体を禁止し、必ず写真異変を随伴させる（例: 女4の「たすけて」）
+          if(c.prof.withPhoto){
+            const ss=Object.keys(anomalies);
+            if(ss.length){const s=pick(ss); tell.swaps={[s]:pick(anomalies[s])};}
+            else tell=null;   // 随伴できないなら発動しない（単体NGの契約を守る）
+          }
+        }
         else if(c.single!==undefined) tell={kind:'photo',swaps:{[c.single]:pick(anomalies[c.single])}};
         else            tell={kind:'photo',swaps:{...c.combo}};
+        if(!tell) danger=false;
       }else if(UI_TELLS.length){
         tell={kind:'ui',type:pick(UI_TELLS)};
       }else{
@@ -185,7 +194,7 @@ function photoSet(entry){
 }
 function photoURL(entry,i){
   const t=entry.tell;
-  if(t&&t.kind==='photo'&&t.swaps&&t.swaps[i]) return encodeURI(t.swaps[i]);   // 危険ラン＝該当スロットのみ異変verに差し替え
+  if(t&&t.swaps&&t.swaps[i]) return encodeURI(t.swaps[i]);   // 危険ラン＝該当スロットのみ異変verに差し替え（prof随伴のswapsも含む）
   const s=photoSet(entry);
   const path=(s&&s.photos[i])?s.photos[i]:`${PHOTO_BASE}/${entry.p.folder}/${i+1}.png`;
   return encodeURI(path);
@@ -278,7 +287,7 @@ function showPhoto(wrap,i){
   if(changed){photo.classList.remove('anim');void photo.offsetWidth;photo.classList.add('anim');}
   wrap.querySelectorAll('.seg').forEach((s,k)=>s.classList.toggle('on',k===i));
   const t=wrap._entry.tell, old=wrap.querySelector('.dbg'); if(old)old.remove();
-  if(DEBUG&&t&&t.kind==='photo'&&t.swaps&&t.swaps[i]){
+  if(DEBUG&&t&&t.swaps&&t.swaps[i]){
     const d=document.createElement('div');d.className='dbg';
     d.style.cssText='position:absolute;top:44px;left:12px;right:12px;z-index:6;background:#ff2d55dd;color:#fff;font-size:11px;padding:6px 9px;border-radius:8px';
     d.textContent='▲ TELL: '+t.swaps[i].split('/').pop(); wrap.appendChild(d);
