@@ -462,7 +462,7 @@ function showStart(){
   ov.className='overlay title';
   ov.innerHTML=`
     <div class="t2-tap" id="t2Tap">
-      <div class="t2-logo">${ICON.spark}<span>Amary</span></div>
+      <div class="t2-logo"><img class="t2-logo-img" src="assets/logo/yummy_white.webp?v=48" alt="Yummy"></div>
       <p class="t2-note">本作はフィクションです。登場する人物・団体・アプリはすべて架空のものであり、実在するサービス・団体・人物とは一切関係ありません。人物写真はすべてAIによって生成された、実在しない人物です。本作には犯罪・ストーカー行為等を示唆する表現が含まれます。</p>
     </div>`;
   paintIcons(ov);
