@@ -476,7 +476,7 @@ function startBloodFX(host){
   const N=8;
   for(let i=0;i<N;i++){
     const x=W*((i+0.15+Math.random()*0.7)/N);
-    drips.push({x, w:2.4+Math.random()*3.2, speed:9+Math.random()*20,
+    drips.push({x, w:2.4+Math.random()*3.2, speed:18+Math.random()*40,
       maxY:H*(0.34+Math.random()*0.52), phase:Math.random()*100,
       drift:0, stall:Math.random()*0.8, last:{x,y:2}, y:2});
   }
@@ -523,11 +523,10 @@ function gameOver(entry,judgedSafe){
   ov.innerHTML=`
     ${dead?'<div class="fx-goo"></div><div class="fx-vhs"></div>':'<div class="fx-orbs"></div>'}
     <div class="go-inner${dead?' vhs-shake':''}">
-      <div class="ov-go" ${dead?'data-glitch="DEAD END"':''}>${dead?'DEAD END':'冤罪'}</div>
-      <p class="ov-sub">${dead?'死んでしまった':'この人は、普通の人だった'}</p>
+      <div class="ov-go" ${dead?'data-glitch="GAME OVER"':''}>GAME OVER</div>
+      <p class="ov-sub">${dead?'闇にのまれてしまった…':'冤罪をかけてしまった…'}</p>
       <div class="dead-photo" id="deadPhoto"></div>
       <div class="dead-name">${entry.p.name} <span class="dead-age">${entry.p.age}</span></div>
-      <div class="verdict ${dead?'was':'wasnt'}">${dead?'異変があった':'異変はなかった'}</div>
       <p class="ov-progress">${idx} / ${run.length} 人</p>
       <button class="btn" id="retryBtn">もう一度さがす</button>
       <button class="btn sub" id="titleBtn">タイトルへ</button>

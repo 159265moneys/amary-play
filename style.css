@@ -182,8 +182,14 @@ body{font-family:-apple-system,"Hiragino Kaku Gothic ProN","Noto Sans JP",sans-s
 @keyframes vhsRoll{0%{top:110%}12%{top:-8%}100%{top:-8%}}
 /* 揺れは廃止。クラスは互換のため残す（何もしない） */
 .vhs-shake{animation:none}
-.overlay.dead .ov-go{position:relative;color:#ff2b47;font-size:36px;letter-spacing:5px;
-  text-shadow:0 0 22px #ff2b4788,0 0 60px #a3122a66}
+/* ホラー書体（ローカルバンドル・OFL） */
+@font-face{font-family:'Creepster';src:url('assets/fonts/Creepster.woff2') format('woff2');font-display:swap}
+.overlay.dead .ov-go{position:relative;color:#ff2b47;font-size:52px;letter-spacing:6px;
+  font-family:'Creepster','Hiragino Mincho ProN',serif;font-weight:400;
+  text-shadow:0 0 22px #ff2b4788,0 0 60px #a3122a66;margin-bottom:2px}
+/* DEAD側のボタン: 角丸四角＋明朝 */
+.overlay.dead .btn,.overlay.dead .btn.sub{border-radius:10px;
+  font-family:'Hiragino Mincho ProN','Yu Mincho','Noto Serif JP',serif;font-weight:600;letter-spacing:.12em}
 /* RGBスプリット: 常時2本ズレを重ねるのではなく、6.5秒周期の一瞬(3%)だけ狂う */
 .overlay.dead .ov-go::before,.overlay.dead .ov-go::after{content:attr(data-glitch);position:absolute;inset:0;opacity:0}
 .overlay.dead .ov-go::before{color:#0ef;animation:glitchA 6.5s steps(2) infinite}
@@ -221,7 +227,9 @@ body{font-family:-apple-system,"Hiragino Kaku Gothic ProN","Noto Sans JP",sans-s
   background:radial-gradient(circle at 34% 28%,#3d3c43,#101014 68%,#000 100%);
   animation:orbFloat ease-in-out infinite alternate}
 @keyframes orbFloat{from{transform:translate(0,0)}to{transform:translate(10px,-34px)}}
-.overlay.enzai .ov-go{color:#3a383f}
+.overlay.enzai .ov-go{color:#3a383f;letter-spacing:4px}
+/* 冤罪側のボタン: 角丸四角（フォントは現行のまま） */
+.overlay.enzai .btn,.overlay.enzai .btn.sub{border-radius:10px}
 .overlay.enzai .ov-sub{color:#57555d}
 .overlay.enzai .dead-photo{border-color:#e6e5e9;box-shadow:0 6px 18px #0004,0 0 0 3px #a5a4ab;filter:grayscale(.55)}
 .overlay.enzai .verdict.wasnt{background:#e9e8ec;color:#3f3d45}
