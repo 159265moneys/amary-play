@@ -18,6 +18,15 @@ const TAGS=[
   {id:'movie',label:'映画好き'},{id:'travel',label:'旅行したい'},{id:'sauna',label:'サウナー'},{id:'ramen',label:'ラーメン好き'},
   {id:'cooking',label:'料理がすき'},{id:'sake',label:'お酒好き'},{id:'festival',label:'フェス好き'},{id:'cat',label:'猫と暮らす'},
   {id:'dog',label:'犬すき'},{id:'gym',label:'筋トレ'},{id:'drive',label:'ドライブ'},{id:'camera',label:'カメラ・写真'},
+  {id:'onsen',label:'温泉すき'},{id:'camp',label:'キャンプ'},{id:'umi',label:'海がすき'},{id:'live',label:'音楽ライブ'},
+  {id:'sweets',label:'甘いものに目がない'},{id:'dokusho',label:'読書'},{id:'karaoke',label:'カラオケすき'},{id:'yuenchi',label:'遊園地・テーマパーク'},
+];
+/* 闇タグ（プロフ異変）: 趣味の文法に乗っているが、よく考えると常軌を逸している。
+   危険ラン時にタグ1枠だけ差し替わる（写真異変と択一・同時発動なし） */
+const DARK_TAGS=[
+  {id:'d_haka',label:'墓地巡り'},{id:'d_hamono',label:'刃物あつめ'},{id:'d_biko',label:'深夜の尾行'},
+  {id:'d_kanshi',label:'監視カメラ鑑賞'},{id:'d_kokkaku',label:'骨格標本'},{id:'d_rope',label:'ロープの結び方研究'},
+  {id:'d_soshiki',label:'お葬式に参列すること'},{id:'d_otoshimono',label:'落とし物あつめ'},{id:'d_kagi',label:'鍵作り'},
 ];
 const tagImg=t=>encodeURI(`assets/tags/${t.id}.png`);
 
@@ -115,10 +124,11 @@ function buildRun(){
       const set=(window.PHOTOS||{})[p.folder];
       const anomalies=(set&&!Array.isArray(set)&&set.anomalies)||{};
       const sets=(set&&!Array.isArray(set)&&set.anomalySets)||[];   // N-K-2以降＝同時セット（manifest由来）
-      // 【契約】候補は「単発1枚」または「定義済みセット」のどちらか一つだけ。偶発的な同時出しは構造上不可能
+      // 【契約】候補は「単発1枚」「定義済みセット」「プロフ異変1つ」のどれか一つだけ。偶発的な同時出しは構造上不可能
       const candidates=[
         ...Object.keys(anomalies).map(slot=>({single:slot})),
         ...sets.map(m=>({combo:m})),
+        ...(p.profTells||[]).map(t=>({prof:t})),
       ];
       if(p.anomalySets&&p.anomalySets.length){   // data.jsでの手動セット指定（単発素材の組み合わせ）も候補化
         for(const combo of p.anomalySets){
@@ -128,8 +138,9 @@ function buildRun(){
       }
       if(candidates.length){
         const c=pick(candidates);
-        const swaps=c.single!==undefined ? {[c.single]:pick(anomalies[c.single])} : {...c.combo};
-        tell={kind:'photo',swaps};
+        if(c.prof)      tell={kind:'prof',t:c.prof};
+        else if(c.single!==undefined) tell={kind:'photo',swaps:{[c.single]:pick(anomalies[c.single])}};
+        else            tell={kind:'photo',swaps:{...c.combo}};
       }else if(UI_TELLS.length){
         tell={kind:'ui',type:pick(UI_TELLS)};
       }else{
@@ -137,7 +148,7 @@ function buildRun(){
       }
     }
     const ui=(t)=>danger&&tell.kind==='ui'&&tell.type===t;
-    return {
+    const entry={
       p,danger,tell,
       tagList: p.tagIds ? p.tagIds.map(id=>TAGS.find(t=>t.id===id)).filter(Boolean)
                         : shuffle(TAGS.slice()).slice(0,4+(Math.random()*3|0)),
@@ -149,6 +160,20 @@ function buildRun(){
       online: pick(['12分前にオンライン','3時間前にオンライン','1時間前にオンライン','オンライン中']),
       badge: true,
     };
+    // プロフ異変の適用（tell確定後にエントリ側だけを書き換える。p本体は不変）
+    if(tell&&tell.kind==='prof'){
+      const t=tell.t;
+      if(t.type==='tag'){
+        const dark=pick(DARK_TAGS);
+        const i=Math.floor(Math.random()*entry.tagList.length);
+        entry.tagList=entry.tagList.slice(); entry.tagList[i]=dark;
+        tell.desc=`タグ異変: ${dark.label}`;
+      }else if(t.type==='bio'){
+        entry.bioOverride=t.mode==='replace'?t.text:p.bio+t.text;
+        tell.desc='bio異変';
+      }
+    }
+    return entry;
   });
 }
 
@@ -206,7 +231,7 @@ function renderProfile(entry){
 
       <section class="c-sec">
         <h3 class="c-h">自己紹介</h3>
-        <p class="c-bio">${p.bio}</p>
+        <p class="c-bio">${entry.bioOverride||p.bio}</p>
       </section>
 
       <section class="c-sec">
@@ -228,6 +253,12 @@ function renderProfile(entry){
     </div>`;
 
   paintIcons(prof);
+  if(DEBUG&&entry.tell&&entry.tell.kind==='prof'){
+    const d=document.createElement('div');
+    d.style.cssText='position:sticky;top:0;z-index:9;background:#7a2bd6dd;color:#fff;font-size:11px;padding:6px 10px;border-radius:0 0 8px 8px';
+    d.textContent='▲ PROF TELL: '+(entry.tell.desc||entry.tell.t.type);
+    prof.prepend(d);
+  }
   const wrap=prof.querySelector('.photo-wrap'); wrap._entry=entry; wrap._pi=0;
   wrap.querySelector('.segs').innerHTML=Array.from({length:photoCount(entry)},(_,i)=>`<span class="seg ${i===0?'on':''}"></span>`).join('');
   showPhoto(wrap,0);
