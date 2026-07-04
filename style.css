@@ -375,8 +375,13 @@ body{font-family:-apple-system,"Hiragino Kaku Gothic ProN","Noto Sans JP",sans-s
 .df-close{border:none;background:#ffffff10;color:#c98b95;width:36px;height:36px;border-radius:50%;
   display:flex;align-items:center;justify-content:center}
 .df-close .ic{width:16px;height:16px}
-.df-grid{flex:1;overflow-y:auto;display:grid;grid-template-columns:repeat(3,1fr);gap:6px;
-  padding:12px 12px calc(24px + env(safe-area-inset-bottom,0px));align-content:start}
+/* カテゴリ分け: スクロール土台の中に「写真異変」「タグ異変」の見出し＋グリッドを並べる */
+.df-scroll{flex:1;overflow-y:auto;padding-bottom:calc(24px + env(safe-area-inset-bottom,0px))}
+.df-sec{display:flex;align-items:center;justify-content:space-between;padding:16px 14px 9px;
+  font-family:"Hiragino Mincho ProN","Yu Mincho",serif;font-size:15px;font-weight:600;letter-spacing:.18em;color:#e8c9cf;
+  border-bottom:1px solid #24101a;margin:0 4px 4px}
+.df-sec-n{font-family:-apple-system,sans-serif;font-size:12px;font-weight:700;letter-spacing:.06em;color:#8a5c66}
+.df-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:6px 12px 4px}
 .df-cell{position:relative}
 .df-thumb{position:relative;aspect-ratio:4/5;border-radius:8px;background-size:cover;background-position:center top;
   border:1px solid #2a121a;filter:saturate(.85) brightness(.92);overflow:hidden}

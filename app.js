@@ -621,46 +621,51 @@ function darkEntries(){
     const meta=(window.DARKDESC||{})[p]||{};
     return {kind:'photo',key:p,img:p,no:order[i]+1,got:got.has(p),desc:meta.d||'',star:meta.s||3};
   });
-  // 写真異変(1〜72)の後ろに闇タグ(73〜)を追加。写真のNo.は不変に保つため別シードで採番
-  const N=paths.length;
+  // タグ異変は別カテゴリ。No.は独自に1〜9（ネタバレ防止で別シードのランダム固定）
   const r2=mulberry32(20260705);
   const torder=DARK_TAGS.map((_,i)=>i);
   for(let i=torder.length-1;i>0;i--){const j=(r2()*(i+1))|0;[torder[i],torder[j]]=[torder[j],torder[i]];}
   const tags=DARK_TAGS.map((t,i)=>{
     const meta=TAG_DARKDESC[t.id]||{};
-    return {kind:'tag',key:'tag:'+t.id,img:tagImg(t),label:t.label,no:N+torder[i]+1,
+    return {kind:'tag',key:'tag:'+t.id,img:tagImg(t),label:t.label,no:torder[i]+1,
       got:got.has('tag:'+t.id),desc:meta.d||'',star:meta.s||2};
   });
-  return photo.concat(tags).sort((a,b)=>a.no-b.no);
+  photo.sort((a,b)=>a.no-b.no); tags.sort((a,b)=>a.no-b.no);
+  return photo.concat(tags);   // 写真(No.1〜72)→タグ(No.1〜9)の順。カテゴリはkindで判別
 }
 const starsHTML=n=>Array.from({length:5},(_,i)=>`<span class="st ${i<n?'on':''}">★</span>`).join('');
 const df=document.getElementById('darkfile');
 function openDarkFile(){
-  const items=darkEntries();   // 全72枠を常時表示（未収集はUNIDENTIFIED）
+  const items=darkEntries();
   const gotCount=items.filter(e=>e.got).length;
+  const cellHTML=e=>e.got?`
+    <div class="df-cell${e.kind==='tag'?' tagcell':''}" data-key="${e.key}">
+      <div class="df-thumb" style="background-image:url('${encodeURI(e.img)}')">${e.kind==='tag'?`<span class="df-tag">${e.label}</span>`:''}</div>
+      <span class="df-no">闇No.${String(e.no).padStart(2,'0')}</span>
+      <span class="df-stars">${starsHTML(e.star)}</span>
+    </div>`:`
+    <div class="df-cell df-unknown">
+      <div class="df-thumb"><span class="df-q">?</span></div>
+      <span class="df-no">闇No.${String(e.no).padStart(2,'0')}</span>
+      <span class="df-unid">UNIDENTIFIED</span>
+    </div>`;
+  const section=(title,arr)=>`
+    <div class="df-sec"><span>${title}</span><span class="df-sec-n">${arr.filter(e=>e.got).length} / ${arr.length}</span></div>
+    <div class="df-grid">${arr.map(cellHTML).join('')}</div>`;
   df.className='';
   df.innerHTML=`
     <div class="df-head"><span class="df-title">闇ファイル</span>
-      <span class="df-count">闇発見率 ${Math.round(gotCount/items.length*100)}%（${gotCount}/${items.length}）</span>
+      <span class="df-count">発見率 ${Math.round(gotCount/items.length*100)}%</span>
       <button class="df-close" id="dfClose" data-icon="x"></button></div>
-    <div class="df-grid">
-      ${items.map(e=>e.got?`
-        <div class="df-cell${e.kind==='tag'?' tagcell':''}" data-no="${e.no}">
-          <div class="df-thumb" style="background-image:url('${encodeURI(e.img)}')">${e.kind==='tag'?`<span class="df-tag">${e.label}</span>`:''}</div>
-          <span class="df-no">闇No.${String(e.no).padStart(2,'0')}</span>
-          <span class="df-stars">${starsHTML(e.star)}</span>
-        </div>`:`
-        <div class="df-cell df-unknown">
-          <div class="df-thumb"><span class="df-q">?</span></div>
-          <span class="df-no">闇No.${String(e.no).padStart(2,'0')}</span>
-          <span class="df-unid">UNIDENTIFIED</span>
-        </div>`).join('')}
+    <div class="df-scroll">
+      ${section('写真異変',items.filter(e=>e.kind==='photo'))}
+      ${section('タグ異変',items.filter(e=>e.kind==='tag'))}
     </div>
     <div class="df-detail hidden" id="dfDetail"></div>`;
   paintIcons(df);
   df.querySelector('#dfClose').addEventListener('click',()=>{df.className='hidden';df.innerHTML='';});
   df.querySelectorAll('.df-cell:not(.df-unknown)').forEach(c=>c.addEventListener('click',()=>{
-    const e=items.find(x=>x.no==c.dataset.no);
+    const e=items.find(x=>x.key===c.dataset.key);
     const d=df.querySelector('#dfDetail');
     d.className='df-detail';
     d.innerHTML=`
