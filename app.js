@@ -584,27 +584,39 @@ function darkEntries(){
   const order=paths.map((_,i)=>i);
   for(let i=order.length-1;i>0;i--){const j=(r()*(i+1))|0;[order[i],order[j]]=[order[j],order[i]];}
   const got=new Set(getDark());
-  return paths.map((p,i)=>({path:p,no:order[i]+1,got:got.has(p),
-    desc:(window.DARKDESC||{})[p]||''})).sort((a,b)=>a.no-b.no);
+  return paths.map((p,i)=>{
+    const meta=(window.DARKDESC||{})[p]||{};
+    return {path:p,no:order[i]+1,got:got.has(p),
+      desc:meta.d||'',star:meta.s||3};
+  }).sort((a,b)=>a.no-b.no);
 }
+const starsHTML=n=>Array.from({length:5},(_,i)=>`<span class="st ${i<n?'on':''}">★</span>`).join('');
 const df=document.getElementById('darkfile');
 function openDarkFile(){
-  const items=darkEntries().filter(e=>e.got);
+  const items=darkEntries();   // 全72枠を常時表示（未収集はUNIDENTIFIED）
+  const gotCount=items.filter(e=>e.got).length;
   df.className='';
   df.innerHTML=`
     <div class="df-head"><span class="df-title">闇ファイル</span>
+      <span class="df-count">${gotCount} / ${items.length}</span>
       <button class="df-close" id="dfClose" data-icon="x"></button></div>
     <div class="df-grid">
-      ${items.map(e=>`
+      ${items.map(e=>e.got?`
         <div class="df-cell" data-no="${e.no}">
           <div class="df-thumb" style="background-image:url('${encodeURI(e.path)}')"></div>
           <span class="df-no">闇No.${String(e.no).padStart(2,'0')}</span>
+          <span class="df-stars">${starsHTML(e.star)}</span>
+        </div>`:`
+        <div class="df-cell df-unknown">
+          <div class="df-thumb"><span class="df-q">?</span></div>
+          <span class="df-no">闇No.${String(e.no).padStart(2,'0')}</span>
+          <span class="df-unid">UNIDENTIFIED</span>
         </div>`).join('')}
     </div>
     <div class="df-detail hidden" id="dfDetail"></div>`;
   paintIcons(df);
   df.querySelector('#dfClose').addEventListener('click',()=>{df.className='hidden';df.innerHTML='';});
-  df.querySelectorAll('.df-cell').forEach(c=>c.addEventListener('click',()=>{
+  df.querySelectorAll('.df-cell:not(.df-unknown)').forEach(c=>c.addEventListener('click',()=>{
     const e=items.find(x=>x.no==c.dataset.no);
     const d=df.querySelector('#dfDetail');
     d.className='df-detail';
@@ -612,6 +624,7 @@ function openDarkFile(){
       <div class="df-d-inner">
         <img src="${encodeURI(e.path)}" alt="">
         <div class="df-d-no">闇No.${String(e.no).padStart(2,'0')}</div>
+        <div class="df-d-stars">${starsHTML(e.star)}</div>
         <p class="df-d-desc">${e.desc}</p>
         <button class="df-d-close" id="dfDClose">閉じる</button>
       </div>`;

@@ -334,8 +334,24 @@ body{font-family:-apple-system,"Hiragino Kaku Gothic ProN","Noto Sans JP",sans-s
 .df-thumb{aspect-ratio:4/5;border-radius:8px;background-size:cover;background-position:center top;
   border:1px solid #2a121a;filter:saturate(.85) brightness(.92)}
 .df-cell:active .df-thumb{filter:none}
-.df-no{position:absolute;left:5px;bottom:5px;font-size:9.5px;font-weight:700;letter-spacing:.06em;
+.df-no{position:absolute;left:5px;top:5px;font-size:9.5px;font-weight:700;letter-spacing:.06em;
   color:#ff8a9c;background:#0a0508cc;padding:2px 6px;border-radius:6px}
+/* 収集数カウンタ */
+.df-count{margin-left:auto;margin-right:12px;font-size:12px;font-weight:700;letter-spacing:.1em;color:#8a5c66}
+/* 難易度（赤星1〜5） */
+.df-stars{position:absolute;right:5px;bottom:5px;background:#0a0508cc;padding:2px 5px;border-radius:6px;
+  font-size:8.5px;letter-spacing:1px;line-height:1}
+.st{color:#3a1a22}
+.st.on{color:#e0264f;text-shadow:0 0 5px #a3122a88}
+.df-d-stars{margin-top:6px;font-size:15px;letter-spacing:4px}
+/* 未収集: UNIDENTIFIED */
+.df-unknown .df-thumb{display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(150deg,#140a10,#0d0509 60%);border:1px dashed #33161f;filter:none}
+.df-q{font-size:34px;font-weight:900;color:#3a1a24;
+  font-family:"Hiragino Mincho ProN","Yu Mincho",serif}
+.df-unknown .df-no{color:#6e4a53}
+.df-unid{position:absolute;left:0;right:0;bottom:7px;text-align:center;
+  font-size:7.5px;font-weight:700;letter-spacing:.18em;color:#4a2530}
 /* 詳細 */
 .df-detail{position:absolute;inset:0;z-index:5;background:#0a0508f5;display:flex;
   align-items:center;justify-content:center;animation:tFade .25s ease}
