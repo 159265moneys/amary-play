@@ -700,7 +700,8 @@ function openDrawer(){
     ${darkBtn}
     <div class="dw-sec">その他</div>
     <button class="dw-item" id="dwShare">結果をシェア<span class="dw-chev">›</span></button>
-    <button class="dw-item" id="dwAbout">この作品について<span class="dw-chev">›</span></button>`;
+    <button class="dw-item" id="dwAbout">この作品について<span class="dw-chev">›</span></button>
+    <button class="dw-home" id="dwHome">タイトルに戻る</button>`;
   paintIcons(drawerWrap);
   drawerWrap.classList.remove('hidden');
   document.getElementById('dwClose').addEventListener('click',closeDrawer);
@@ -709,6 +710,7 @@ function openDrawer(){
   if(dk)dk.addEventListener('click',()=>{closeDrawer();openDarkFile();});
   document.getElementById('dwShare').addEventListener('click',shareResult);
   document.getElementById('dwAbout').addEventListener('click',openAbout);
+  document.getElementById('dwHome').addEventListener('click',()=>{closeDrawer();showStart();});
 }
 function closeDrawer(){drawerWrap.classList.add('hidden');document.getElementById('drawer').innerHTML='';}
 document.querySelector('.appbar .icon-btn[aria-label="menu"]').addEventListener('click',openDrawer);
