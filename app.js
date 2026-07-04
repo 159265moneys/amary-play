@@ -559,37 +559,102 @@ function gameOver(entry,judgedSafe){
   ov.querySelector('#titleBtn').addEventListener('click',showStart);
   ov.classList.remove('hidden');
 }
+/* ============ 闇ファイル（図鑑）: クリアしたランのクロだけが記録される ============
+   GAME OVER・冤罪のランは「なかったこと」（死ぬか捕まるかしているので）。 */
+function getDark(){ try{return JSON.parse(localStorage.getItem('amaryDark')||'[]');}catch(_){return [];} }
+function collectDarkRun(){
+  const got=new Set(getDark());
+  for(const e of run){
+    if(e.danger&&e.tell&&e.tell.swaps) Object.values(e.tell.swaps).forEach(p=>got.add(p));
+  }
+  localStorage.setItem('amaryDark',JSON.stringify([...got]));
+}
+/* 全異変エントリ（72件）。闇No.はシード固定のランダム採番＝人物順のネタバレなし */
+function darkEntries(){
+  const folders=new Set(PROFILES.map(p=>p.folder));
+  const paths=[];
+  for(const k of Object.keys(window.PHOTOS||{})){
+    if(!folders.has(k))continue;
+    const m=window.PHOTOS[k]; if(Array.isArray(m))continue;
+    for(const vs of Object.values(m.anomalies||{})) paths.push(...vs);
+    for(const s of (m.anomalySets||[])) paths.push(...Object.values(s));
+  }
+  paths.sort();
+  const r=mulberry32(20260704);
+  const order=paths.map((_,i)=>i);
+  for(let i=order.length-1;i>0;i--){const j=(r()*(i+1))|0;[order[i],order[j]]=[order[j],order[i]];}
+  const got=new Set(getDark());
+  return paths.map((p,i)=>({path:p,no:order[i]+1,got:got.has(p),
+    desc:(window.DARKDESC||{})[p]||''})).sort((a,b)=>a.no-b.no);
+}
+const df=document.getElementById('darkfile');
+function openDarkFile(){
+  const items=darkEntries().filter(e=>e.got);
+  df.className='';
+  df.innerHTML=`
+    <div class="df-head"><span class="df-title">闇ファイル</span>
+      <button class="df-close" id="dfClose" data-icon="x"></button></div>
+    <div class="df-grid">
+      ${items.map(e=>`
+        <div class="df-cell" data-no="${e.no}">
+          <div class="df-thumb" style="background-image:url('${encodeURI(e.path)}')"></div>
+          <span class="df-no">闇No.${String(e.no).padStart(2,'0')}</span>
+        </div>`).join('')}
+    </div>
+    <div class="df-detail hidden" id="dfDetail"></div>`;
+  paintIcons(df);
+  df.querySelector('#dfClose').addEventListener('click',()=>{df.className='hidden';df.innerHTML='';});
+  df.querySelectorAll('.df-cell').forEach(c=>c.addEventListener('click',()=>{
+    const e=items.find(x=>x.no==c.dataset.no);
+    const d=df.querySelector('#dfDetail');
+    d.className='df-detail';
+    d.innerHTML=`
+      <div class="df-d-inner">
+        <img src="${encodeURI(e.path)}" alt="">
+        <div class="df-d-no">闇No.${String(e.no).padStart(2,'0')}</div>
+        <p class="df-d-desc">${e.desc}</p>
+        <button class="df-d-close" id="dfDClose">閉じる</button>
+      </div>`;
+    d.querySelector('#dfDClose').addEventListener('click',()=>{d.className='df-detail hidden';d.innerHTML='';});
+  }));
+}
+/* ヘッダー⚙: 初回クリアまでは図鑑UI自体が存在しない（何も起きない） */
+document.querySelector('.appbar .icon-btn[aria-label="filter"]').addEventListener('click',()=>{
+  if(getDark().length) openDarkFile();
+});
+
 function win(){
   stopOverlayFx();
+  collectDarkRun();                              // クリアしたランのクロを記録
+  const firstTime=!localStorage.getItem('amaryDarkPopup');
   ov.className='overlay holy';
   const kuro=run.length-matched;
-  const time=fmtTime(Date.now()-runStartAt);   // タイム表示はクリア時のみ
+  const time=fmtTime(Date.now()-runStartAt);     // タイム表示はクリア時のみ
   ov.innerHTML=`
     <div class="fx-holy"></div>
-    <div class="go-inner">
+    <div class="go-inner holy-enter">
       <div class="ov-logo clear"><span>CLEAR</span></div>
-      <p class="ov-tag">${run.length}人すべてを見極めた。</p>
+      <p class="ov-tag">あなたのおかげでマッチングアプリの秩序は保たれた</p>
       <div class="holy-time"><span class="ht-n">${time}</span><span class="ht-l">TIME</span></div>
       <div class="holy-stats">
         <div class="hs"><span class="hs-n">${matched}</span><span class="hs-l">シロ判定</span></div>
-        <div class="hs"><span class="hs-n">${kuro}</span><span class="hs-l">クロ判定</span></div>
-        <div class="hs"><span class="hs-n">0</span><span class="hs-l">ミス</span></div>
+        <div class="hs" id="kuroCard"><span class="hs-n" id="kuroN">${kuro}</span><span class="hs-l">クロ判定</span></div>
       </div>
       <button class="btn" id="againBtn">もう一度さがす</button>
       <button class="btn sub" id="winTitleBtn">タイトルへ</button>
-    </div>`;
+    </div>
+    <div class="whiteout"></div>`;
   const fx=ov.querySelector('.fx-holy');
-  // 上る光の粒: 少数精鋭・奥行きつき（大きさ/ぼかし/速度を連動）
-  spawnFx(fx,'spark',12,el=>{
+  // 大量の粒子（奥行きつき）が立ちのぼり続ける
+  spawnFx(fx,'spark',44,el=>{
     const depth=Math.random();
-    const s=3+ (1-depth)*6;
+    const s=2.5+(1-depth)*6.5;
     el.style.width=el.style.height=s+'px';
-    el.style.left=(3+Math.random()*94)+'%';
+    el.style.left=(1+Math.random()*97)+'%';
     el.style.filter=`blur(${depth*2.5}px)`;
-    el.style.animationDuration=(8+depth*7)+'s';
-    el.style.animationDelay=(-Math.random()*15)+'s';
+    el.style.animationDuration=(6+depth*8)+'s';
+    el.style.animationDelay=(-Math.random()*14)+'s';
   });
-  // 背景そのものが上へ流れていく光の帯
   spawnFx(fx,'hlight',3,(el,i)=>{
     el.style.animationDuration=(9+i*2.5)+'s';
     el.style.animationDelay=(-i*4)+'s';
@@ -597,6 +662,59 @@ function win(){
   ov.querySelector('#againBtn').addEventListener('click',startRun);
   ov.querySelector('#winTitleBtn').addEventListener('click',showStart);
   ov.classList.remove('hidden');
+  // ホワイトアウト明け＋3秒: クロ判定の数字だけが闇堕ち→粒子集束→爆発→消滅
+  setTimeout(()=>kuroCorrupt(firstTime),4400);
+}
+/* クロ判定の闇堕ち演出 */
+function kuroCorrupt(firstTime){
+  const el=ov.querySelector('#kuroN'); if(!el)return;
+  el.classList.add('corrupt');
+  const card=ov.querySelector('#kuroCard'); if(card)card.classList.add('corrupt-card');
+  const fx=ov.querySelector('.fx-holy'); if(!fx)return;
+  const or=ov.getBoundingClientRect(), r=el.getBoundingClientRect();
+  const cx=r.left-or.left+r.width/2, cy=r.top-or.top+r.height/2;
+  // 粒子が数字に吸い込まれるように集まる
+  for(let i=0;i<26;i++){
+    const p=document.createElement('i'); p.className='kuro-p';
+    const ang=Math.random()*Math.PI*2, dist=110+Math.random()*260;
+    p.style.left=cx+'px'; p.style.top=cy+'px';
+    p.style.setProperty('--dx',Math.cos(ang)*dist+'px');
+    p.style.setProperty('--dy',Math.sin(ang)*dist+'px');
+    p.style.animationDelay=(Math.random()*0.5)+'s';
+    fx.appendChild(p);
+  }
+  setTimeout(()=>{
+    fx.querySelectorAll('.kuro-p').forEach(p=>p.remove());
+    const b=document.createElement('div'); b.className='kuro-burst';
+    b.style.left=cx+'px'; b.style.top=cy+'px'; fx.appendChild(b);
+    el.style.opacity='0';                          // 数字は消えてなくなる
+    setTimeout(()=>b.remove(),1000);
+    if(firstTime){
+      localStorage.setItem('amaryDarkPopup','1');
+      setTimeout(showDarkPopup,700);               // 爆発した粒子が図鑑になる
+    }else{
+      // 爆発した粒子が右上（⚙＝図鑑）へ吸収されていく
+      for(let i=0;i<12;i++){
+        const q=document.createElement('i'); q.className='kuro-absorb';
+        q.style.left=cx+(Math.random()-0.5)*60+'px'; q.style.top=cy+(Math.random()-0.5)*40+'px';
+        q.style.setProperty('--ax',(or.width-44-cx)+'px');
+        q.style.setProperty('--ay',(40-cy)+'px');
+        q.style.animationDelay=(Math.random()*0.35)+'s';
+        fx.appendChild(q);
+        setTimeout(()=>q.remove(),1700);
+      }
+    }
+  },1500);
+}
+function showDarkPopup(){
+  const pop=document.createElement('div'); pop.className='dark-popup';
+  pop.innerHTML=`
+    <div class="dp-card">
+      <p class="dp-text">闇ファイルが解放されました</p>
+      <button class="dp-btn" id="dpBtn">確認する</button>
+    </div>`;
+  ov.appendChild(pop);
+  pop.querySelector('#dpBtn').addEventListener('click',()=>{pop.remove();openDarkFile();});
 }
 
 /* ============ tutorial ============ */
