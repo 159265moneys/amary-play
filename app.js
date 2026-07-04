@@ -697,16 +697,58 @@ function openDrawer(){
     <div class="dw-title">Menu<button class="dw-close" id="dwClose" data-icon="x"></button></div>
     <div class="dw-sec">記録（ベストタイム）</div>
     ${recs}
-    ${darkBtn}`;
+    ${darkBtn}
+    <div class="dw-sec">その他</div>
+    <button class="dw-item" id="dwShare">結果をシェア<span class="dw-chev">›</span></button>
+    <button class="dw-item" id="dwAbout">この作品について<span class="dw-chev">›</span></button>`;
   paintIcons(drawerWrap);
   drawerWrap.classList.remove('hidden');
   document.getElementById('dwClose').addEventListener('click',closeDrawer);
   document.getElementById('drawerBack').addEventListener('click',closeDrawer);
   const dk=document.getElementById('dwDark');
   if(dk)dk.addEventListener('click',()=>{closeDrawer();openDarkFile();});
+  document.getElementById('dwShare').addEventListener('click',shareResult);
+  document.getElementById('dwAbout').addEventListener('click',openAbout);
 }
 function closeDrawer(){drawerWrap.classList.add('hidden');document.getElementById('drawer').innerHTML='';}
 document.querySelector('.appbar .icon-btn[aria-label="menu"]').addEventListener('click',openDrawer);
+
+/* 軽いトースト（共有コピー通知など） */
+function toast(msg){
+  const t=document.createElement('div'); t.className='toast'; t.textContent=msg;
+  document.getElementById('app').appendChild(t);
+  setTimeout(()=>t.classList.add('show'),10);
+  setTimeout(()=>{t.classList.remove('show');setTimeout(()=>t.remove(),300);},1600);
+}
+/* 結果をシェア: 闇発見率＋ベストタイムをSNS共有（Web Share API、無ければコピー） */
+const SHARE_URL='https://159265moneys.github.io/amary-play/';
+function shareResult(){
+  const rate=Math.round(getDark().length/darkEntries().length*100);
+  const times=(()=>{try{return JSON.parse(localStorage.getItem('amaryTimes')||'[]');}catch(_){return [];}})();
+  const best=times.length?fmtTime(times[0]):'--:--';
+  const text=`【Yummy】マッチングアプリに潜む闇を暴け。\n闇発見率 ${rate}%／ベスト ${best}\nあなたは何%の闇を見つけられる？`;
+  if(navigator.share){ navigator.share({title:'Yummy',text,url:SHARE_URL}).catch(()=>{}); }
+  else if(navigator.clipboard){ navigator.clipboard.writeText(text+'\n'+SHARE_URL).then(()=>toast('コピーしました')).catch(()=>toast('コピーに失敗しました')); }
+  else { toast('共有に対応していません'); }
+}
+/* この作品について: クレジット＋注意書き */
+function openAbout(){
+  const m=document.createElement('div'); m.className='about-modal';
+  m.innerHTML=`
+    <div class="about-card">
+      <img class="about-logo" src="assets/logo/yummy_pink.webp?v=53" alt="Yummy">
+      <p class="about-tag">「たまらない相手」に、出会おう。</p>
+      <p class="about-body">本作はフィクションです。登場する人物・団体・アプリはすべて架空のものであり、実在するサービス・団体・人物とは一切関係ありません。人物写真はすべてAIによって生成された、実在しない人物です。本作には犯罪・ストーカー行為等を示唆する表現が含まれます。</p>
+      <div class="about-cred">
+        <div class="ac-row"><span class="ac-k">画像生成</span><span class="ac-v">OpenAI gpt-image-2</span></div>
+        <div class="ac-row"><span class="ac-k">企画・制作</span><span class="ac-v">ミギノナナメウエ</span></div>
+      </div>
+      <button class="about-close" id="aboutClose">閉じる</button>
+    </div>`;
+  document.getElementById('app').appendChild(m);
+  m.addEventListener('click',e=>{ if(e.target===m) m.remove(); });
+  m.querySelector('#aboutClose').addEventListener('click',()=>m.remove());
+}
 
 function win(){
   stopOverlayFx();
