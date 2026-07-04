@@ -440,6 +440,7 @@ function applyZoom(){document.querySelector('.zoom-inner').style.transform=`tran
 /* ============ overlays ============ */
 const ov=document.getElementById('overlay');
 function showStart(){
+  stopOverlayFx();
   // 本物のマチアプのスプラッシュ流儀：ブランドカラー全面＋白ロゴ＋白の注意書きのみ
   ov.className='overlay title';
   ov.innerHTML=`
@@ -455,13 +456,73 @@ function showStart(){
 function spawnFx(host,cls,n,fn){
   for(let i=0;i<n;i++){const el=document.createElement('i');el.className=cls;fn(el,i);host.appendChild(el);}
 }
+/* ---- DEAD END の血（Canvas）----
+   血は直線では落ちない。1本ごとに: 横のランダムウォーク＋sin揺らぎ / 速度の脈動
+   （たまに止まり、たまにツーッと走る）/ 太さの脈動 / 先端に明るい溜まり。
+   軌跡は蓄積キャンバスに描き足し、先端だけ毎フレーム別キャンバスで描き直す */
+function startBloodFX(host){
+  const wrap=document.createElement('div'); wrap.className='fx-blood';
+  const trail=document.createElement('canvas'), tips=document.createElement('canvas');
+  wrap.appendChild(trail); wrap.appendChild(tips); host.prepend(wrap);
+  const DPR=Math.min(window.devicePixelRatio||1,2);
+  const W=host.clientWidth||390, H=host.clientHeight||780;
+  [trail,tips].forEach(c=>{c.width=W*DPR; c.height=H*DPR;});
+  const tc=trail.getContext('2d'), pc=tips.getContext('2d');
+  tc.setTransform(DPR,0,0,DPR,0,0); pc.setTransform(DPR,0,0,DPR,0,0);
+  // 上端の血溜まり（不均一なにじみ）
+  tc.fillStyle='rgba(86,3,15,.95)';
+  for(let x=0;x<W;x+=3){ tc.fillRect(x,0,3,3+Math.sin(x*.7)*1.5+Math.random()*3); }
+  const drips=[];
+  const N=8;
+  for(let i=0;i<N;i++){
+    const x=W*((i+0.15+Math.random()*0.7)/N);
+    drips.push({x, w:2.4+Math.random()*3.2, speed:9+Math.random()*20,
+      maxY:H*(0.34+Math.random()*0.52), phase:Math.random()*100,
+      drift:0, stall:Math.random()*0.8, last:{x,y:2}, y:2});
+  }
+  let prev=performance.now(), raf=0, dead=false;
+  function frame(now){
+    if(dead)return;
+    raf=requestAnimationFrame(frame);
+    const dt=Math.min((now-prev)/1000,0.05); prev=now;
+    pc.clearRect(0,0,W,H);
+    for(const d of drips){
+      if(d.y<d.maxY){
+        if(d.stall>0){ d.stall-=dt; }
+        else{
+          if(Math.random()<0.006) d.stall=0.4+Math.random()*1.4;      // たまに止まる
+          let v=d.speed*(0.45+0.55*Math.sin(now/900+d.phase*7));
+          if(v<0)v=0;
+          if(Math.random()<0.004) v+=d.speed*7;                        // たまにツーッと走る
+          const ny=Math.min(d.y+v*dt, d.maxY);
+          d.drift+=(Math.random()-0.5)*0.9;  d.drift*=0.96;            // 横のランダムウォーク
+          const nx=d.x+Math.sin(ny/34+d.phase)*2.6+d.drift;
+          tc.strokeStyle=`rgba(${104+(Math.random()*26|0)},5,19,.95)`;
+          tc.lineWidth=Math.max(1,d.w*(0.75+0.5*Math.sin(ny/15+d.phase*3)));
+          tc.lineCap='round';
+          tc.beginPath(); tc.moveTo(d.last.x,d.last.y); tc.lineTo(nx,ny); tc.stroke();
+          d.last={x:nx,y:ny}; d.y=ny;
+        }
+      }
+      // 先端の濡れた溜まり（小さく・暗く。玉ボケにしない）
+      const r=d.w*0.85+0.8;
+      const g=pc.createRadialGradient(d.last.x,d.last.y-r*0.3,0,d.last.x,d.last.y,r*1.25);
+      g.addColorStop(0,'rgba(172,18,40,.92)'); g.addColorStop(.7,'rgba(128,8,26,.75)'); g.addColorStop(1,'rgba(100,4,20,0)');
+      pc.fillStyle=g; pc.beginPath(); pc.ellipse(d.last.x,d.last.y,r,r*1.35,0,0,7); pc.fill();
+    }
+  }
+  raf=requestAnimationFrame(frame);
+  return ()=>{dead=true; cancelAnimationFrame(raf); wrap.remove();};
+}
+function stopOverlayFx(){ if(ov._stopFx){ov._stopFx(); ov._stopFx=null;} }
 function gameOver(entry,judgedSafe){
   lives--; updateHUD();
   // 8番出口方式：答え合わせはしない。「異変があった/なかった」だけ。
   const dead=entry.danger;   // クロを見逃してシロ判定＝死 / 普通の人をクロ判定＝冤罪
+  stopOverlayFx();
   ov.className=dead?'overlay dead':'overlay enzai';
   ov.innerHTML=`
-    ${dead?'<div class="fx-goo"></div><div class="fx-blood"></div><div class="fx-vhs"></div>':'<div class="fx-orbs"></div>'}
+    ${dead?'<div class="fx-goo"></div><div class="fx-vhs"></div>':'<div class="fx-orbs"></div>'}
     <div class="go-inner${dead?' vhs-shake':''}">
       <div class="ov-go" ${dead?'data-glitch="DEAD END"':''}>${dead?'DEAD END':'冤罪'}</div>
       <p class="ov-sub">${dead?'死んでしまった':'この人は、普通の人だった'}</p>
@@ -472,6 +533,9 @@ function gameOver(entry,judgedSafe){
       <button class="btn" id="retryBtn">もう一度さがす</button>
       <button class="btn sub" id="titleBtn">タイトルへ</button>
     </div>`;
+  if(dead){
+    ov._stopFx=startBloodFX(ov);   // Canvas血（不揃いな波線）。画面遷移時に必ず停止
+  }
   if(!dead){
     // 黒いオーブ: 少数・大きめ・奥行き（ぼかしと透明度を連動）でゆっくり呼吸
     spawnFx(ov.querySelector('.fx-orbs'),'orb',5,el=>{
@@ -486,7 +550,6 @@ function gameOver(entry,judgedSafe){
       el.style.animationDelay=(-Math.random()*20)+'s';
     });
   }
-  // DEAD ENDの血・ノイズはCSSのみ（fx-blood/fx-vhsの擬似要素）。JS生成物なし
   const dp=ov.querySelector('#deadPhoto');
   const s=photoSet(entry);
   const u=encodeURI(s&&s.photos[0]?s.photos[0]:`${PHOTO_BASE}/${entry.p.folder}/1.png`);
@@ -499,6 +562,7 @@ function gameOver(entry,judgedSafe){
   ov.classList.remove('hidden');
 }
 function win(){
+  stopOverlayFx();
   ov.className='overlay holy';
   const kuro=run.length-matched;
   const time=fmtTime(Date.now()-runStartAt);   // タイム表示はクリア時のみ
@@ -639,6 +703,7 @@ function tutCommit(dir){
 
 /* ============ controls / boot ============ */
 function startRun(){
+  stopOverlayFx();
   run=buildRun(); idx=0; lives=START_LIVES; matched=0; runStartAt=Date.now();
   committing=false; resetProfileStyle();   // 前ランの残留transform/opacityを必ず掃除
   ov.classList.add('hidden');
