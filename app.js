@@ -105,8 +105,6 @@ const UI_TELLS=[];
 /* ============ run state ============ */
 let run=[],idx=0,lives=START_LIVES,matched=0,runStartAt=0;
 const fmtTime=ms=>{const s=Math.floor(ms/1000);return `${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`;};
-const stampLike=document.getElementById('stampLike');
-const stampNope=document.getElementById('stampNope');
 
 /* 実画像があるプロフィールだけ出す（画像未実装の人物はプレースホルダで出さない） */
 function roster(){
@@ -307,7 +305,6 @@ function setJudgeBg(s){
 function resetProfileStyle(){
   const prof=document.getElementById('profile');
   prof.style.transition='none'; prof.style.transform=''; prof.style.opacity='';
-  stampLike.style.opacity=0; stampNope.style.opacity=0;
   setJudgeBg(0);
 }
 function wireGestures(){
@@ -342,8 +339,6 @@ function wireGestures(){
     }
     if(axis==='h'){
       prof().style.transform=`translateX(${dx}px) rotate(${dx/24}deg)`;
-      const k=Math.min(Math.abs(dx)/120,1);
-      stampLike.style.opacity=dx>0?k:0; stampNope.style.opacity=dx<0?k:0;
       setJudgeBg(dx);
     }
   });
@@ -352,7 +347,6 @@ function wireGestures(){
     if(!inGame()){axis=null;return;}
     const dx=e.clientX-sx;
     if(axis==='h'){
-      stampLike.style.opacity=0; stampNope.style.opacity=0;
       axis=null;
       if(Math.abs(dx)>90)return commit(dx>0?'like':'nope');
       const p=prof();
@@ -379,7 +373,7 @@ function wireGestures(){
     if(!active)return;
     active=false;
     if(!committing){const p=prof();p.style.transition='transform .3s';p.style.transform='';}
-    stampLike.style.opacity=0; stampNope.style.opacity=0; axis=null;
+    axis=null;
   });
 }
 
@@ -393,8 +387,7 @@ function commit(dir){
   const judgedSafe=dir==='like';
   const correct=entry.danger?!judgedSafe:judgedSafe;
   const prof=document.getElementById('profile');
-  stampLike.style.opacity=0; stampNope.style.opacity=0;
-  setJudgeBg(dir==='like'?1:-1);   // 飛んでいく間も判定色を見せる
+  setJudgeBg(dir==='like'?1:-1);   // 飛んでいく間も判定色（と判定文字）を見せる
   prof.style.transition='transform .3s ease-out, opacity .3s ease-out';
   prof.style.transform=`translateX(${dir==='like'?600:-600}px) rotate(${dir==='like'?9:-9}deg)`;
   prof.style.opacity='0';
@@ -816,14 +809,12 @@ function tutCommit(dir){
   tutNudge(false);
   if(dir!==tutorial.need){   // 逆方向：戻して促す（死なない）
     prof.style.transition='transform .3s'; prof.style.transform=''; setJudgeBg(0);
-    stampLike.style.opacity=0; stampNope.style.opacity=0;
     const cap=document.querySelector('.tut-cap');
     if(cap){cap.classList.remove('blink');void cap.offsetWidth;cap.classList.add('blink');}
     setTimeout(()=>tutNudge(true),320);
     return;
   }
   committing=true; setJudgeBg(dir==='like'?1:-1);
-  stampLike.style.opacity=0; stampNope.style.opacity=0;
   prof.style.transition='transform .3s ease-out, opacity .3s ease-out';
   prof.style.transform=`translateX(${dir==='like'?600:-600}px) rotate(${dir==='like'?9:-9}deg)`;
   prof.style.opacity='0';

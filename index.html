@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>Amary</title>
-<link rel="stylesheet" href="style.css?v=39">
+<link rel="stylesheet" href="style.css?v=40">
 </head>
 <body>
 <div id="app">
@@ -24,6 +24,8 @@
 
   <!-- scrollable profile -->
   <main id="scroll" class="scroll">
+    <!-- スワイプでカードがズレた時、背景に直接書かれた判定文字が見える -->
+    <div class="judge-layer"><span class="jw jw-shiro">シロ</span><span class="jw jw-kuro">クロ</span></div>
     <div id="profile" class="profile"></div>
   </main>
 
@@ -32,10 +34,6 @@
     <button class="act act-nope" data-act="nope" aria-label="クロ" data-icon="x"></button>
     <button class="act act-like" data-act="like" aria-label="シロ" data-icon="heart"></button>
   </nav>
-
-  <!-- swipe stamps: シロ=神々しい水色 / クロ=禍々しい赤黒 -->
-  <div class="stamp stamp-like" id="stampLike">シロ</div>
-  <div class="stamp stamp-nope" id="stampNope">クロ</div>
 
   <!-- zoom viewer -->
   <div id="zoom" class="zoom hidden">
@@ -55,10 +53,10 @@
 
 </div>
 
-<script src="icons.js?v=39"></script>
-<script src="data.js?v=39"></script>
-<script src="darkdesc.js?v=39"></script>
-<script src="manifest.js?v=39"></script>
-<script src="app.js?v=39"></script>
+<script src="icons.js?v=40"></script>
+<script src="data.js?v=40"></script>
+<script src="darkdesc.js?v=40"></script>
+<script src="manifest.js?v=40"></script>
+<script src="app.js?v=40"></script>
 </body>
 </html>
