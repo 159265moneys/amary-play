@@ -95,10 +95,18 @@ body{font-family:-apple-system,"Hiragino Kaku Gothic ProN","Noto Sans JP",sans-s
 .qa .q{font-size:11.5px;color:var(--sub);margin-bottom:3px}
 .qa .a{font-size:15px;font-weight:600}
 
-/* スワイプでズレて見える判定背景＝生成スプライト（筆文字ごと描き込み済みのキーアート） */
-.scroll.judge-shiro{background:#dff0fb url('assets/judge/shiro.webp') left center/cover no-repeat}
-.scroll.judge-kuro{background:#0c0205 url('assets/judge/kuro.webp') right center/cover no-repeat}
+/* スワイプ判定: 白黒に徹する。シロ=白背景×黒の明朝 / クロ=黒背景×白の明朝 */
+.scroll.judge-shiro{background:#fff}
+.scroll.judge-kuro{background:#000}
+.judge-layer{position:sticky;top:0;height:0;z-index:0;pointer-events:none}
 .profile{position:relative;z-index:1}
+.jw{position:absolute;top:130px;font-size:84px;font-weight:600;opacity:0;transition:opacity .12s ease;
+  width:1em;word-break:break-all;line-height:1.16;text-align:center;
+  font-family:"Hiragino Mincho ProN","Yu Mincho","Noto Serif JP",serif}
+.jw-shiro{left:26px;color:#111}
+.jw-kuro{right:26px;color:#fff}
+.scroll.judge-shiro .jw-shiro{opacity:1}
+.scroll.judge-kuro .jw-kuro{opacity:1}
 
 /* zoom */
 .zoom{position:absolute;inset:0;background:#000;z-index:60;display:flex;align-items:center;justify-content:center;overflow:hidden}

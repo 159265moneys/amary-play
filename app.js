@@ -838,7 +838,5 @@ wireGestures();
 DEBUG=new URLSearchParams(location.search).has('debug');
 (async function(){
   try{const r=await fetch('manifest.json?b='+Date.now(),{cache:'no-store'});if(r.ok)window.PHOTOS=await r.json();}catch(_){}
-  // 判定背景スプライトを先読み（初回スワイプでの表示遅延ゼロ）
-  ['assets/judge/shiro.webp','assets/judge/kuro.webp'].forEach(u=>{const i=new Image();i.src=u;});
   showStart();
 })();
