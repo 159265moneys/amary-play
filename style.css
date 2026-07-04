@@ -148,9 +148,51 @@ body{font-family:-apple-system,"Hiragino Kaku Gothic ProN","Noto Sans JP",sans-s
 .btn:active{transform:scale(.96)}
 .btn.sub{background:#fff;color:var(--pink);border:1.5px solid #ffd3dd;box-shadow:none;padding:12px 34px;font-size:14px;margin-top:12px}
 
+/* ===== 結果画面 共通: 演出レイヤの土台 ===== */
+.go-inner{position:relative;z-index:5;display:flex;flex-direction:column;align-items:center;width:100%}
+.fx-goo,.fx-blood,.fx-vhs,.fx-orbs,.fx-holy{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+
 /* ===== DEAD END（クロを見逃した死）: 禍々しい赤黒 ===== */
-.overlay.dead{background:radial-gradient(130% 100% at 50% 0%,#3a0d15 0%,#1c070c 55%,#0c0205 100%);color:#e8c9cf}
-.overlay.dead .ov-go{color:#ff2b47;font-size:36px;letter-spacing:5px;text-shadow:0 0 22px #ff2b4788,0 0 60px #a3122a66}
+.overlay.dead{background:#0c0205;color:#e8c9cf;overflow:hidden}
+/* 赤と黒がドロドロと蠢く背景（巨大なぼかし血溜まりが伸縮しながら這う） */
+.fx-goo{filter:blur(46px) contrast(1.15);opacity:.9;z-index:1}
+.fx-goo::before,.fx-goo::after{content:'';position:absolute;border-radius:50%}
+.fx-goo::before{width:85%;height:62%;top:-8%;left:-16%;
+  background:radial-gradient(circle at 40% 40%,#8a0a20 0%,#4a0512 55%,transparent 75%);
+  animation:gooA 8s ease-in-out infinite alternate}
+.fx-goo::after{width:78%;height:58%;bottom:-6%;right:-14%;
+  background:radial-gradient(circle at 60% 60%,#5c0716 0%,#2a040c 55%,transparent 75%);
+  animation:gooB 11s ease-in-out infinite alternate}
+@keyframes gooA{from{transform:translate(0,0) scale(1) rotate(0deg)}50%{transform:translate(26%,20%) scale(1.35) rotate(18deg)}to{transform:translate(8%,42%) scale(.9) rotate(-12deg)}}
+@keyframes gooB{from{transform:translate(0,0) scale(1.1) rotate(0deg)}50%{transform:translate(-24%,-26%) scale(.85) rotate(-20deg)}to{transform:translate(-40%,-6%) scale(1.3) rotate(14deg)}}
+/* 上部から血が滴り落ちる */
+.fx-blood{z-index:2}
+.fx-blood::before{content:'';position:absolute;top:0;left:0;right:0;height:10px;
+  background:linear-gradient(#5c0512,#8a0a20);box-shadow:0 2px 14px #8a0a2088;
+  border-radius:0 0 40% 60%/0 0 14px 22px}
+.drip{position:absolute;top:-2px;height:16vh;border-radius:0 0 5px 5px;
+  background:linear-gradient(to bottom,#8a0a20,#c01530 55%,#e02040);box-shadow:0 0 8px #a3122a66;
+  transform:translateY(-105%);animation:dripFall ease-in infinite}
+.drip::after{content:'';position:absolute;bottom:-4px;left:50%;width:8px;height:11px;margin-left:-4px;
+  border-radius:50% 50% 60% 60%;background:#c01530}
+@keyframes dripFall{0%{transform:translateY(-105%)}55%{transform:translateY(30vh)}100%{transform:translateY(115vh)}}
+/* VHSノイズ：走査線＋明滅＋画面ジッタ */
+.fx-vhs{z-index:3;mix-blend-mode:overlay;
+  background:repeating-linear-gradient(0deg,transparent 0 2px,#ffffff0a 2px 3px,#00000014 3px 4px);
+  animation:vhsFlicker .18s steps(2) infinite}
+.fx-vhs::after{content:'';position:absolute;left:0;right:0;height:56px;top:-60px;
+  background:linear-gradient(#ffffff00,#ffffff12,#ffffff00);animation:vhsRoll 4.5s linear infinite}
+@keyframes vhsFlicker{0%{opacity:.55}50%{opacity:.95}100%{opacity:.7}}
+@keyframes vhsRoll{from{top:-60px}to{top:110%}}
+.vhs-shake{animation:vhsShake .16s steps(2) infinite}
+@keyframes vhsShake{0%{transform:translate(0,0)}25%{transform:translate(-1.5px,.5px)}50%{transform:translate(1px,-1px) skewX(.15deg)}75%{transform:translate(-.5px,1px)}100%{transform:translate(1px,0)}}
+.overlay.dead .ov-go{position:relative;color:#ff2b47;font-size:36px;letter-spacing:5px;text-shadow:0 0 22px #ff2b4788,0 0 60px #a3122a66}
+/* 色ズレ（RGBスプリット）でブラウン管の狂いを出す */
+.overlay.dead .ov-go::before,.overlay.dead .ov-go::after{content:attr(data-glitch);position:absolute;inset:0;opacity:.55}
+.overlay.dead .ov-go::before{color:#0ef;transform:translateX(-2.5px);animation:glitchA 2.4s steps(3) infinite}
+.overlay.dead .ov-go::after{color:#f0426a;transform:translateX(2.5px);animation:glitchB 3.1s steps(4) infinite}
+@keyframes glitchA{0%,88%{transform:translateX(-2.5px)}90%{transform:translate(-6px,2px)}94%{transform:translateX(-1px)}100%{transform:translateX(-2.5px)}}
+@keyframes glitchB{0%,84%{transform:translateX(2.5px)}86%{transform:translate(6px,-2px)}92%{transform:translateX(1px)}100%{transform:translateX(2.5px)}}
 .overlay.dead .ov-sub{color:#c98b95}
 .overlay.dead .dead-photo{border-color:#12030a;box-shadow:0 0 0 3px #a3122a,0 12px 34px #000d;filter:saturate(.55) brightness(.8) contrast(1.05)}
 .overlay.dead .dead-name{color:#f3d9dc}
@@ -160,8 +202,42 @@ body{font-family:-apple-system,"Hiragino Kaku Gothic ProN","Noto Sans JP",sans-s
 .overlay.dead .btn{background:linear-gradient(135deg,#a3122a,#ff2b47);box-shadow:0 8px 24px #a3122a66}
 .overlay.dead .btn.sub{background:transparent;color:#e08a97;border-color:#5a1b26}
 
+/* ===== 冤罪（誤ってクロ判定）: 白黒混合のグレー＋黒いオーブ ===== */
+.overlay.enzai{background:
+  radial-gradient(90% 70% at 20% 15%,#f4f4f5 0%,transparent 60%),
+  radial-gradient(80% 65% at 85% 80%,#3c3b41 0%,transparent 65%),
+  radial-gradient(120% 100% at 50% 50%,#cbcacf 0%,#8f8e95 70%,#6b6a71 100%);
+  color:#2a282e;overflow:hidden}
+.fx-orbs{z-index:1}
+.orb{position:absolute;border-radius:50%;opacity:.55;filter:blur(1.5px);
+  background:radial-gradient(circle at 34% 28%,#4a4950,#141317 68%,#000 100%);
+  box-shadow:0 6px 22px #0006;animation:orbFloat ease-in-out infinite alternate}
+@keyframes orbFloat{from{transform:translate(0,0) scale(1)}to{transform:translate(14px,-26px) scale(1.08)}}
+.overlay.enzai .ov-go{color:#3a383f}
+.overlay.enzai .ov-sub{color:#57555d}
+.overlay.enzai .dead-photo{border-color:#e6e5e9;box-shadow:0 6px 18px #0004,0 0 0 3px #a5a4ab;filter:grayscale(.55)}
+.overlay.enzai .verdict.wasnt{background:#e9e8ec;color:#3f3d45}
+.overlay.enzai .ov-progress{color:#5b5961}
+.overlay.enzai .btn{background:linear-gradient(135deg,#4c4a52,#77757e);box-shadow:0 8px 20px #0003}
+.overlay.enzai .btn.sub{background:#ffffff70;color:#4c4a52;border-color:#9d9ca3}
+
 /* ===== CLEAR: 神々しい水色 ===== */
-.overlay.holy{background:radial-gradient(130% 100% at 50% 0%,#ffffff 0%,#eaf8ff 45%,#c8ecff 100%)}
+.overlay.holy{background:radial-gradient(130% 100% at 50% 0%,#ffffff 0%,#eaf8ff 45%,#c8ecff 100%);overflow:hidden}
+/* 背景そのものが水色→白へ上へ流れる光の帯 */
+.fx-holy{z-index:1}
+.hlight{position:absolute;left:-25%;right:-25%;height:42%;
+  background:radial-gradient(50% 50% at 50% 50%,#ffffffd9 0%,#d8f2ff66 55%,transparent 75%);
+  filter:blur(26px);transform:translateY(110vh);animation:hlRise linear infinite}
+@keyframes hlRise{0%{transform:translateY(110vh);opacity:0}12%{opacity:1}88%{opacity:1}100%{transform:translateY(-70vh);opacity:0}}
+/* 下から上へのぼる白いキラキラ粒子 */
+.spark{position:absolute;bottom:-3%;border-radius:50%;background:#fff;
+  box-shadow:0 0 6px #fff,0 0 14px #aee6ff,0 0 26px #8fdcff88;
+  animation:sparkUp linear infinite}
+@keyframes sparkUp{0%{transform:translateY(0) scale(1);opacity:0}8%{opacity:1}80%{opacity:.9}100%{transform:translateY(-108vh) scale(.35);opacity:0}}
+/* タイム（クリア時のみ表示） */
+.holy-time{display:flex;flex-direction:column;align-items:center;margin:2px 0 14px}
+.ht-n{font-size:44px;font-weight:900;letter-spacing:1px;color:#1e90c9;text-shadow:0 0 24px #9fdcff;line-height:1.1;font-variant-numeric:tabular-nums}
+.ht-l{font-size:11px;font-weight:800;letter-spacing:4px;color:#6aa9c4;margin-top:2px}
 .overlay.holy .ov-logo{filter:drop-shadow(0 0 16px #b5e6ff)}
 .overlay.holy .ov-logo span{background:linear-gradient(135deg,#2fa8de,#8fdcff);-webkit-background-clip:text;background-clip:text;color:transparent}
 .overlay.holy .ov-tag{color:#4d94b8}
@@ -182,31 +258,15 @@ body{font-family:-apple-system,"Hiragino Kaku Gothic ProN","Noto Sans JP",sans-s
 @keyframes shimmer{from{background-position:200% 0}to{background-position:-200% 0}}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* ===== title screen (キービジュアル) ===== */
-.overlay.title{background:#131019;color:#fff;justify-content:flex-start;padding:0;overflow:hidden}
-.t-inner{position:relative;z-index:2;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:26px 24px;gap:0}
-.t-logo{font-size:40px;margin-bottom:22px;animation:tFade .7s ease both}
-.t-fan{position:relative;width:320px;height:236px;margin:4px 0 18px;animation:tFade .8s .15s ease both}
-.t-card{position:absolute;top:14px;left:50%;width:150px;height:188px;margin-left:-75px;border-radius:16px;
-  background-size:cover;background-position:center top;box-shadow:0 14px 34px #000a;border:2.5px solid #ffffff18}
-.t-l{transform:translateX(-96px) rotate(-12deg);filter:brightness(.92)}
-.t-r{transform:translateX(96px) rotate(12deg);filter:brightness(.9)}
-.t-c{width:164px;height:206px;margin-left:-82px;top:2px;transform:none;z-index:2;border-color:#ffffff2e;
-  box-shadow:0 18px 44px #000c,0 0 34px #a3122a55}
-.t-fan,.t-card{will-change:transform}
-.t-l,.t-r,.t-c{animation:tFloat 5s ease-in-out infinite}
-.t-r{animation-delay:1.2s}.t-c{animation-delay:.6s}
-@keyframes tFloat{0%,100%{margin-top:0}50%{margin-top:-7px}}
-.t-stamp{position:absolute;font-size:15px;font-weight:900;letter-spacing:2px;padding:3px 9px;border:2.5px solid;border-radius:8px}
-.t-s{bottom:12px;left:8px;transform:rotate(-12deg);color:#2fa8de;border-color:#8fdcff;background:#ffffffe8;text-shadow:0 0 8px #aee6ff;box-shadow:0 0 14px #8fdcff66}
-.t-k{top:10px;right:8px;transform:rotate(12deg);color:#ff2b47;border-color:#a3122a;background:#150407ee;text-shadow:0 0 8px #ff2b47aa;box-shadow:0 0 18px #a3122a88}
-.t-q{position:absolute;bottom:12px;right:10px;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;
-  font-size:19px;font-weight:900;color:#fff;background:#000000b3;border:2px solid #ffffff55;text-shadow:none}
-.t-copy{font-size:26px;font-weight:900;letter-spacing:1px;color:#fff;animation:tUp .7s .3s ease both}
-.t-copy b{color:#ff2b47;text-shadow:0 0 16px #ff2b4766}
-.t-copy2{font-size:13px;font-weight:600;color:#9a90a5;margin-top:8px;animation:tUp .7s .4s ease both}
-.t-cta{margin-top:22px;padding:16px 58px;animation:tUp .7s .5s ease both}
-.t-note{color:#6d6478;margin-top:22px;max-width:340px}
+/* ===== title screen — 本物のマチアプのスプラッシュ流儀（ブランド色全面＋白ロゴ＋注意書きのみ） ===== */
+.overlay.title{background:var(--grad);padding:0;overflow:hidden}
+.t2-tap{position:relative;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:32px 30px;cursor:pointer}
+.t2-logo{display:flex;align-items:center;gap:10px;font-size:46px;font-weight:800;letter-spacing:-1px;color:#fff;
+  animation:tFade .8s ease both}
+.t2-logo .ic{color:#fff;width:.82em;height:.82em}
+.t2-note{position:absolute;left:30px;right:30px;bottom:36px;font-size:10px;line-height:1.8;color:#ffffffc4;text-align:center;
+  animation:tFade .8s .25s ease both}
 @keyframes tFade{from{opacity:0}to{opacity:1}}
 @keyframes tUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 
@@ -218,9 +278,10 @@ body{font-family:-apple-system,"Hiragino Kaku Gothic ProN","Noto Sans JP",sans-s
 /* スワイプ実習：写真下部を暗く沈めて字幕を立たせる */
 .tut.pass::before{content:'';position:absolute;inset:0;pointer-events:none;
   background:linear-gradient(to top,#0a0610f2 0%,#0a0610c4 14%,#0a061050 30%,transparent 46%)}
-/* 映画字幕（明朝・黒場・素のテキスト） */
-.inter-layer{cursor:pointer}
-.tut-scrim{position:absolute;inset:0;background:#0a0710f8;animation:tFade .35s ease}
+/* 映画字幕（明朝・黒場・素のテキスト）
+   scrimは不透過＆無アニメ＝字幕切替の瞬間に下画面が露出しない。フェードは文字側だけ */
+.inter-layer{cursor:pointer;background:#040207}
+.tut-scrim{position:absolute;inset:0;background:#040207}
 .inter{position:absolute;left:30px;right:30px;top:50%;transform:translateY(-50%);
   font-family:"Hiragino Mincho ProN","Yu Mincho","Noto Serif JP",serif;
   font-size:19px;font-weight:600;line-height:2.4;letter-spacing:.12em;color:#e9e4ee;text-align:center;

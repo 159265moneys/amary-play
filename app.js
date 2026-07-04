@@ -94,7 +94,8 @@ const QA=[['理想の休日は？','家でのんびり派、たまに遠出'],['
 const UI_TELLS=[];
 
 /* ============ run state ============ */
-let run=[],idx=0,lives=START_LIVES,matched=0;
+let run=[],idx=0,lives=START_LIVES,matched=0,runStartAt=0;
+const fmtTime=ms=>{const s=Math.floor(ms/1000);return `${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`;};
 const stampLike=document.getElementById('stampLike');
 const stampNope=document.getElementById('stampNope');
 
@@ -399,41 +400,57 @@ function applyZoom(){document.querySelector('.zoom-inner').style.transform=`tran
 /* ============ overlays ============ */
 const ov=document.getElementById('overlay');
 function showStart(){
-  const ph=(f,i)=>{const m=(window.PHOTOS||{})[f];return m&&m.photos&&m.photos[i]?encodeURI(m.photos[i]):'';};
-  // 中央カードは「あかり(女6)のFV異変ver」＝背後にストーカーが写っている実物。気づいた人だけゾッとする仕掛け
-  const center=(window.PHOTOS['女6']&&window.PHOTOS['女6'].anomalySets)?encodeURI(window.PHOTOS['女6'].anomalySets[0]['0']):ph('女6',0);
+  // 本物のマチアプのスプラッシュ流儀：ブランドカラー全面＋白ロゴ＋白の注意書きのみ
   ov.className='overlay title';
   ov.innerHTML=`
-    <div class="t-inner">
-      <div class="ov-logo t-logo">${ICON.spark}<span>Amary</span></div>
-      <div class="t-fan">
-        <div class="t-card t-l" style="background-image:url('${ph('女1',0)}')"><span class="t-stamp t-s">シロ</span></div>
-        <div class="t-card t-r" style="background-image:url('${ph('男6',0)}')"><span class="t-q">?</span></div>
-        <div class="t-card t-c" style="background-image:url('${center}')"><span class="t-stamp t-k">クロ</span></div>
-      </div>
-      <h1 class="t-copy">この中に、<b>クロ</b>がいる。</h1>
-      <p class="t-copy2">${roster().length}人全員、普通に見える。</p>
-      <button class="btn t-cta" id="startBtn">調査をはじめる</button>
-      <p class="ov-note t-note">本作はフィクションです。登場する人物・団体・アプリはすべて架空のものであり、実在するサービス・団体・人物とは一切関係ありません。人物写真はすべてAIによって生成された、実在しない人物です。本作には犯罪・ストーカー行為等を示唆する表現が含まれます。</p>
+    <div class="t2-tap" id="t2Tap">
+      <div class="t2-logo">${ICON.spark}<span>Amary</span></div>
+      <p class="t2-note">本作はフィクションです。登場する人物・団体・アプリはすべて架空のものであり、実在するサービス・団体・人物とは一切関係ありません。人物写真はすべてAIによって生成された、実在しない人物です。本作には犯罪・ストーカー行為等を示唆する表現が含まれます。</p>
     </div>`;
   paintIcons(ov);
-  ov.querySelector('#startBtn').addEventListener('click',startTutorial);
+  ov.querySelector('#t2Tap').addEventListener('click',startTutorial);
   ov.classList.remove('hidden');
+}
+/* ---- 結果画面の演出パーティクル（CSSアニメの個体差をJSで散らす） ---- */
+function spawnFx(host,cls,n,fn){
+  for(let i=0;i<n;i++){const el=document.createElement('i');el.className=cls;fn(el,i);host.appendChild(el);}
 }
 function gameOver(entry,judgedSafe){
   lives--; updateHUD();
   // 8番出口方式：答え合わせはしない。「異変があった/なかった」だけ。
   const dead=entry.danger;   // クロを見逃してシロ判定＝死 / 普通の人をクロ判定＝冤罪
-  ov.className=dead?'overlay dead':'overlay';
+  ov.className=dead?'overlay dead':'overlay enzai';
   ov.innerHTML=`
-    <div class="ov-go">${dead?'DEAD END':'冤罪'}</div>
-    <p class="ov-sub">${dead?'死んでしまった':'この人は、普通の人だった'}</p>
-    <div class="dead-photo" id="deadPhoto"></div>
-    <div class="dead-name">${entry.p.name} <span class="dead-age">${entry.p.age}</span></div>
-    <div class="verdict ${dead?'was':'wasnt'}">${dead?'異変があった':'異変はなかった'}</div>
-    <p class="ov-progress">${idx} / ${run.length} 人</p>
-    <button class="btn" id="retryBtn">もう一度さがす</button>
-    <button class="btn sub" id="titleBtn">タイトルへ</button>`;
+    ${dead?'<div class="fx-goo"></div><div class="fx-blood"></div><div class="fx-vhs"></div>':'<div class="fx-orbs"></div>'}
+    <div class="go-inner${dead?' vhs-shake':''}">
+      <div class="ov-go" ${dead?'data-glitch="DEAD END"':''}>${dead?'DEAD END':'冤罪'}</div>
+      <p class="ov-sub">${dead?'死んでしまった':'この人は、普通の人だった'}</p>
+      <div class="dead-photo" id="deadPhoto"></div>
+      <div class="dead-name">${entry.p.name} <span class="dead-age">${entry.p.age}</span></div>
+      <div class="verdict ${dead?'was':'wasnt'}">${dead?'異変があった':'異変はなかった'}</div>
+      <p class="ov-progress">${idx} / ${run.length} 人</p>
+      <button class="btn" id="retryBtn">もう一度さがす</button>
+      <button class="btn sub" id="titleBtn">タイトルへ</button>
+    </div>`;
+  if(dead){
+    // 上部から血が滴り落ちる（本数・太さ・速度・タイミングは毎回ランダム）
+    spawnFx(ov.querySelector('.fx-blood'),'drip',13,el=>{
+      el.style.left=(1+Math.random()*97)+'%';
+      el.style.width=(2.5+Math.random()*4.5)+'px';
+      el.style.animationDuration=(3.2+Math.random()*3.4)+'s';
+      el.style.animationDelay=(Math.random()*3.5)+'s';
+    });
+  }else{
+    // 黒いオーブがゆっくり浮遊
+    spawnFx(ov.querySelector('.fx-orbs'),'orb',7,el=>{
+      const s=18+Math.random()*52;
+      el.style.width=el.style.height=s+'px';
+      el.style.left=(4+Math.random()*88)+'%';
+      el.style.top=(6+Math.random()*80)+'%';
+      el.style.animationDuration=(7+Math.random()*7)+'s';
+      el.style.animationDelay=(-Math.random()*8)+'s';
+    });
+  }
   const dp=ov.querySelector('#deadPhoto');
   const s=photoSet(entry);
   const u=encodeURI(s&&s.photos[0]?s.photos[0]:`${PHOTO_BASE}/${entry.p.folder}/1.png`);
@@ -448,16 +465,35 @@ function gameOver(entry,judgedSafe){
 function win(){
   ov.className='overlay holy';
   const kuro=run.length-matched;
+  const time=fmtTime(Date.now()-runStartAt);   // タイム表示はクリア時のみ
   ov.innerHTML=`
-    <div class="ov-logo clear"><span>CLEAR</span></div>
-    <p class="ov-tag">${run.length}人すべてを見極めた。</p>
-    <div class="holy-stats">
-      <div class="hs"><span class="hs-n">${matched}</span><span class="hs-l">シロ判定</span></div>
-      <div class="hs"><span class="hs-n">${kuro}</span><span class="hs-l">クロ判定</span></div>
-      <div class="hs"><span class="hs-n">0</span><span class="hs-l">ミス</span></div>
-    </div>
-    <button class="btn" id="againBtn">もう一度さがす</button>
-    <button class="btn sub" id="winTitleBtn">タイトルへ</button>`;
+    <div class="fx-holy"></div>
+    <div class="go-inner">
+      <div class="ov-logo clear"><span>CLEAR</span></div>
+      <p class="ov-tag">${run.length}人すべてを見極めた。</p>
+      <div class="holy-time"><span class="ht-n">${time}</span><span class="ht-l">TIME</span></div>
+      <div class="holy-stats">
+        <div class="hs"><span class="hs-n">${matched}</span><span class="hs-l">シロ判定</span></div>
+        <div class="hs"><span class="hs-n">${kuro}</span><span class="hs-l">クロ判定</span></div>
+        <div class="hs"><span class="hs-n">0</span><span class="hs-l">ミス</span></div>
+      </div>
+      <button class="btn" id="againBtn">もう一度さがす</button>
+      <button class="btn sub" id="winTitleBtn">タイトルへ</button>
+    </div>`;
+  const fx=ov.querySelector('.fx-holy');
+  // 下から上へ立ちのぼる白いキラキラ粒子
+  spawnFx(fx,'spark',26,el=>{
+    const s=3+Math.random()*5;
+    el.style.width=el.style.height=s+'px';
+    el.style.left=(1+Math.random()*97)+'%';
+    el.style.animationDuration=(4.5+Math.random()*4.5)+'s';
+    el.style.animationDelay=(-Math.random()*9)+'s';
+  });
+  // 背景そのものが上へ流れていく光の帯
+  spawnFx(fx,'hlight',3,(el,i)=>{
+    el.style.animationDuration=(9+i*2.5)+'s';
+    el.style.animationDelay=(-i*4)+'s';
+  });
   ov.querySelector('#againBtn').addEventListener('click',startRun);
   ov.querySelector('#winTitleBtn').addEventListener('click',showStart);
   ov.classList.remove('hidden');
@@ -565,7 +601,7 @@ function tutCommit(dir){
 
 /* ============ controls / boot ============ */
 function startRun(){
-  run=buildRun(); idx=0; lives=START_LIVES; matched=0;
+  run=buildRun(); idx=0; lives=START_LIVES; matched=0; runStartAt=Date.now();
   committing=false; resetProfileStyle();   // 前ランの残留transform/opacityを必ず掃除
   ov.classList.add('hidden');
   document.getElementById('scroll').scrollTop=0;

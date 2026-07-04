@@ -668,14 +668,10 @@
         "img/m30/30-2-1.webp"
       ],
       "2": [
-        "img/m30/30-3-1.webp"
+        "img/m30/30-3-1.webp",
+        "img/m30/30-3-2.webp"
       ]
-    },
-    "anomalySets": [
-      {
-        "2": "img/m30/30-3-2.webp"
-      }
-    ]
+    }
   },
   "男3": {
     "photos": [
