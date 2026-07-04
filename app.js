@@ -379,8 +379,8 @@ function wireGestures(){
     }else if(axis===null&&moved<8&&startWrap){
       // タップは写真送りのみ（左1/3=前、右1/3=次）。拡大は廃止＝スワイプと競合させない
       const r=startWrap.getBoundingClientRect(), rx=(sx-r.left)/r.width;
-      if(rx<0.33){if(startWrap._pi>0){showPhoto(startWrap,startWrap._pi-1);flashEdge(startWrap,'l');}}
-      else if(rx>0.67){if(startWrap._pi<photoCount(startWrap._entry)-1){showPhoto(startWrap,startWrap._pi+1);flashEdge(startWrap,'r');}}
+      if(rx<0.33){if(startWrap._pi>0){showPhoto(startWrap,startWrap._pi-1);flashEdge(startWrap,'l');haptic('light');}}
+      else if(rx>0.67){if(startWrap._pi<photoCount(startWrap._entry)-1){showPhoto(startWrap,startWrap._pi+1);flashEdge(startWrap,'r');haptic('light');}}
       if(tutorial)tutNudge(true);
     }else if(tutorial&&!committing)tutNudge(true);
     axis=null;
@@ -890,6 +890,12 @@ function startRun(){
 }
 window.addEventListener('keydown',e=>{if(e.key==='ArrowRight')commit('like');if(e.key==='ArrowLeft')commit('nope');});
 document.querySelectorAll('.float-actions .act').forEach(b=>b.addEventListener('click',()=>commit(b.dataset.act)));
+/* UI操作全般に軽いコツン（押した瞬間＝pointerdown）。
+   判定ボタン.actと写真送りはそれぞれ専用にhapticを鳴らすため二重防止で除外 */
+document.getElementById('app').addEventListener('pointerdown',e=>{
+  if(e.target.closest('.act,.photo-wrap'))return;
+  if(e.target.closest('button,.df-cell,.dw-dark')) haptic('light');
+},true);
 
 paintIcons(document);
 wireGestures();
