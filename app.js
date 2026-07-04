@@ -106,6 +106,28 @@ const UI_TELLS=[];
 let run=[],idx=0,lives=START_LIVES,matched=0,runStartAt=0;
 const fmtTime=ms=>{const s=Math.floor(ms/1000);return `${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`;};
 
+/* ---- Haptics: Capacitor環境でのみ動作。webや未対応環境では完全に無音でスキップ ---- */
+function haptic(kind){
+  try{
+    const H=window.Capacitor&&window.Capacitor.Plugins&&window.Capacitor.Plugins.Haptics;
+    if(!H||!H.impact)return;
+    if(kind==='heavy'){
+      H.impact({style:'HEAVY'}).catch(()=>{});
+      setTimeout(()=>{try{H.impact({style:'HEAVY'}).catch(()=>{});}catch(_){}},130);
+    }else{
+      H.impact({style:'LIGHT'}).catch(()=>{});
+    }
+  }catch(_){}
+}
+/* ---- クロ側心拍ビネット: 左への傾きに応じて縁を暗くし、鼓動させる ---- */
+const dreadEl=document.getElementById('dread');
+function setDread(dx){
+  if(!dreadEl)return;
+  const k=dx<0?Math.min(-dx/240,1):0;
+  dreadEl.style.opacity=(k*0.95).toFixed(3);
+  dreadEl.classList.toggle('beat',k>0.12);
+}
+
 /* 実画像があるプロフィールだけ出す（画像未実装の人物はプレースホルダで出さない） */
 function roster(){
   return PROFILES.filter(p=>{
@@ -305,7 +327,7 @@ function setJudgeBg(s){
 function resetProfileStyle(){
   const prof=document.getElementById('profile');
   prof.style.transition='none'; prof.style.transform=''; prof.style.opacity='';
-  setJudgeBg(0);
+  setJudgeBg(0); setDread(0);
 }
 function wireGestures(){
   const scroll=document.getElementById('scroll');
@@ -340,6 +362,7 @@ function wireGestures(){
     if(axis==='h'){
       prof().style.transform=`translateX(${dx}px) rotate(${dx/24}deg)`;
       setJudgeBg(dx);
+      setDread(dx);
     }
   });
   scroll.addEventListener('pointerup',e=>{
@@ -351,7 +374,7 @@ function wireGestures(){
       if(Math.abs(dx)>90)return commit(dx>0?'like':'nope');
       const p=prof();
       p.style.transition='transform .3s cubic-bezier(.2,.85,.25,1)'; p.style.transform='';
-      setJudgeBg(0);
+      setJudgeBg(0); setDread(0);
       if(tutorial){p.addEventListener('transitionend',()=>tutNudge(true),{once:true});}   // 戻り切ってからピクピク再開
     }else if(axis===null&&moved<8&&startWrap){
       // タップは写真送りのみ（左1/3=前、右1/3=次）。拡大は廃止＝スワイプと競合させない
@@ -384,6 +407,7 @@ function commit(dir){
   if(tutorial)return tutCommit(dir);                      // チュートリアル中は専用処理（死なない）
   const entry=run[idx]; if(!entry)return;
   committing=true;
+  haptic('light');   // 捺印の手応え
   const judgedSafe=dir==='like';
   const correct=entry.danger?!judgedSafe:judgedSafe;
   const prof=document.getElementById('profile');
@@ -509,6 +533,7 @@ function startBloodFX(host){
 function stopOverlayFx(){ if(ov._stopFx){ov._stopFx(); ov._stopFx=null;} }
 function gameOver(entry,judgedSafe){
   lives--; updateHUD();
+  haptic('heavy');   // GAME OVERの重い衝撃
   // 8番出口方式：答え合わせはしない。「異変があった/なかった」だけ。
   const dead=entry.danger;   // クロを見逃してシロ判定＝死 / 普通の人をクロ判定＝冤罪
   stopOverlayFx();
@@ -591,7 +616,7 @@ function openDarkFile(){
   df.className='';
   df.innerHTML=`
     <div class="df-head"><span class="df-title">闇ファイル</span>
-      <span class="df-count">${gotCount} / ${items.length}</span>
+      <span class="df-count">闇発見率 ${Math.round(gotCount/items.length*100)}%（${gotCount}/${items.length}）</span>
       <button class="df-close" id="dfClose" data-icon="x"></button></div>
     <div class="df-grid">
       ${items.map(e=>e.got?`
@@ -624,10 +649,37 @@ function openDarkFile(){
     d.querySelector('#dfDClose').addEventListener('click',()=>{d.className='df-detail hidden';d.innerHTML='';});
   }));
 }
-/* ヘッダー⚙: 初回クリアまでは図鑑UI自体が存在しない（何も起きない） */
-document.querySelector('.appbar .icon-btn[aria-label="filter"]').addEventListener('click',()=>{
-  if(getDark().length) openDarkFile();
-});
+/* ============ 設定ドロワー（⚙・左からスライド） ============ */
+const drawerWrap=document.getElementById('drawerWrap');
+function vol(key,def){const v=parseInt(localStorage.getItem(key));return isNaN(v)?def:v;}
+function openDrawer(){
+  const times=(()=>{try{return JSON.parse(localStorage.getItem('amaryTimes')||'[]');}catch(_){return [];}})();
+  const recs=times.length
+    ? times.map((t,i)=>`<div class="dw-rec"><span class="rk">${i+1}位</span><span class="tv">${fmtTime(t)}</span></div>`).join('')
+    : '<p class="dw-empty">まだ記録がありません</p>';
+  const darkBtn=getDark().length
+    ? `<div class="dw-sec">ファイル</div>
+       <button class="dw-dark" id="dwDark">闇ファイル<small>闇発見率 ${Math.round(getDark().length/darkEntries().length*100)}%</small></button>`
+    : '';
+  document.getElementById('drawer').innerHTML=`
+    <div class="dw-title">設定<button class="dw-close" id="dwClose" data-icon="x"></button></div>
+    <div class="dw-sec">サウンド</div>
+    <div class="dw-row"><label>BGM</label><input type="range" min="0" max="100" value="${vol('amaryVolBGM',70)}" id="dwBGM"><span class="dw-val" id="dwBGMv">${vol('amaryVolBGM',70)}</span></div>
+    <div class="dw-row"><label>SE</label><input type="range" min="0" max="100" value="${vol('amaryVolSE',70)}" id="dwSE"><span class="dw-val" id="dwSEv">${vol('amaryVolSE',70)}</span></div>
+    <div class="dw-sec">記録（ベストタイム）</div>
+    ${recs}
+    ${darkBtn}`;
+  paintIcons(drawerWrap);
+  drawerWrap.classList.remove('hidden');
+  document.getElementById('dwClose').addEventListener('click',closeDrawer);
+  document.getElementById('drawerBack').addEventListener('click',closeDrawer);
+  document.getElementById('dwBGM').addEventListener('input',e=>{localStorage.setItem('amaryVolBGM',e.target.value);document.getElementById('dwBGMv').textContent=e.target.value;});
+  document.getElementById('dwSE').addEventListener('input',e=>{localStorage.setItem('amaryVolSE',e.target.value);document.getElementById('dwSEv').textContent=e.target.value;});
+  const dk=document.getElementById('dwDark');
+  if(dk)dk.addEventListener('click',()=>{closeDrawer();openDarkFile();});
+}
+function closeDrawer(){drawerWrap.classList.add('hidden');document.getElementById('drawer').innerHTML='';}
+document.querySelector('.appbar .icon-btn[aria-label="filter"]').addEventListener('click',openDrawer);
 
 function win(){
   stopOverlayFx();
@@ -635,7 +687,13 @@ function win(){
   const firstTime=!localStorage.getItem('amaryDarkPopup');
   ov.className='overlay holy';
   const kuro=run.length-matched;
-  const time=fmtTime(Date.now()-runStartAt);     // タイム表示はクリア時のみ
+  const elapsed=Date.now()-runStartAt;
+  try{
+    const arr=JSON.parse(localStorage.getItem('amaryTimes')||'[]');
+    arr.push(elapsed); arr.sort((a,b)=>a-b);
+    localStorage.setItem('amaryTimes',JSON.stringify(arr.slice(0,5)));
+  }catch(_){}
+  const time=fmtTime(elapsed);                   // タイム表示はクリア時のみ
   ov.innerHTML=`
     <div class="fx-holy"></div>
     <div class="go-inner holy-enter">
@@ -814,7 +872,7 @@ function tutCommit(dir){
     setTimeout(()=>tutNudge(true),320);
     return;
   }
-  committing=true; setJudgeBg(dir==='like'?1:-1);
+  committing=true; setJudgeBg(dir==='like'?1:-1); haptic('light');
   prof.style.transition='transform .3s ease-out, opacity .3s ease-out';
   prof.style.transform=`translateX(${dir==='like'?600:-600}px) rotate(${dir==='like'?9:-9}deg)`;
   prof.style.opacity='0';
