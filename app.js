@@ -662,7 +662,7 @@ function openDrawer(){
        <button class="dw-dark" id="dwDark">闇ファイル<small>闇発見率 ${Math.round(getDark().length/darkEntries().length*100)}%</small></button>`
     : '';
   document.getElementById('drawer').innerHTML=`
-    <div class="dw-title">設定<button class="dw-close" id="dwClose" data-icon="x"></button></div>
+    <div class="dw-title">Menu<button class="dw-close" id="dwClose" data-icon="x"></button></div>
     <div class="dw-sec">サウンド</div>
     <div class="dw-row"><label>SE</label><input type="range" min="0" max="100" value="${vol('amaryVolSE',70)}" id="dwSE"><span class="dw-val" id="dwSEv">${vol('amaryVolSE',70)}</span></div>
     <div class="dw-sec">記録（ベストタイム）</div>
@@ -677,7 +677,7 @@ function openDrawer(){
   if(dk)dk.addEventListener('click',()=>{closeDrawer();openDarkFile();});
 }
 function closeDrawer(){drawerWrap.classList.add('hidden');document.getElementById('drawer').innerHTML='';}
-document.querySelector('.appbar .icon-btn[aria-label="filter"]').addEventListener('click',openDrawer);
+document.querySelector('.appbar .icon-btn[aria-label="menu"]').addEventListener('click',openDrawer);
 
 function win(){
   stopOverlayFx();

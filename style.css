@@ -129,9 +129,9 @@ body{font-family:-apple-system,"Hiragino Kaku Gothic ProN","Noto Sans JP",sans-s
 /* 設定ドロワー（左からスライド） */
 #drawerWrap{position:absolute;inset:0;z-index:92}
 #drawerBack{position:absolute;inset:0;background:#00000066;animation:tFade .25s ease}
-#drawer{position:absolute;top:0;bottom:0;left:0;width:300px;background:#fff;box-shadow:8px 0 40px #0004;
+#drawer{position:absolute;top:0;bottom:0;right:0;width:300px;background:#fff;box-shadow:-8px 0 40px #0004;
   padding:calc(20px + env(safe-area-inset-top,0px)) 20px 24px;overflow-y:auto;
-  transform:translateX(-100%);animation:drawerIn .28s cubic-bezier(.2,.85,.3,1) forwards}
+  transform:translateX(100%);animation:drawerIn .28s cubic-bezier(.2,.85,.3,1) forwards}
 @keyframes drawerIn{to{transform:translateX(0)}}
 .dw-title{font-size:19px;font-weight:800;color:var(--ink);margin-bottom:18px;display:flex;align-items:center;justify-content:space-between}
 .dw-close{border:none;background:#f0ecf3;color:#8a8592;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center}
