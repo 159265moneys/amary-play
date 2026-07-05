@@ -24,9 +24,13 @@ const TAGS=[
 /* 闇タグ（プロフ異変）: 趣味の文法に乗っているが、よく考えると常軌を逸している。
    危険ラン時にタグ1枠だけ差し替わる（写真異変と択一・同時発動なし） */
 const DARK_TAGS=[
-  {id:'d_haka',label:'墓地巡り'},{id:'d_hamono',label:'刃物あつめ'},{id:'d_biko',label:'深夜の尾行'},
-  {id:'d_kanshi',label:'監視カメラ鑑賞'},{id:'d_kokkaku',label:'骨格標本'},{id:'d_rope',label:'ロープの結び方研究'},
-  {id:'d_soshiki',label:'お葬式に参列すること'},{id:'d_otoshimono',label:'落とし物あつめ'},{id:'d_kagi',label:'鍵作り'},
+  // 心霊系（死・弔い）: 心霊系キャラに出す
+  {id:'d_haka',label:'墓地巡り',cat:'shinrei'},{id:'d_soshiki',label:'お葬式に参列すること',cat:'shinrei'},
+  {id:'d_kokkaku',label:'骨格標本',cat:'shinrei'},
+  // 人怖系（危険な人間）: 人怖系キャラに出す
+  {id:'d_hamono',label:'刃物あつめ',cat:'hitokowa'},{id:'d_biko',label:'深夜の尾行',cat:'hitokowa'},
+  {id:'d_kanshi',label:'監視カメラ鑑賞',cat:'hitokowa'},{id:'d_rope',label:'ロープの結び方研究',cat:'hitokowa'},
+  {id:'d_otoshimono',label:'落とし物あつめ',cat:'hitokowa'},{id:'d_kagi',label:'鍵作り',cat:'hitokowa'},
 ];
 /* 闇タグの図鑑記録用: 説明(d)＋難易度(s)。画像は assets/tags/<id>.png を流用 */
 const TAG_DARKDESC={
@@ -205,7 +209,8 @@ function buildRun(){
     if(tell&&tell.kind==='prof'){
       const t=tell.t;
       if(t.type==='tag'){
-        const dark=pick(DARK_TAGS);
+        const pool=DARK_TAGS.filter(d=>d.cat===(t.cat||'hitokowa'));
+        const dark=pick(pool.length?pool:DARK_TAGS);   // カテゴリ一致プールから（心霊/人怖）
         const i=Math.floor(Math.random()*entry.tagList.length);
         entry.tagList=entry.tagList.slice(); entry.tagList[i]=dark;
         tell.darkTag=dark.id;                    // 図鑑記録用
