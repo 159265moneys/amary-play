@@ -494,6 +494,29 @@ body{font-family:-apple-system,"Hiragino Kaku Gothic ProN","Noto Sans JP",sans-s
   animation:tFade .8s .25s ease both}
 @keyframes tFade{from{opacity:0}to{opacity:1}}
 @keyframes tUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+/* 2回目以降のタイトル: 一瞬だけVHSが乱れ赤黒いホラーがよぎる */
+.t2-glitch{position:absolute;inset:0;z-index:5;pointer-events:none;opacity:0;
+  background:
+    repeating-linear-gradient(0deg,transparent 0 2px,rgba(0,0,0,.28) 2px 3px),
+    linear-gradient(0deg,#ff2b4733,transparent 20% 80%,#ff2b4733),
+    radial-gradient(130% 100% at 50% 42%,#3a0008 0%,#12000399 55%,#08000255 100%)}
+.t2-glitch.on{animation:t2glitch .42s linear 1}
+@keyframes t2glitch{
+  0%{opacity:0;transform:translate(0,0) scaleX(1)}
+  12%{opacity:.95;transform:translate(-6px,3px) scaleX(1.03)}
+  28%{opacity:.4;transform:translate(7px,-4px) scaleX(.99)}
+  46%{opacity:.9;transform:translate(-4px,2px) scaleX(1.02)}
+  70%{opacity:.55;transform:translate(3px,-1px)}
+  88%{opacity:.2;transform:translate(-2px,1px)}
+  100%{opacity:0;transform:translate(0,0)}}
+/* グリッチ中はロゴがRGBズレして震える */
+.t2-logo.glitch{animation:t2logoGlitch .42s linear 1}
+@keyframes t2logoGlitch{
+  0%,100%{transform:translate(0,0);filter:none}
+  12%{transform:translate(5px,-2px);filter:drop-shadow(-4px 0 0 #0ff8) drop-shadow(4px 0 0 #ff2b47cc)}
+  30%{transform:translate(-6px,2px);filter:drop-shadow(4px 0 0 #0ffaa) drop-shadow(-4px 0 0 #ff2b47cc)}
+  55%{transform:translate(4px,1px);filter:drop-shadow(-3px 0 0 #0ff8) drop-shadow(3px 0 0 #ff2b47aa)}
+  80%{transform:translate(-2px,0);filter:none}}
 
 /* ===== tutorial ===== */
 #tut{position:absolute;inset:0;z-index:70}

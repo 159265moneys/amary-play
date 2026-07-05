@@ -475,22 +475,38 @@ function applyZoom(){document.querySelector('.zoom-inner').style.transform=`tran
 
 /* ============ overlays ============ */
 const ov=document.getElementById('overlay');
+let titleGlitchTimer=null;
 function showStart(){
   stopOverlayFx();
+  clearInterval(titleGlitchTimer); titleGlitchTimer=null;
   // 本物のマチアプのスプラッシュ流儀：ブランドカラー全面＋白ロゴ＋白の注意書きのみ
   ov.className='overlay title';
   ov.innerHTML=`
     <div class="t2-tap" id="t2Tap">
+      <div class="t2-glitch"></div>
       <div class="t2-logo"><img class="t2-logo-img" src="assets/logo/yummy_white.webp?v=48" alt="Yummy"></div>
       <p class="t2-note">本作はフィクションです。登場する人物・団体・アプリはすべて架空のものであり、実在するサービス・団体・人物とは一切関係ありません。人物写真はすべてAIによって生成された、実在しない人物です。本作には一部、刺激の強い表現・不穏な描写が含まれます。</p>
     </div>`;
   paintIcons(ov);
   // 初回はチュートリアル、2回目以降（見た/スキップした後）は本編へ直行
   ov.querySelector('#t2Tap').addEventListener('click',()=>{
+    clearInterval(titleGlitchTimer); titleGlitchTimer=null;
     if(localStorage.getItem('amaryTutDone')) startRun();
     else startTutorial();
   });
   ov.classList.remove('hidden');
+  // 2回目以降のみ：数秒ごとにVHSが乱れ、一瞬だけ赤黒いホラーがよぎる
+  if(localStorage.getItem('amaryTutDone')){
+    const g=ov.querySelector('.t2-glitch'), logo=ov.querySelector('.t2-logo');
+    const fire=()=>{
+      if(!ov.className.includes('title')||ov.classList.contains('hidden'))return;
+      g.classList.remove('on'); logo.classList.remove('glitch');
+      void g.offsetWidth;
+      g.classList.add('on'); logo.classList.add('glitch');
+    };
+    setTimeout(fire,3200+Math.random()*1800);   // 初回は3〜5秒後
+    titleGlitchTimer=setInterval(fire,5000+Math.random()*3500);
+  }
 }
 /* ---- 結果画面の演出パーティクル（CSSアニメの個体差をJSで散らす） ---- */
 function spawnFx(host,cls,n,fn){
