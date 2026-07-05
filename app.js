@@ -694,10 +694,9 @@ function openDrawer(){
   const recs=times.length
     ? times.map((t,i)=>`<div class="dw-rec"><span class="rk">${i+1}位</span><span class="tv">${fmtTime(t)}</span></div>`).join('')
     : '<p class="dw-empty">まだ記録がありません</p>';
-  const darkBtn=getDark().length
-    ? `<div class="dw-sec">ファイル</div>
-       <button class="dw-dark" id="dwDark">闇ファイル<small>闇発見率 ${Math.round(getDark().length/darkEntries().length*100)}%</small></button>`
-    : '';
+  const unlocked=getDark().length>0;
+  const darkBtn=`<div class="dw-sec">ファイル</div>
+       <button class="dw-dark${unlocked?'':' locked'}" id="dwDark"${unlocked?'':' disabled'}>闇ファイル<small>${unlocked?`闇発見率 ${Math.round(getDark().length/darkEntries().length*100)}%`:'未解放'}</small></button>`;
   document.getElementById('drawer').innerHTML=`
     <div class="dw-title">Menu<button class="dw-close" id="dwClose" data-icon="x"></button></div>
     <div class="dw-sec">記録（ベストタイム）</div>
@@ -712,7 +711,7 @@ function openDrawer(){
   document.getElementById('dwClose').addEventListener('click',closeDrawer);
   document.getElementById('drawerBack').addEventListener('click',closeDrawer);
   const dk=document.getElementById('dwDark');
-  if(dk)dk.addEventListener('click',()=>{closeDrawer();openDarkFile();});
+  if(dk&&!dk.disabled)dk.addEventListener('click',()=>{closeDrawer();openDarkFile();});
   document.getElementById('dwShare').addEventListener('click',shareResult);
   document.getElementById('dwAbout').addEventListener('click',openAbout);
   document.getElementById('dwHome').addEventListener('click',()=>{closeDrawer();showStart();});
