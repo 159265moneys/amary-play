@@ -726,6 +726,7 @@ function openDrawer(){
     <div class="dw-sec">その他</div>
     <button class="dw-item" id="dwShare">結果をシェア<span class="dw-chev">›</span></button>
     <button class="dw-item" id="dwAbout">この作品について<span class="dw-chev">›</span></button>
+    <button class="dw-item dw-danger" id="dwReset">データを消去<span class="dw-chev">›</span></button>
     <button class="dw-home" id="dwHome">タイトルに戻る</button>`;
   paintIcons(drawerWrap);
   drawerWrap.classList.remove('hidden');
@@ -735,7 +736,31 @@ function openDrawer(){
   if(dk&&!dk.disabled)dk.addEventListener('click',()=>{closeDrawer();openDarkFile();});
   document.getElementById('dwShare').addEventListener('click',shareResult);
   document.getElementById('dwAbout').addEventListener('click',openAbout);
+  document.getElementById('dwReset').addEventListener('click',resetAllData);
   document.getElementById('dwHome').addEventListener('click',()=>{closeDrawer();showStart();});
+}
+/* 確認ダイアログ（破壊的操作用） */
+function confirmDialog(msg,yesLabel,onYes){
+  const m=document.createElement('div'); m.className='about-modal';
+  m.innerHTML=`
+    <div class="confirm-card">
+      <p class="confirm-msg">${msg}</p>
+      <div class="confirm-btns">
+        <button class="confirm-cancel" id="cfNo">キャンセル</button>
+        <button class="confirm-yes" id="cfYes">${yesLabel}</button>
+      </div>
+    </div>`;
+  document.getElementById('app').appendChild(m);
+  m.addEventListener('click',e=>{ if(e.target===m) m.remove(); });
+  m.querySelector('#cfNo').addEventListener('click',()=>m.remove());
+  m.querySelector('#cfYes').addEventListener('click',()=>{ m.remove(); onYes(); });
+}
+/* データ消去＝記録・闇ファイル・チュートリアル履歴を全消しして最初から */
+function resetAllData(){
+  confirmDialog('記録・闇ファイルをすべて消去して最初からにします。<br>この操作は取り消せません。','消去する',()=>{
+    Object.keys(localStorage).filter(k=>k.startsWith('amary')).forEach(k=>localStorage.removeItem(k));
+    closeDrawer(); showStart(); toast('データを消去しました');
+  });
 }
 function closeDrawer(){drawerWrap.classList.add('hidden');document.getElementById('drawer').innerHTML='';}
 document.querySelector('.appbar .icon-btn[aria-label="menu"]').addEventListener('click',openDrawer);
