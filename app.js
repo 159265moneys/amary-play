@@ -481,7 +481,7 @@ function showStart(){
   ov.innerHTML=`
     <div class="t2-tap" id="t2Tap">
       <div class="t2-logo"><img class="t2-logo-img" src="assets/logo/yummy_white.webp?v=48" alt="Yummy"></div>
-      <p class="t2-note">本作はフィクションです。登場する人物・団体・アプリはすべて架空のものであり、実在するサービス・団体・人物とは一切関係ありません。人物写真はすべてAIによって生成された、実在しない人物です。本作には犯罪・ストーカー行為等を示唆する表現が含まれます。</p>
+      <p class="t2-note">本作はフィクションです。登場する人物・団体・アプリはすべて架空のものであり、実在するサービス・団体・人物とは一切関係ありません。人物写真はすべてAIによって生成された、実在しない人物です。本作には一部、刺激の強い表現・不穏な描写が含まれます。</p>
     </div>`;
   paintIcons(ov);
   ov.querySelector('#t2Tap').addEventListener('click',startTutorial);
@@ -744,9 +744,9 @@ function openAbout(){
     <div class="about-card">
       <img class="about-logo" src="assets/logo/yummy_pink.webp?v=53" alt="Yummy">
       <p class="about-tag">「たまらない相手」に、出会おう。</p>
-      <p class="about-body">本作はフィクションです。登場する人物・団体・アプリはすべて架空のものであり、実在するサービス・団体・人物とは一切関係ありません。人物写真はすべてAIによって生成された、実在しない人物です。本作には犯罪・ストーカー行為等を示唆する表現が含まれます。</p>
+      <p class="about-body">本作はフィクションです。登場する人物・団体・アプリはすべて架空のものであり、実在するサービス・団体・人物とは一切関係ありません。人物写真はすべてAIによって生成された、実在しない人物です。本作には一部、刺激の強い表現・不穏な描写が含まれます。</p>
       <div class="about-cred">
-        <div class="ac-row"><span class="ac-k">企画・制作</span><span class="ac-v"></span></div>
+        <div class="ac-row"><span class="ac-k">企画・制作</span><span class="ac-v">ODDGAMES</span></div>
       </div>
       <button class="about-close" id="aboutClose">閉じる</button>
     </div>`;
