@@ -726,7 +726,7 @@ function openDrawer(){
     <div class="dw-sec">その他</div>
     <button class="dw-item" id="dwShare">結果をシェア<span class="dw-chev">›</span></button>
     <button class="dw-item" id="dwAbout">この作品について<span class="dw-chev">›</span></button>
-    <button class="dw-item dw-danger" id="dwReset">データを消去<span class="dw-chev">›</span></button>
+    <button class="dw-item dw-danger" id="dwReset">退会する<span class="dw-chev">›</span></button>
     <button class="dw-home" id="dwHome">タイトルに戻る</button>`;
   paintIcons(drawerWrap);
   drawerWrap.classList.remove('hidden');
@@ -757,9 +757,9 @@ function confirmDialog(msg,yesLabel,onYes){
 }
 /* データ消去＝記録・闇ファイル・チュートリアル履歴を全消しして最初から */
 function resetAllData(){
-  confirmDialog('記録・闇ファイルをすべて消去して最初からにします。<br>この操作は取り消せません。','消去する',()=>{
+  confirmDialog('本当に退会しますか？<br>これまでの記録やデータはすべて削除され、元に戻せません。','退会する',()=>{
     Object.keys(localStorage).filter(k=>k.startsWith('amary')).forEach(k=>localStorage.removeItem(k));
-    closeDrawer(); showStart(); toast('データを消去しました');
+    closeDrawer(); showStart(); toast('退会しました');
   });
 }
 function closeDrawer(){drawerWrap.classList.add('hidden');document.getElementById('drawer').innerHTML='';}
