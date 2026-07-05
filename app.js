@@ -345,6 +345,7 @@ function setJudgeBg(s){
 function resetProfileStyle(){
   const prof=document.getElementById('profile');
   prof.style.transition='none'; prof.style.transform=''; prof.style.opacity='';
+  prof.classList.remove('tut-nudge-left','tut-nudge-right');   // ピクピク（チュートリアル）を必ず解除
   setJudgeBg(0); setDread(0);
 }
 function wireGestures(){
@@ -484,7 +485,11 @@ function showStart(){
       <p class="t2-note">本作はフィクションです。登場する人物・団体・アプリはすべて架空のものであり、実在するサービス・団体・人物とは一切関係ありません。人物写真はすべてAIによって生成された、実在しない人物です。本作には一部、刺激の強い表現・不穏な描写が含まれます。</p>
     </div>`;
   paintIcons(ov);
-  ov.querySelector('#t2Tap').addEventListener('click',startTutorial);
+  // 初回はチュートリアル、2回目以降（見た/スキップした後）は本編へ直行
+  ov.querySelector('#t2Tap').addEventListener('click',()=>{
+    if(localStorage.getItem('amaryTutDone')) startRun();
+    else startTutorial();
+  });
   ov.classList.remove('hidden');
 }
 /* ---- 結果画面の演出パーティクル（CSSアニメの個体差をJSで散らす） ---- */
@@ -919,11 +924,17 @@ function tutShow(){
     T.addEventListener('click',tutNext,{once:true});
   }else{
     T.innerHTML=''; T.classList.add('hidden'); tutorial=null;
+    localStorage.setItem('amaryTutDone','1');   // 完走→次回以降スキップ
     startRun(); return;
   }
   paintIcons(T);
   const sk=T.querySelector('#tutSkip');
-  if(sk)sk.addEventListener('click',()=>{T.innerHTML='';T.classList.add('hidden');tutorial=null;startRun();});
+  if(sk)sk.addEventListener('click',()=>{
+    tutNudge(false);                            // ピクピク即停止
+    T.innerHTML=''; T.classList.add('hidden'); tutorial=null;
+    localStorage.setItem('amaryTutDone','1');   // スキップ→次回以降スキップ
+    startRun();
+  });
 }
 function tutNext(){if(!tutorial)return;tutorial.step++;tutShow();}
 /* カード本体を「スワイプしかけ」でピクピク動かす（CSSアニメ）。ドラッグ中は外して指追従を優先 */
