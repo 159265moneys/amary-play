@@ -5,6 +5,9 @@ const PHOTO_BASE = '写真素材';
 const PHOTOS_PER = 5;
 const START_LIVES = 3;
 const DANGER_RATE = 0.5;
+const NORMAL_LEN = 30;              // 通常モード＝30人でクリア
+const HARD_LEN = 60;               // ハードモード＝60人（全員）
+const HARD_UNLOCK_MS = 10*60*1000; // 1週目を10分以内でクリア→ハード解放
 let DEBUG = false;
 
 const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
@@ -119,7 +122,7 @@ const QA=[['理想の休日は？','家でのんびり派、たまに遠出'],['
 const UI_TELLS=[];
 
 /* ============ run state ============ */
-let run=[],idx=0,lives=START_LIVES,matched=0,runStartAt=0;
+let run=[],idx=0,lives=START_LIVES,matched=0,runStartAt=0,hardMode=false;
 const fmtTime=ms=>{const s=Math.floor(ms/1000);return `${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`;};
 
 /* ---- Haptics: Capacitor環境でのみ動作。webや未対応環境では完全に無音でスキップ ---- */
@@ -152,7 +155,8 @@ function roster(){
   });
 }
 function buildRun(){
-  return shuffle(roster()).map(p=>{
+  const len = hardMode ? HARD_LEN : NORMAL_LEN;
+  return shuffle(roster()).slice(0,len).map(p=>{
     let danger=Math.random()<DANGER_RATE;
     let tell=null;
     if(danger){
@@ -491,6 +495,7 @@ function showStart(){
   // 初回はチュートリアル、2回目以降（見た/スキップした後）は本編へ直行
   ov.querySelector('#t2Tap').addEventListener('click',()=>{
     clearInterval(titleGlitchTimer); titleGlitchTimer=null;
+    hardMode=false;                                   // タイトルからは常に通常モード
     if(localStorage.getItem('amaryTutDone')) startRun();
     else startTutorial();
   });
@@ -711,17 +716,30 @@ function openDarkFile(){
 /* ============ 設定ドロワー（⚙・左からスライド） ============ */
 const drawerWrap=document.getElementById('drawerWrap');
 function openDrawer(){
-  const times=(()=>{try{return JSON.parse(localStorage.getItem('amaryTimes')||'[]');}catch(_){return [];}})();
+  const readTimes=(k)=>{try{return JSON.parse(localStorage.getItem(k)||'[]');}catch(_){return [];}};
+  const times=readTimes('amaryTimes');
   const recs=times.length
     ? times.map((t,i)=>`<div class="dw-rec"><span class="rk">${i+1}位</span><span class="tv">${fmtTime(t)}</span></div>`).join('')
     : '<p class="dw-empty">まだ記録がありません</p>';
+  const hardUnlocked=!!localStorage.getItem('amaryHardUnlocked');
+  const hardTimes=readTimes('amaryTimesHard');
+  const hardRecs=hardTimes.length
+    ? hardTimes.map((t,i)=>`<div class="dw-rec"><span class="rk">${i+1}位</span><span class="tv">${fmtTime(t)}</span></div>`).join('')
+    : '<p class="dw-empty">まだ記録がありません</p>';
+  // ハードモード：解放前は伏せる（グレーアウトで存在だけ示す）
+  const hardBtn=hardUnlocked
+    ? `<button class="dw-hard" id="dwHard">ハードモードで挑戦<small>60人・失敗できない</small></button>`
+    : `<button class="dw-hard locked" id="dwHard" disabled>ハードモード<small>1週目を10分以内でクリアで解放</small></button>`;
   const unlocked=getDark().length>0;
   const darkBtn=`<div class="dw-sec">ファイル</div>
        <button class="dw-dark${unlocked?'':' locked'}" id="dwDark"${unlocked?'':' disabled'}>闇ファイル<small>${unlocked?`闇発見率 ${Math.round(getDark().length/darkEntries().length*100)}%`:'未解放'}</small></button>`;
   document.getElementById('drawer').innerHTML=`
     <div class="dw-title">Menu<button class="dw-close" id="dwClose" data-icon="x"></button></div>
-    <div class="dw-sec">記録（ベストタイム）</div>
+    <div class="dw-sec">モード</div>
+    ${hardBtn}
+    <div class="dw-sec">${hardUnlocked?'記録（ノーマル）':'記録（ベストタイム）'}</div>
     ${recs}
+    ${hardUnlocked?`<div class="dw-sec">記録（ハード）</div>${hardRecs}`:''}
     ${darkBtn}
     <div class="dw-sec">その他</div>
     <button class="dw-item" id="dwShare">結果をシェア<span class="dw-chev">›</span></button>
@@ -732,6 +750,8 @@ function openDrawer(){
   drawerWrap.classList.remove('hidden');
   document.getElementById('dwClose').addEventListener('click',closeDrawer);
   document.getElementById('drawerBack').addEventListener('click',closeDrawer);
+  const hd=document.getElementById('dwHard');
+  if(hd&&!hd.disabled)hd.addEventListener('click',()=>{closeDrawer();hardMode=true;startRun();});
   const dk=document.getElementById('dwDark');
   if(dk&&!dk.disabled)dk.addEventListener('click',()=>{closeDrawer();openDarkFile();});
   document.getElementById('dwShare').addEventListener('click',shareResult);
@@ -808,18 +828,24 @@ function win(){
   ov.className='overlay holy';
   const kuro=run.length-matched;
   const elapsed=Date.now()-runStartAt;
+  const timeKey=hardMode?'amaryTimesHard':'amaryTimes';
   try{
-    const arr=JSON.parse(localStorage.getItem('amaryTimes')||'[]');
+    const arr=JSON.parse(localStorage.getItem(timeKey)||'[]');
     arr.push(elapsed); arr.sort((a,b)=>a-b);
-    localStorage.setItem('amaryTimes',JSON.stringify(arr.slice(0,5)));
+    localStorage.setItem(timeKey,JSON.stringify(arr.slice(0,5)));
   }catch(_){}
+  // 1週目（通常モード）を10分以内でクリア→ハードモード解放
+  const justUnlockedHard=!hardMode&&elapsed<=HARD_UNLOCK_MS&&!localStorage.getItem('amaryHardUnlocked');
+  if(justUnlockedHard)localStorage.setItem('amaryHardUnlocked','1');
   const time=fmtTime(elapsed);                   // タイム表示はクリア時のみ
   ov.innerHTML=`
     <div class="fx-holy"></div>
     <div class="go-inner holy-enter">
       <div class="ov-logo clear"><span>CLEAR</span></div>
+      <div class="clear-mode ${hardMode?'hard':'normal'}">${hardMode?'HARD':'NORMAL'}</div>
       <p class="ov-tag">あなたのおかげでマッチングアプリの秩序は保たれた</p>
       <div class="holy-time"><span class="ht-n">${time}</span><span class="ht-l">TIME</span></div>
+      ${justUnlockedHard?`<div class="hard-unlock"><div class="hu-head"><svg class="hu-ic" viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="10" rx="2.2"/><path d="M8 10.5V7a4 4 0 0 1 7.8-1.2"/></svg>HARDモード解放</div><span>メニューから挑戦できます（60人）</span></div>`:''}
       <div class="holy-stats">
         <div class="hs"><span class="hs-n">${matched}</span><span class="hs-l">シロ判定</span></div>
         <div class="hs" id="kuroCard"><span class="hs-n" id="kuroN">${kuro}</span><span class="hs-l">クロ判定</span></div>
@@ -942,24 +968,29 @@ function tutShow(){
     T.innerHTML=inter('あなたはマッチングアプリに潜む闇を調査する捜査官です');
     T.addEventListener('click',tutNext,{once:true});
   }else if(s===1){
+    // 写真送り（左右端タッチ）の説明。スワイプ判定の前に置く
+    T.className='tut inter-layer';
+    T.innerHTML=inter('プロフィール写真の<b>左右の端</b>をタップすると<br>その人の別の写真を見られます');
+    T.addEventListener('click',tutNext,{once:true});
+  }else if(s===2){
     tutorial.entry=tutEntry(TUT_KURO,true); tutorial.need='nope';
     document.getElementById('scroll').scrollTop=0;
     renderProfile(tutorial.entry);
     T.className='tut pass';
     T.innerHTML=`<div class="tut-cap">怪しいと思ったユーザーは<br>左にスワイプして<b class="kuro">「クロ」</b>に</div>${tutSkipHTML()}`;
     tutNudge(true);
-  }else if(s===2){
+  }else if(s===3){
     tutorial.entry=tutEntry(TUT_SHIRO,false); tutorial.need='like';
     document.getElementById('scroll').scrollTop=0;
     renderProfile(tutorial.entry);
     T.className='tut pass';
     T.innerHTML=`<div class="tut-cap">問題ないと思ったユーザは<br>右にスワイプして<b class="shiro">「シロ」</b>にしてください</div>${tutSkipHTML()}`;
     tutNudge(true);
-  }else if(s===3){
+  }else if(s===4){
     T.className='tut inter-layer';
     T.innerHTML=inter('マッチングアプリに潜む闇には<br>さまざまな種類があります');
     T.addEventListener('click',tutNext,{once:true});
-  }else if(s===4){
+  }else if(s===5){
     T.className='tut inter-layer';
     T.innerHTML=inter('判断を間違えないように<br>よーく観察してみましょう');
     T.addEventListener('click',tutNext,{once:true});

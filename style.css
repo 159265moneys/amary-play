@@ -154,6 +154,14 @@ body{font-family:-apple-system,"Hiragino Kaku Gothic ProN","Noto Sans JP",sans-s
 /* 未解放（初回クリア前）: グレーアウト＆押せない */
 .dw-dark.locked{opacity:.42;filter:grayscale(.7);pointer-events:none}
 .dw-dark.locked:active{transform:none}
+/* ハードモード（解放後は挑戦ボタン、解放前はグレーアウト） */
+.dw-hard{width:100%;text-align:left;border:none;border-radius:12px;padding:14px 16px;
+  background:linear-gradient(135deg,#3a0a14,#7a0f22);color:#ffdbe1;font-size:14.5px;font-weight:800;
+  letter-spacing:.06em;display:flex;flex-direction:column;gap:3px;box-shadow:0 6px 18px #7a0f2240}
+.dw-hard small{font-family:-apple-system,sans-serif;font-size:10.5px;font-weight:600;color:#e59aa6;letter-spacing:.02em}
+.dw-hard:active{transform:scale(.98)}
+.dw-hard.locked{background:#efe7ec;color:#9a8f9f;box-shadow:none;pointer-events:none}
+.dw-hard.locked small{color:#b3a7b6}
 /* メニュー項目（結果をシェア / この作品について） */
 .dw-item{width:100%;text-align:left;border:none;background:#f6f2f8;color:var(--ink);
   border-radius:12px;padding:14px 16px;margin-bottom:8px;font-size:14px;font-weight:700;
@@ -360,6 +368,18 @@ body{font-family:-apple-system,"Hiragino Kaku Gothic ProN","Noto Sans JP",sans-s
 .ht-n{font-size:44px;font-weight:900;letter-spacing:1px;color:#1e90c9;text-shadow:0 0 24px #9fdcff;line-height:1.1;font-variant-numeric:tabular-nums}
 .ht-l{font-size:11px;font-weight:800;letter-spacing:4px;color:#6aa9c4;margin-top:2px}
 .overlay.holy .ov-tag{max-width:300px;line-height:1.8}
+/* クリア画面のモード表示・ハード解放バナー */
+.clear-mode{display:inline-block;margin:8px auto 0;padding:3px 15px;border-radius:999px;
+  color:#fff;font-size:11px;font-weight:900;letter-spacing:3px}
+.clear-mode.normal{background:linear-gradient(135deg,#2fa8de,#8fdcff)}
+.clear-mode.hard{background:linear-gradient(135deg,#a3122a,#ff2b47)}
+.hard-unlock{margin:2px auto 16px;max-width:290px;padding:12px 16px;border-radius:14px;
+  background:#0d0409;border:1px solid #7a0f22;color:#ffd0d7;line-height:1.5;
+  display:flex;flex-direction:column;gap:3px;align-items:center;animation:dpIn .5s ease}
+.hard-unlock .hu-head{display:flex;align-items:center;gap:7px;font-size:14px;font-weight:800}
+.hard-unlock .hu-ic{width:16px;height:16px;fill:none;stroke:#ff6b81;stroke-width:2;
+  stroke-linecap:round;stroke-linejoin:round}
+.hard-unlock span{font-size:11px;font-weight:600;color:#e59aa6}
 
 /* ===== クリアの流れ: ホワイトアウト → 天国が透けて現れる ===== */
 .whiteout{position:absolute;inset:0;background:#fff;z-index:8;pointer-events:none;
