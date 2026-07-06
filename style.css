@@ -481,6 +481,12 @@ body{font-family:-apple-system,"Hiragino Kaku Gothic ProN","Noto Sans JP",sans-s
 .df-d-img-wrap{position:relative;width:100%;display:flex;justify-content:center}
 .df-d-inner img{width:100%;max-height:52vh;object-fit:contain;border-radius:12px;
   border:1px solid #3a1a24;box-shadow:0 12px 44px #000c}
+/* セット異変（女6の同じ男など）: 詳細は複数枚を横並び */
+.df-d-set{gap:6px}
+.df-d-set img{width:auto;flex:1;min-width:0;max-height:40vh}
+/* グリッドのセルに「N枚セット」バッジ */
+.df-setbadge{position:absolute;left:5px;bottom:5px;background:#7a0f22e6;color:#ffdbe1;
+  padding:2px 6px;border-radius:6px;font-size:9px;font-weight:800;letter-spacing:.04em}
 /* タグ詳細: 画像の上に興味・関心カードのラベルを大きく重ねる */
 .df-d-tag{position:absolute;left:0;right:0;bottom:0;padding:34px 18px 16px;
   background:linear-gradient(to top,#000000e6,transparent);border-radius:0 0 12px 12px;

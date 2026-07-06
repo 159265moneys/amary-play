@@ -633,24 +633,26 @@ function collectDarkRun(){
   }
   localStorage.setItem('amaryDark',JSON.stringify([...got]));
 }
-/* 全異変エントリ（72件）。闇No.はシード固定のランダム採番＝人物順のネタバレなし */
+/* 全異変エントリ。闇No.はシード固定のランダム採番＝人物順のネタバレなし。
+   ユニット単位＝単体異変は1枚、anomalySet（例:女6の同じ男）は複数枚で1エントリ */
 function darkEntries(){
   const folders=new Set(PROFILES.map(p=>p.folder));
-  const paths=[];
+  const units=[];
   for(const k of Object.keys(window.PHOTOS||{})){
     if(!folders.has(k))continue;
     const m=window.PHOTOS[k]; if(Array.isArray(m))continue;
-    for(const vs of Object.values(m.anomalies||{})) paths.push(...vs);
-    for(const s of (m.anomalySets||[])) paths.push(...Object.values(s));
+    for(const vs of Object.values(m.anomalies||{})) for(const p of vs) units.push([p]); // 単体=1枚
+    for(const s of (m.anomalySets||[])) units.push(Object.values(s));                   // セット=複数枚で1件
   }
-  paths.sort();
+  units.sort((a,b)=>a[0]<b[0]?-1:a[0]>b[0]?1:0);   // 先頭パスで安定ソート
   const r=mulberry32(20260704);
-  const order=paths.map((_,i)=>i);
+  const order=units.map((_,i)=>i);
   for(let i=order.length-1;i>0;i--){const j=(r()*(i+1))|0;[order[i],order[j]]=[order[j],order[i]];}
   const got=new Set(getDark());
-  const photo=paths.map((p,i)=>{
-    const meta=(window.DARKDESC||{})[p]||{};
-    return {kind:'photo',key:p,img:p,no:order[i]+1,got:got.has(p),desc:meta.d||'',star:meta.s||3};
+  const photo=units.map((u,i)=>{
+    const meta=(window.DARKDESC||{})[u[0]]||{};   // 説明・難易度は先頭画像のDARKDESCを採用
+    return {kind:'photo',set:u.length>1,key:u[0],img:u[0],imgs:u,no:order[i]+1,
+      got:u.some(p=>got.has(p)),desc:meta.d||'',star:meta.s||3};
   });
   // タグ異変は別カテゴリ。No.は独自に1〜9（ネタバレ防止で別シードのランダム固定）
   const r2=mulberry32(20260705);
@@ -671,7 +673,7 @@ function openDarkFile(){
   const gotCount=items.filter(e=>e.got).length;
   const cellHTML=e=>e.got?`
     <div class="df-cell${e.kind==='tag'?' tagcell':''}" data-key="${e.key}">
-      <div class="df-thumb" style="background-image:url('${encodeURI(e.img)}')">${e.kind==='tag'?`<span class="df-tag">${e.label}</span>`:''}</div>
+      <div class="df-thumb" style="background-image:url('${encodeURI(e.img)}')">${e.kind==='tag'?`<span class="df-tag">${e.label}</span>`:''}${e.set?`<span class="df-setbadge">${e.imgs.length}枚セット</span>`:''}</div>
       <span class="df-no">闇No.${String(e.no).padStart(2,'0')}</span>
       <span class="df-stars">${starsHTML(e.star)}</span>
     </div>`:`
@@ -701,8 +703,8 @@ function openDarkFile(){
     d.className='df-detail';
     d.innerHTML=`
       <div class="df-d-inner">
-        <div class="df-d-img-wrap">
-          <img src="${encodeURI(e.img)}" alt="">
+        <div class="df-d-img-wrap${e.set?' df-d-set':''}">
+          ${e.set?e.imgs.map(im=>`<img src="${encodeURI(im)}" alt="">`).join(''):`<img src="${encodeURI(e.img)}" alt="">`}
           ${e.kind==='tag'?`<span class="df-d-tag">${e.label}</span>`:''}
         </div>
         <div class="df-d-no">闇No.${String(e.no).padStart(2,'0')}</div>
@@ -731,8 +733,10 @@ function openDrawer(){
     ? `<button class="dw-hard" id="dwHard">ハードモードで挑戦<small>60人・失敗できない</small></button>`
     : `<button class="dw-hard locked" id="dwHard" disabled>ハードモード<small>1週目を10分以内でクリアで解放</small></button>`;
   const unlocked=getDark().length>0;
+  const dstat=darkEntries();
+  const drate=Math.round(dstat.filter(e=>e.got).length/dstat.length*100);
   const darkBtn=`<div class="dw-sec">ファイル</div>
-       <button class="dw-dark${unlocked?'':' locked'}" id="dwDark"${unlocked?'':' disabled'}>闇ファイル<small>${unlocked?`闇発見率 ${Math.round(getDark().length/darkEntries().length*100)}%`:'未解放'}</small></button>`;
+       <button class="dw-dark${unlocked?'':' locked'}" id="dwDark"${unlocked?'':' disabled'}>闇ファイル<small>${unlocked?`闇発見率 ${drate}%`:'未解放'}</small></button>`;
   document.getElementById('drawer').innerHTML=`
     <div class="dw-title">Menu<button class="dw-close" id="dwClose" data-icon="x"></button></div>
     <div class="dw-sec">モード</div>
@@ -795,7 +799,8 @@ function toast(msg){
 /* 結果をシェア: 闇発見率＋ベストタイムをSNS共有（Web Share API、無ければコピー） */
 const SHARE_URL='https://159265moneys.github.io/amary-play/';
 function shareResult(){
-  const rate=Math.round(getDark().length/darkEntries().length*100);
+  const dstat=darkEntries();
+  const rate=Math.round(dstat.filter(e=>e.got).length/dstat.length*100);
   const times=(()=>{try{return JSON.parse(localStorage.getItem('amaryTimes')||'[]');}catch(_){return [];}})();
   const best=times.length?fmtTime(times[0]):'--:--';
   const text=`【Yummy】マッチングアプリに潜む闇を暴け。\n闇発見率 ${rate}%／ベスト ${best}\nあなたは何%の闇を見つけられる？`;
