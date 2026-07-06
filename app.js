@@ -1,5 +1,5 @@
 'use strict';
-/* ============ Amary — Pairs-style scrollable profile / swipe-horror ============ */
+/* ============ Yummy — Pairs-style scrollable profile / swipe-horror ============ */
 
 const PHOTO_BASE = '写真素材';
 const PHOTOS_PER = 5;
@@ -797,7 +797,7 @@ function toast(msg){
   setTimeout(()=>{t.classList.remove('show');setTimeout(()=>t.remove(),300);},1600);
 }
 /* 結果をシェア: 闇発見率＋ベストタイムをSNS共有（Web Share API、無ければコピー） */
-const SHARE_URL='https://159265moneys.github.io/amary-play/';
+const SHARE_URL='https://159265moneys.github.io/yummy-play/';
 function shareResult(){
   const dstat=darkEntries();
   const rate=Math.round(dstat.filter(e=>e.got).length/dstat.length*100);
